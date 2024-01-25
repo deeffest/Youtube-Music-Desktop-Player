@@ -1,0 +1,31 @@
+---
+name: Bug report
+description: Create a bug report to help fix a problem with the GPT4Free-App.
+body:
+- type: textarea
+  attributes:
+    label: Description of the bug
+    description: |
+      A description of what the bug is.
+      1. Make sure that you first check if your bug hasn't already been reported. It saves a bit of work on our end.
+      2. Please attach screenshots if they help in understanding the problem better. Don't host your images/videos/GIFs somewhere (e.g. Imgur) and share a link. Directly drag & drop here to avoid navigating to an external link.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Expected behavior
+    description: "A description of what you expected to happen."
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Actual behavior
+    description: "A description of what actually happened."
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Operating system & version
+    placeholder: "Windows 10 x64 1809"
+  validations:
+    required: true
