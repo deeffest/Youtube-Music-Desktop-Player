@@ -1,6 +1,6 @@
 ---
 name: Enhancement or feature request
-description: Suggest an enhancement or feature for GPT4Free-App.
+description: Suggest an enhancement or feature.
 body:
 - type: textarea
   attributes:
@@ -14,7 +14,7 @@ body:
 - type: textarea
   attributes:
     label: Preferred solution
-    description: "A description of what changes should be made to GPT4Free-App to solve the problem."
+    description: "A description of what changes should be made to app to solve the problem."
   validations:
     required: true
 - type: textarea
