@@ -7,6 +7,7 @@ Displays Youtube Music site using [PyQt5](https://www.riverbankcomputing.com/sof
 
 ## Start using
 1. Download and install `YTMDPlayer-Setup.exe` from the releases page: https://github.com/deeffest/Youtube-Music-Desktop-Player/releases
+2. Go to the directory of the installed application and run the `Youtube Music Desktop Player.exe` file 
 
 ## Disclaimer
 Youtube Music Desktop Player is an unofficial application and not affiliated with YouTube or Google Inc. in any way. "Youtube", "Youtube Music" and the "Youtube Logo" are registered trademarks of Google Inc.
