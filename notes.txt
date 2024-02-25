@@ -1,10 +1,10 @@
 1.1 Update!
  
-- Мини-плеер полностью переработан.
-- Исправлены вылеты приложения при скрытом окне во время закрытия всплывающих уведомлений и заставки.
-- Добавлено меню для трея.
-- Теперь нажав на кнопку выхода, можно скрыть окно в трей, не прерывая прослушивание вашей музыки. (Необходимо включить в настройках во вкладке `Main`).
-- Теперь треки после скачивания конвертируются в `mp3` формат.
-- Добавлены кнопки для управления воспроизведением в миниатюре основного окна и окна мини-плеера.
-- Добавлена возможность скачивать целые плейлисты.
-- Прочие изменения и улучшения.
+- Mini player completely redesigned.
+- Fixed application crashes when the window is hidden while closing popup notifications and splash screen.
+- Added menu for the tray.
+- Now by clicking the exit button, you can hide the window in the tray without interrupting your music listening. (Must be enabled in the settings under the ```Main`` tab).
+- Tracks are now converted to ``mp3`` format after downloading.
+- Added buttons to control playback in the main window thumbnail and mini player window.
+- Added ability to download entire playlists.
+- Other changes and improvements.
