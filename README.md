@@ -17,6 +17,11 @@ Download music for offline listening: Download individual tracks or entire playl
 Focus on music with the mini player: Minimize the main window and use the compact mini player for playback controls.
 Convenient controls: Access playback controls through the window thumbnail buttons or the system tray context menu.
 
+## Known bugs and defects
+1. large size of the installer (actual since version 1.1).
+2. When running the application as an administrator, the buttons in the window thumbnail disappear. (actual since version 1.1).
+3. The menu called in the system tray is located above the place where it should be. (actual since version 1.1).
+4. When downloading existing music, the download indicator does not disappear. (actual since version 1.1).
 
 ## Start using
 1. Download and install `YTMDPlayer-Setup.exe` from the releases page: https://github.com/deeffest/Youtube-Music-Desktop-Player/releases
