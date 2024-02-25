@@ -9,7 +9,7 @@ import getpass
 from core.main_window import Window
 
 name = "Youtube Music Desktop Player"
-version = "1.0"
+version = "1.1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 username = getpass.getuser()
 
