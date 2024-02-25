@@ -31,7 +31,7 @@ class AboutDlg(QDialog):
         self._init_connect()
 
     def _init_content(self):
-    	self.TitleLabel.setText(f"{self.name} {self.version}")
+        pass
     
     def _init_connect(self):
     	self.PushButton.clicked.connect(self.close)

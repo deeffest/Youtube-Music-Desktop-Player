@@ -15,6 +15,8 @@ username = getpass.getuser()
 
 if __name__ == '__main__':
     settings = QSettings("deeffest", name)  
+    settings.setValue("current_dir", current_dir)
+    
     app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
     app.setApplicationName(name)
 

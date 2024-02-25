@@ -35,19 +35,18 @@ class OptionsDlg(QDialog):
 
     def _init_tab_1(self):
         self.PillPushButton.setChecked(True)
-
         self.PillPushButton_2.setChecked(False)
 
         self.frame_3.show()
+
         self.frame_4.hide()
 
     def _init_tab_2(self):
         self.PillPushButton_2.setChecked(True)
-
         self.PillPushButton.setChecked(False)
 
-        self.frame_3.hide()
         self.frame_4.show()
+        self.frame_3.hide()
 
     def _init_content(self):
         if self.settings.value("save_last_window_size", "true") == "true":
@@ -75,6 +74,11 @@ class OptionsDlg(QDialog):
         else:
             self.SwitchButton_5.setChecked(False)
 
+        if self.settings.value("hide_window_in_tray", "true") == "true":
+            self.SwitchButton_2.setChecked(True)
+        else:
+            self.SwitchButton_2.setChecked(False)
+
     def _init_connect(self):
         self.PushButton.clicked.connect(self.close)
         self.SwitchButton.checkedChanged.connect(self.save_last_window_size)
@@ -82,9 +86,24 @@ class OptionsDlg(QDialog):
         self.SwitchButton_4.checkedChanged.connect(self.check_for_updates_at_startup)
         self.SwitchButton_3.checkedChanged.connect(self.support_for_animated_scrolling)
         self.SwitchButton_5.checkedChanged.connect(self.support_full_screen_mode)
+        self.SwitchButton_2.checkedChanged.connect(self.hide_window_in_tray)
 
         self.PillPushButton.clicked.connect(self._init_tab_1)
         self.PillPushButton_2.clicked.connect(self._init_tab_2)
+
+    def add_to_autorun(self):
+        if self.settings.value("add_to_autorun", "false") == "false":
+            self.settings.setValue("add_to_autorun", "true")
+            self.add_from_autorun()
+        else:
+            self.settings.setValue("add_to_autorun", "false")           
+            self.remove_from_autorun()
+
+    def hide_window_in_tray(self):
+        if self.settings.value("hide_window_in_tray", "true") == "true":
+            self.settings.setValue("hide_window_in_tray", "false")
+        else:
+            self.settings.setValue("hide_window_in_tray", "true")
 
     def support_full_screen_mode(self):
         if self.settings.value("support_full_screen_mode", "true") == "true":

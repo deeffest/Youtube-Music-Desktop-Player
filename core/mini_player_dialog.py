@@ -1,11 +1,20 @@
 from PyQt5.QtWidgets import QApplication, QDialog
-from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtCore import (
+    QRect, Qt, QRectF, QUrl, QRegularExpression, 
+    QStringListModel
+)
 from PyQt5.QtGui import (
-    QPixmap, QIcon, QPainter, QPen, QColor
+    QPixmap, QIcon, QPainter, QPen, QColor, QMouseEvent,
+    QPainterPath, QBrush
+)
+from PyQt5.QtWinExtras import (
+    QWinThumbnailToolBar, QWinThumbnailToolButton  
 )
 from PyQt5.uic import loadUi
+from qfluentwidgets import ToolTipFilter, ToolTipPosition
 
 import requests
+import pytube
 
 class MiniPlayerDlg(QDialog):
     def __init__(
@@ -15,12 +24,18 @@ class MiniPlayerDlg(QDialog):
         settings,
         parent=None
     ):
-        super().__init__(parent)
+        super().__init__()
 
         self.current_dir = current_dir
         self.name = name
         self.window = parent
         self.settings = settings
+        self.drag_position = None
+        self.isDragging = False
+        self.radius = 12        
+
+        self.win_toolbar = QWinThumbnailToolBar(self)
+        self.create_win_toolbar_buttons()
 
         loadUi(
             f'{self.current_dir}/core/ui/mini_player_dialog.ui', self
@@ -30,35 +45,39 @@ class MiniPlayerDlg(QDialog):
         self._init_content()
         self._init_connect()
 
-    def _init_content(self):
-        self.update_play_pause_icon()
-        self.set_track_image()
-        self.update_window_title(self.window.windowTitle())
+        self.show()
 
-        self.TransparentToolButton_2.setIcon(
+    def _init_content(self):
+        self.change_info(self.window.webview.url())
+
+        self.ToolButton.setIcon(
             QIcon(f"{self.current_dir}/resources/icons/close_white_24dp.svg")
         )
-        self.TransparentToolButton_6.setIcon(            
-            QIcon(f"{self.current_dir}/resources/icons/replay_5_white_24dp.svg")
+        self.ToolButton_2.setIcon(
+            QIcon(f"{self.current_dir}/resources/icons/minimize_white_24dp.svg")
         )
-        self.TransparentToolButton_5.setIcon(            
+        self.TransparentToolButton.setIcon(            
             QIcon(f"{self.current_dir}/resources/icons/skip_previous_white_24dp.svg")
         )
         self.TransparentToolButton_3.setIcon(
             QIcon(f"{self.current_dir}/resources/icons/skip_next_white_24dp.svg")
         )
-        self.TransparentToolButton_4.setIcon(            
-            QIcon(f"{self.current_dir}/resources/icons/forward_5_white_24dp.svg")
+        self.PillToolButton.setIcon(
+            QIcon(f"{self.current_dir}/resources/icons/push_pin_white_24dp.svg")
         )
 
     def _init_connect(self):
-        self.TransparentToolButton_2.clicked.connect(self.close)
-        self.TransparentToolButton.clicked.connect(self.play_pause_track)
-        self.TransparentToolButton_5.clicked.connect(self.previous_track)
-        self.TransparentToolButton_6.clicked.connect(self.skip_back)
+        self.ToolButton.clicked.connect(self.close)
+        self.ToolButton_2.clicked.connect(lambda: self.showMinimized())
+        self.TransparentToolButton_2.clicked.connect(self.play_pause_track)
+        self.TransparentToolButton.clicked.connect(self.previous_track)
         self.TransparentToolButton_3.clicked.connect(self.next_track)
-        self.TransparentToolButton_4.clicked.connect(self.skip_forward)
-        self.window.webview.titleChanged.connect(self.update_window_title)
+        self.window.webview.urlChanged.connect(self.update_info)
+        self.window.webview.titleChanged.connect(self.change_title)
+        self.PillToolButton.clicked.connect(self.toggle_on_top_hint)
+        self.tool_btn_previous.clicked.connect(self.previous_track)
+        self.tool_btn_next.clicked.connect(self.next_track)
+        self.tool_btn_play_pause.clicked.connect(self.play_pause_track)
 
     def play_pause_track(self):
         script = "var video = document.getElementsByTagName('video')[0];" \
@@ -75,13 +94,19 @@ class MiniPlayerDlg(QDialog):
 
     def set_play_pause_icon(self, is_paused):
         if is_paused:            
-            self.TransparentToolButton.setIcon(
-                QIcon(f"{self.current_dir}/resources/icons/play_circle_white_24dp.svg")
+            self.TransparentToolButton_2.setIcon(
+                QIcon(f"{self.current_dir}/resources/icons/play_arrow_white_24dp.svg")
             )
+            self.tool_btn_play_pause.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/play_arrow_white_24dp.svg"
+            ))   
         else:
-            self.TransparentToolButton.setIcon(
-                QIcon(f"{self.current_dir}/resources/icons/pause_circle_white_24dp.svg")
+            self.TransparentToolButton_2.setIcon(
+                QIcon(f"{self.current_dir}/resources/icons/pause_white_24dp.svg")
             )
+            self.tool_btn_play_pause.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+            ))  
     
     def set_track_image(self):
         self.window.webview.page().runJavaScript(
@@ -104,88 +129,120 @@ class MiniPlayerDlg(QDialog):
     def previous_track(self):
         self.window.webview.page().runJavaScript(
             'document.querySelector(".previous-button").click();'
-        )   
-
-    def skip_back(self):
-        self.window.webview.page().runJavaScript(
-            'document.querySelector("video").currentTime -= 5'
-        )    
+        )     
 
     def next_track(self):
         self.window.webview.page().runJavaScript(
             'document.querySelector(".next-button").click();'
-        )  
+        )     
 
-    def skip_forward(self):
-        self.window.webview.page().runJavaScript(
-            'document.querySelector("video").currentTime += 5'
-        )      
+    def mouseMoveEvent(self, event: QMouseEvent):
+        if event.buttons() == Qt.LeftButton and self.drag_position:
+            if not self.isDragging:
+                self.isDragging = True
+            self.move(event.globalPos() - self.drag_position)
+        super(MiniPlayerDlg, self).mouseMoveEvent(event)
 
-    def show_state(self):
-        self.setFixedSize(243, 142)
-        screen_geometry = QApplication.desktop().availableGeometry()
-        self.setGeometry(
-            QRect(
-                screen_geometry.width() - 243, 
-                screen_geometry.height() - 180,
-                243,
-                142 
-            )
-        )
+    def mousePressEvent(self, event: QMouseEvent):
+        self.drag_position = event.globalPos() - self.frameGeometry().topLeft()
+        self.isDragging = True
+        super(MiniPlayerDlg, self).mousePressEvent(event)
 
-    def enterEvent(self, event):
-        super().enterEvent(event)
-        self.show_state()
+    def mouseReleaseEvent(self, event: QMouseEvent):
+        if event.button() == Qt.LeftButton:
+            self.isDragging = False
+        super(MiniPlayerDlg, self).mouseReleaseEvent(event)
 
-    def hide_state(self):
-        self.setFixedSize(3, 142)
-        screen_geometry = QApplication.desktop().availableGeometry()
-        self.setGeometry(
-            QRect(
-                screen_geometry.width() - 3,
-                screen_geometry.height() - 180, 
-                243,
-                142
-            )
-        )
-
-    def leaveEvent(self, event):
-        super().leaveEvent(event)
-        self.hide_state()
+    def toggle_on_top_hint(self):
+        if self.windowFlags() & Qt.WindowStaysOnTopHint:
+            self.setWindowFlag(Qt.WindowStaysOnTopHint, False)
+            self.PillToolButton.setChecked(False)
+        else:
+            self.setWindowFlag(Qt.WindowStaysOnTopHint)
+            self.PillToolButton.setChecked(True)
+        self.show()
 
     def _init_window(self):
         self.window.hide()
-        self.show_state()
 
         self.setWindowTitle(self.name)
-        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_NoSystemBackground, True)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
-        self.setFixedSize(243, 142)
+        self.setFixedSize(360, 180)
         self.setWindowIcon(QIcon(
             f"{self.current_dir}/resources/icons/icon.ico")
         )
 
-    def update_window_title(self, title):
-        track_name = title.split("- YouTube Music")[0].strip()
-        self.BodyLabel.setText(track_name)
-        self.BodyLabel.setToolTip(track_name)
+    def update_info(self, url):
+        try:
+            yt = pytube.YouTube(QUrl(url).toString())
+            self.StrongBodyLabel.setText(yt.title)
+            self.StrongBodyLabel.setToolTip(yt.title)
+            self.StrongBodyLabel.installEventFilter(
+                ToolTipFilter(
+                    self.StrongBodyLabel, 0, 
+                    ToolTipPosition.TOP
+            ))
+            self.BodyLabel_2.setText(yt.author)
+            self.BodyLabel_2.setToolTip(yt.author)
+            self.BodyLabel_2.installEventFilter(
+                ToolTipFilter(
+                    self.BodyLabel_2, 0, 
+                    ToolTipPosition.TOP
+            ))
+        except pytube.exceptions.PytubeError as e:
+            print("pytube error:", e)
 
-        self.update_play_pause_icon()
+    def change_info(self, url):
         self.set_track_image()
+        self.update_play_pause_icon()
+        self.update_info(url)
 
-    def paintEvent(self, event=None):
+    def change_title(self, title):
+        self.set_track_image()
+        self.update_play_pause_icon()
+        self.setWindowTitle(title)
+
+    def create_win_toolbar_buttons(self):
+        self.tool_btn_previous = QWinThumbnailToolButton(self.win_toolbar)
+        self.tool_btn_previous.setToolTip('Previous')
+        self.tool_btn_previous.setIcon(QIcon(
+            f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_previous_white_24dp.svg"
+        ))
+        self.win_toolbar.addButton(self.tool_btn_previous)
+
+        self.tool_btn_play_pause = QWinThumbnailToolButton(self.win_toolbar)
+        self.tool_btn_play_pause.setToolTip('Play/Pause')
+        self.tool_btn_play_pause.setIcon(QIcon(
+            f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+        ))                     
+        self.win_toolbar.addButton(self.tool_btn_play_pause)
+
+        self.tool_btn_next = QWinThumbnailToolButton(self.win_toolbar)
+        self.tool_btn_next.setToolTip('Next')
+        self.tool_btn_next.setIcon(QIcon(
+            f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_next_white_24dp.svg"
+        ))
+        self.win_toolbar.addButton(self.tool_btn_next)
+
+    def _shape(self):
+        path = QPainterPath()
+        path.addRoundedRect(QRectF(0, 0, self.width(), self.height()), self.radius, self.radius)
+        return path
+
+    def paintEvent(self, event):
         painter = QPainter(self)
-        painter.setOpacity(0.7)
-        painter.setBrush(Qt.black)        
+        painter.setRenderHint(QPainter.Antialiasing)
+        painter.fillPath(self._shape(), QBrush(QColor(0, 0, 0, 192)))
+        painter.setPen(QPen(QColor(84, 84, 84), 2))
+        painter.drawPath(self._shape())
 
-        pen = QPen(QColor(84, 84, 84))
-        pen.setWidth(2)
-        pen.setStyle(Qt.SolidLine)
-        painter.setPen(pen)
-
-        painter.drawRect(self.contentsRect())
+    def showEvent(self, event):
+        super().showEvent(event)
+        if not self.win_toolbar.window():
+            self.win_toolbar.setWindow(self.windowHandle())
 
     def closeEvent(self, event):
         self.window.show()
-        event.accept()
+        self.deleteLater()
