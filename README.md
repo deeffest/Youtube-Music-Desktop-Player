@@ -11,7 +11,7 @@ Displays [Youtube Music](https://music.youtube.com) site using [PyQt5](https://w
 No need to keep your browser open: Unlike the web version, you can minimize the application window to the system tray while you work, play, or browse other applications. Music playback continues uninterrupted.
 
 2. **Offline Access**:
-Download music for offline listening: Download individual tracks or entire playlists in MP3 format at high quality and listen to them without an internet connection. This is perfect for situations with limited or no internet access, like airplane travel or commutes.
+Download music for offline listening: Download individual tracks or entire playlists in ``MP3`` format at high quality and listen to them without an internet connection. This is perfect for situations with limited or no internet access, like airplane travel or commutes.
 
 3. **Improved Navigation**:
 Focus on music with the mini player: Minimize the main window and use the compact mini player for playback controls.
