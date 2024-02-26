@@ -8,14 +8,13 @@ Displays [Youtube Music](https://music.youtube.com) site using [PyQt5](https://w
 
 ## Features
 1. **Background Playback**:
-No need to keep your browser open: Unlike the web version, you can minimize the application window to the system tray while you work, play, or browse other applications. Music playback continues uninterrupted.
+Unlike the web version, you can minimize the application window to the system tray while you work, play or browse other applications. Music playback is not interrupted.
 
 2. **Offline Access**:
-Download music for offline listening: Download individual tracks or entire playlists in ``MP3`` format at high quality and listen to them without an internet connection. This is perfect for situations with limited or no internet access, like airplane travel or commutes.
+Download individual tracks or entire playlists in high quality MP3 format and listen to them without an Internet connection. This is ideal for situations with limited or no internet access.
 
-3. **Improved Navigation**:
-Focus on music with the mini player: Minimize the main window and use the compact mini player for playback controls.
-Convenient controls: Access playback controls through the window thumbnail buttons or the system tray context menu.
+2. **Improved Navigation**:
+Minimize the main window and use the compact mini player to control playback. Playback controls can also be accessed using the window thumbnail buttons or the context menu in the system tray.
 
 ## Known bugs and defects
 1. large size of the installer (actual since version 1.1).
