@@ -642,7 +642,10 @@ class Window(QMainWindow):
                 )
                 download_btn = PushButton("Download")
                 download_btn.clicked.connect(
-                    lambda: webbrowser.open_new_tab(item_download)
+                    lambda: [
+                        webbrowser.open_new_tab(item_download),
+                        sys.exit(),
+                    ]
                 )
                 update_msg_box.addWidget(download_btn)  
             else:
@@ -680,6 +683,9 @@ class Window(QMainWindow):
     def resizeEvent(self, event):
         self.settings.setValue("last_window_size", event.size())
         self.label.setMaximumWidth(self.width() * 0.8)
+
+    def closeInTray(self):
+        sys.exit(0)
 
     def closeEvent(self, event):
         if self.settings.value("hide_window_in_tray", "true") == "true":

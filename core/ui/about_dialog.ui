@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>467</width>
+    <width>480</width>
     <height>296</height>
    </rect>
   </property>
@@ -83,7 +83,7 @@
         <item>
          <widget class="TitleLabel" name="TitleLabel">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Youtube Music Desktop Player &lt;/span&gt;&lt;span style=&quot; font-size:14pt; color:#d3d3d3;&quot;&gt;v1.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Youtube Music Desktop Player &lt;/span&gt;&lt;span style=&quot; font-size:14pt; color:#d3d3d3;&quot;&gt;v1.1.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>

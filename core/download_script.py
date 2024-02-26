@@ -4,41 +4,60 @@ import subprocess
 import os
 import requests
 
-def download_track(url, download_path, download_type):
+def download_track(url, download_path, download_type, script_dir):
+    if not check_ffmpeg_available():
+        download_ffmpeg(script_dir)
+
     if download_type == "track":
         yt = YouTube(url)
         stream = yt.streams.get_highest_resolution()
         filename = stream.download(output_path=download_path)
 
         name, ext = os.path.splitext(filename)
+        existing_file = os.path.join(download_path, f"{name}.mp3")
         input_file = filename
-        output_file = f"{name}.mp3"
+        output_file = f"{name}.mp3" 
 
-        try:
-            subprocess.run(["ffmpeg", "-i", input_file, output_file], creationflags=subprocess.CREATE_NO_WINDOW)
-            os.remove(input_file)
-        except subprocess.CalledProcessError:
-            print("FFmpeg not found. Downloading...")
-            download_ffmpeg(download_path)
-            subprocess.run(["ffmpeg", "-i", input_file, output_file], creationflags=subprocess.CREATE_NO_WINDOW)
-            os.remove(input_file)
+        subprocess.run(
+            ["ffmpeg", "-i", input_file, "-y", output_file], 
+            creationflags=subprocess.CREATE_NO_WINDOW
+            )
+        os.remove(input_file)
+
+        sys.exit(0)
 
     elif download_type == "playlist":
         playlist = Playlist(url)
+        playlist_name = playlist.title.replace("/", "_")
+        folder_path = os.path.join(download_path, playlist_name)
+
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
         for video in playlist.videos:
-            stream = video.streams.filter(type='video', progressive=True, file_extension='mp4').order_by('resolution').desc().first()
-            filename = stream.download(output_path=download_path)
+            stream = video.streams.filter(
+                type='video', 
+                progressive=True, 
+                file_extension='mp4'
+                ).order_by('resolution').desc().first()
+            filename = stream.download(output_path=folder_path)
 
             name, ext = os.path.splitext(filename)
+            existing_file = os.path.join(folder_path, f"{name}.mp3")
             input_file = filename
             output_file = f"{name}.mp3"
 
-            subprocess.run(["ffmpeg", "-i", input_file, output_file], creationflags=subprocess.CREATE_NO_WINDOW)
+            subprocess.run(
+                ["ffmpeg", "-i", input_file, "-y", output_file], 
+                creationflags=subprocess.CREATE_NO_WINDOW
+                )
             os.remove(input_file)
 
-def download_ffmpeg(download_path, script_dir):
+        sys.exit(0)
+
+def download_ffmpeg(script_dir):
     ffmpeg_url = "https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/download/1.0/ffmpeg.exe" 
-    ffmpeg_filename = os.path.join(script_dir, "ffmpeg.exe")
+    ffmpeg_filename = os.path.join(f"{script_dir}/core", "ffmpeg.exe")
 
     try:
         response = requests.get(ffmpeg_url, stream=True)
@@ -49,10 +68,21 @@ def download_ffmpeg(download_path, script_dir):
         if not os.path.isfile(ffmpeg_filename):
             raise Exception("Error downloading FFmpeg.")
 
-        print("FFmpeg downloaded successfully.")
     except Exception as e:
-        print(f"Error downloading FFmpeg: {e}")
         sys.exit(1)
+
+def check_ffmpeg_available():
+    try:
+        subprocess.run(
+            ["ffmpeg", "-version"], 
+            check=True, 
+            stdout=subprocess.DEVNULL, 
+            stderr=subprocess.DEVNULL, 
+            creationflags=subprocess.CREATE_NO_WINDOW
+            )
+        return True
+    except:
+        return False
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
@@ -63,9 +93,4 @@ if __name__ == "__main__":
     download_type = sys.argv[3]
     script_dir = sys.argv[4]
 
-    try:
-        download_track(url, download_path, download_type)
-    except:
-        print("FFmpeg not found.")
-        download_ffmpeg(download_path, script_dir)
-        download_track(url, download_path, download_type)
+    download_track(url, download_path, download_type, script_dir)

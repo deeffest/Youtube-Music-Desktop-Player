@@ -58,7 +58,7 @@ class TrayIcon(QSystemTrayIcon):
 
         menu.addSeparator()
 
-        self.exit_action = Action('Exit', triggered=lambda: sys.exit(0))
+        self.exit_action = Action('Exit', triggered=self.window.closeInTray)
         self.exit_action.setIcon(QIcon(
             f"{self.current_dir}/resources/icons/close_white_24dp.svg"))
         menu.addAction(self.exit_action)

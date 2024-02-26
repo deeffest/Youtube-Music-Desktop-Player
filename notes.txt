@@ -1,10 +1,4 @@
-1.1 Update!
+1.1.1 Update!
  
-- Mini player completely redesigned.
-- Fixed application crashes when the window is hidden while closing popup notifications and splash screen.
-- Added menu for the tray.
-- Now by clicking the exit button, you can hide the window in the tray without interrupting your music listening. (Must be enabled in the settings under the ```Main`` tab).
-- Tracks are now converted to ``mp3`` format after downloading.
-- Added buttons to control playback in the main window thumbnail and mini player window.
-- Added ability to download entire playlists.
+- Fixed a bug where the loading indicator would not disappear when loading existing music.
 - Other changes and improvements.
