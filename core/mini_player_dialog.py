@@ -42,6 +42,7 @@ class MiniPlayerDlg(QDialog):
         )
 
         self._init_window()
+        self._init_attributes()
         self._init_content()
         self._init_connect()
 
@@ -49,6 +50,7 @@ class MiniPlayerDlg(QDialog):
 
     def _init_content(self):
         self.change_info(self.window.webview.url())
+        self.update_play_pause_icon()
 
         self.ToolButton.setIcon(
             QIcon(f"{self.current_dir}/resources/icons/close_white_24dp.svg")
@@ -70,27 +72,25 @@ class MiniPlayerDlg(QDialog):
         self.ToolButton.clicked.connect(self.close)
         self.ToolButton_2.clicked.connect(lambda: self.showMinimized())
         self.TransparentToolButton_2.clicked.connect(self.play_pause_track)
-        self.TransparentToolButton.clicked.connect(self.previous_track)
-        self.TransparentToolButton_3.clicked.connect(self.next_track)
-        self.window.webview.urlChanged.connect(self.update_info)
-        self.window.webview.titleChanged.connect(self.change_title)
+        self.TransparentToolButton.clicked.connect(self.window.previous_track)
+        self.TransparentToolButton_3.clicked.connect(self.window.next_track)
+        self.window.webview.titleChanged.connect(self.title_changed)
         self.PillToolButton.clicked.connect(self.toggle_on_top_hint)
-        self.tool_btn_previous.clicked.connect(self.previous_track)
-        self.tool_btn_next.clicked.connect(self.next_track)
+        self.tool_btn_previous.clicked.connect(self.window.previous_track)
+        self.tool_btn_next.clicked.connect(self.window.next_track)
         self.tool_btn_play_pause.clicked.connect(self.play_pause_track)
 
-    def play_pause_track(self):
-        script = "var video = document.getElementsByTagName('video')[0];" \
-                 "if (video.paused) video.play(); else video.pause();"
-        self.window.webview.page().runJavaScript(script)
+    def _init_attributes(self):
+        self.previous_url = self.window.webview.url()
 
+    def play_pause_track(self):
+        with open(f"{self.current_dir}/core/js/play_pause_track.js", "r") as js_file:
+            self.window.webview.page().runJavaScript(js_file.read())
         self.update_play_pause_icon()
 
     def update_play_pause_icon(self):
-        self.window.webview.page().runJavaScript(
-            "var video = document.getElementsByTagName('video')[0]; video.paused;", 
-            self.set_play_pause_icon
-        )
+        with open(f"{self.current_dir}/core/js/get_play_pause_state.js", "r") as js_file:
+            self.window.webview.page().runJavaScript(js_file.read(), self.set_play_pause_icon) 
 
     def set_play_pause_icon(self, is_paused):
         if is_paused:            
@@ -109,10 +109,8 @@ class MiniPlayerDlg(QDialog):
             ))  
     
     def set_track_image(self):
-        self.window.webview.page().runJavaScript(
-            'document.querySelector(".image.style-scope.ytmusic-player-bar").getAttribute("src")', 
-            self.displayImage
-        )
+        with open(f"{self.current_dir}/core/js/get_track_image.js", "r") as js_file:
+            self.window.webview.page().runJavaScript(js_file.read(), self.displayImage)
 
     def displayImage(self, url: str) -> None:
         if url:
@@ -125,16 +123,6 @@ class MiniPlayerDlg(QDialog):
                     self.label.setPixmap(self.pixmap) 
             except Exception as e:
                 print(e)
-
-    def previous_track(self):
-        self.window.webview.page().runJavaScript(
-            'document.querySelector(".previous-button").click();'
-        )     
-
-    def next_track(self):
-        self.window.webview.page().runJavaScript(
-            'document.querySelector(".next-button").click();'
-        )     
 
     def mouseMoveEvent(self, event: QMouseEvent):
         if event.buttons() == Qt.LeftButton and self.drag_position:
@@ -196,11 +184,13 @@ class MiniPlayerDlg(QDialog):
 
     def change_info(self, url):
         self.set_track_image()
-        self.update_play_pause_icon()
         self.update_info(url)
 
-    def change_title(self, title):
-        self.set_track_image()
+    def title_changed(self, title):
+        if self.window.webview.url() != self.previous_url:
+            self.change_info(self.window.webview.url())
+            self.previous_url = self.window.webview.url()
+        
         self.update_play_pause_icon()
         self.setWindowTitle(title)
 

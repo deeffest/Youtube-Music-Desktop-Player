@@ -1,0 +1,1 @@
+document.querySelector(".previous-button").click();

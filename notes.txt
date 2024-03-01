@@ -1,4 +1,4 @@
-1.1.1 Update!
+1.1.2 Update!
  
-- Fixed a bug where the loading indicator would not disappear when loading existing music.
+- Fixed installer size too large.
 - Other changes and improvements.

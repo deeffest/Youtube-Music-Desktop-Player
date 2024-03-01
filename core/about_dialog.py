@@ -1,4 +1,3 @@
-#about_dialog.py
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
@@ -31,7 +30,7 @@ class AboutDlg(QDialog):
         self._init_connect()
 
     def _init_content(self):
-        pass
+        self.BodyLabel_2.setText(self.version)
     
     def _init_connect(self):
     	self.PushButton.clicked.connect(self.close)

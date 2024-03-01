@@ -1,24 +1,16 @@
-#main_window.py
 from PyQt5.QtWidgets import (
     QMainWindow, QApplication, QFileDialog, QShortcut
 )
-from PyQt5.QtGui import (
-    QIcon, QKeySequence
-)
-from PyQt5.QtCore import (
-    QSize, Qt, QUrl, pyqtSignal, QObject
-)
-from PyQt5.QtWebEngineWidgets import (
-    QWebEngineView, QWebEnginePage, QWebEngineSettings
-)
+from PyQt5.QtGui import QIcon, QKeySequence
+from PyQt5.QtCore import QSize, Qt, QUrl
 from PyQt5.QtWinExtras import (
     QWinThumbnailToolBar, QWinThumbnailToolButton  
 )
+from PyQt5.QtWebEngineWidgets import QWebEngineSettings
 from PyQt5 import uic
 
 from qfluentwidgets import (
-    InfoBar, InfoBarPosition, RoundMenu, Action, 
-    MenuAnimationType, IndeterminateProgressRing,
+    InfoBar, InfoBarPosition, IndeterminateProgressRing,
     setTheme, setThemeColor, Theme, SplashScreen, 
     PushButton, ToolTipFilter, ToolTipPosition
 )
@@ -27,196 +19,15 @@ import os
 import sys
 import requests
 import webbrowser
-import subprocess
 from threading import Thread
-from pytube import YouTube
 
+from core.web_engine_page import WebEnginePage
+from core.web_engine_view import WebEngineView
+from core.download_manager import DownloadManager
 from core.options_dialog import OptionsDlg
 from core.about_dialog import AboutDlg
 from core.mini_player_dialog import MiniPlayerDlg
 from core.tray_icon import TrayIcon
-from core.alert_dialog import AlertDlg
-from core.confirm_dialog import ConfirmDlg
-from core.input_dialog import InputDlg
-
-class WebEnginePage(QWebEnginePage):
-    def acceptNavigationRequest(self, url, _type, isMainFrame):
-        if "music.youtube.com" not in url.toString() and "google.com" not in url.toString() and "googlesyndication.com" not in url.toString():
-            webbrowser.open_new_tab(url.toString())
-            return False
-
-        return QWebEnginePage.acceptNavigationRequest(self, url, _type, isMainFrame)
-
-    def javaScriptAlert(self, qurl, text):
-        dialog = AlertDlg(
-            self.parent().name, 
-            self.parent().current_dir, 
-            self.view()
-        ) 
-        dialog.setText(text)
-        reply = dialog.exec_()
-
-    def javaScriptConfirm(self, qurl, text):
-        dialog = ConfirmDlg(            
-            self.parent().name, 
-            self.parent().current_dir, 
-            self.view()
-        ) 
-        dialog.setText(text)
-        reply = dialog.exec_()
-        return reply == True
-
-    def javaScriptPrompt(self, qurl, text, text_value):
-        dialog = InputDlg(            
-            self.parent().name, 
-            self.parent().current_dir, 
-            self.view()
-        ) 
-        dialog.setText(text)
-        dialog.setTextValue(text_value)
-        if dialog.exec_():
-            return (True, dialog.textValue())
-        else:
-            return (False, "")
-
-class WebEngineView(QWebEngineView):
-    def contextMenuEvent(self, event):
-        url = self.window().webview.url().toString()
-        menu = RoundMenu(parent=self.window())
-
-        go_back_action = Action("Back", shortcut="Left")
-        go_back_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/arrow_back_white_24dp.svg")
-        )
-        go_back_action.triggered.connect(
-            self.window().go_back
-        )
-        menu.addAction(go_back_action)
-
-        go_forward_action = Action("Forward", shortcut="Right")
-        go_forward_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/arrow_forward_white_24dp.svg")
-        )
-        go_forward_action.triggered.connect(
-            self.window().go_forward
-        )
-        menu.addAction(go_forward_action)
-
-        go_home_action = Action("Home", shortcut="Ctrl+H")
-        go_home_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/home_white_24dp.svg")
-        )
-        go_home_action.triggered.connect(
-            self.window().go_home
-        )
-        menu.addAction(go_home_action)
-
-        go_reload_action = Action("Reload", shortcut="Ctrl+R")
-        go_reload_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/refresh_white_24dp.svg")
-        )
-        go_reload_action.triggered.connect(
-            self.window().go_reload
-        )
-        menu.addAction(go_reload_action)
-
-        menu.addSeparator()
-
-        download_menu = RoundMenu("Download...", self)
-        download_menu.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/file_download_white_24dp.svg")
-        )
-        menu.addMenu(download_menu)
-
-        download_track_action = Action('track', shortcut="Ctrl+D")
-        download_track_action.triggered.connect(
-            lambda: self.window().go_download('track')
-        )
-        download_menu.addAction(download_track_action)
-
-        download_playlist_action = Action('playlist', shortcut="Ctrl+P")
-        download_playlist_action.triggered.connect(
-            lambda: self.window().go_download('playlist')
-        )
-        download_menu.addAction(download_playlist_action)
-
-        open_mini_player_action = Action("Mini-Player", shortcut="Ctrl+M")
-        open_mini_player_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/picture_in_picture_white_24dp.svg")
-        )
-        open_mini_player_action.triggered.connect(
-            self.window().open_mini_player
-        )
-        menu.addAction(open_mini_player_action)
-
-        menu.addSeparator()
-
-        open_settings_action = Action("Settings", shortcut="Ctrl+S")
-        open_settings_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/settings_white_24dp.svg")
-        )
-        open_settings_action.triggered.connect(
-            self.window().open_settings_dialog
-        )
-        menu.addAction(open_settings_action)
-
-        menu.addSeparator()        
-
-        bug_report_action = Action("Bug Report")
-        bug_report_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/bug_report_white_24dp.svg")
-        )
-        bug_report_action.triggered.connect(lambda:
-            webbrowser.open_new_tab(
-                "https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose"
-            )
-        )
-        menu.addAction(bug_report_action)
-
-        open_about_action = Action("About...")
-        open_about_action.setIcon(
-            QIcon(f"{self.window().current_dir}/resources/icons/info_white_24dp.svg")
-        )
-        open_about_action.triggered.connect(
-            self.window().open_about_dialog
-        )
-        menu.addAction(open_about_action)
-
-        if not "watch" in url:
-            download_track_action.setEnabled(False)
-            open_mini_player_action.setEnabled(False)
-        if not "playlist" in url:
-            download_playlist_action.setEnabled(False)
-
-        if not self.page().history().canGoForward():
-            go_forward_action.setEnabled(False)
-        if not self.page().history().canGoBack():
-            go_back_action.setEnabled(False)
-
-        menu.exec(event.globalPos(), aniType=MenuAnimationType.DROP_DOWN)
-
-class DownloadManager(QObject):
-    downloadFinished = pyqtSignal(str)
-    downloadError = pyqtSignal(str)
-
-    def __init__(self, current_dir, settings):
-        super().__init__()
-        self.current_dir = current_dir
-        self.settings = settings
-
-    def download_external_process(self, url, download_path, download_type):
-        script_dir = self.settings.value("current_dir")
-        process = subprocess.Popen(
-            [f'{self.current_dir}/core/download_script.exe', url, download_path, download_type, script_dir],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        output, error = process.communicate()
-
-        if process.returncode == 0:
-            self.downloadFinished.emit(download_path)
-        else:
-            self.downloadError.emit(error.decode('utf-8'))
 
 class Window(QMainWindow):
     def __init__(
@@ -487,6 +298,8 @@ class Window(QMainWindow):
 
             with open(f"{self.current_dir}/core/js/add_styles.js", "r") as js_file:
                 self.webview.page().runJavaScript(js_file.read())
+
+            self.update_play_pause_icon() 
         else:
             self.ProgressBar.setValue(progress)
             if self.ProgressBar.isHidden():
@@ -537,43 +350,49 @@ class Window(QMainWindow):
         self.win_toolbar.addButton(self.tool_btn_next)
 
     def previous_track(self):
-        self.webview.page().runJavaScript(
-            'document.querySelector(".previous-button").click();'
-        )     
+        with open(f"{self.current_dir}/core/js/previous_track.js", "r") as js_file:
+            self.webview.page().runJavaScript(js_file.read())  
 
     def next_track(self):
-        self.webview.page().runJavaScript(
-            'document.querySelector(".next-button").click();'
-        )     
+        with open(f"{self.current_dir}/core/js/next_track.js", "r") as js_file:
+            self.webview.page().runJavaScript(js_file.read())  
 
     def play_pause_track(self):
-        script = "var video = document.getElementsByTagName('video')[0];" \
-                 "if (video.paused) video.play(); else video.pause();"
-        self.webview.page().runJavaScript(script)
-
+        with open(f"{self.current_dir}/core/js/play_pause_track.js", "r") as js_file:
+            self.webview.page().runJavaScript(js_file.read())
         self.update_play_pause_icon()
 
     def update_play_pause_icon(self):
-        self.webview.page().runJavaScript(
-            "var video = document.getElementsByTagName('video')[0]; video.paused;", 
-            self.set_play_pause_icon
-        )
-
+        with open(f"{self.current_dir}/core/js/get_play_pause_state.js", "r") as js_file:
+            self.webview.page().runJavaScript(js_file.read(), self.set_play_pause_icon) 
+  
     def set_play_pause_icon(self, is_paused):
-        if is_paused:            
-            self.tool_btn_play_pause.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/win_toolbar_icons/play_arrow_white_24dp.svg"
-            ))   
-            self.tray_icon.play_pause_action.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/play_arrow_white_24dp.svg"
-            ))   
+        if is_paused: 
+            if "watch" in self.webview.url().toString():           
+                self.tool_btn_play_pause.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/win_toolbar_icons/play_arrow_white_24dp.svg"
+                ))                   
+                self.tray_icon.play_pause_action.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/play_arrow_white_24dp.svg"
+                ))  
+            else:
+                self.tool_btn_play_pause.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/play_arrow_white_24dp.svg"
+                ))  
+                self.tray_icon.play_pause_action.setEnabled(False)
         else:
-            self.tool_btn_play_pause.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
-            ))  
-            self.tray_icon.play_pause_action.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/pause_white_24dp.svg"
-            ))  
+            if "watch" in self.webview.url().toString():            
+                self.tool_btn_play_pause.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+                ))             
+                self.tray_icon.play_pause_action.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/pause_white_24dp.svg"
+                ))    
+            else:
+                self.tool_btn_play_pause.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+                ))  
+                self.tray_icon.play_pause_action.setEnabled(False)
 
     def _init_window(self):
         self.setWindowTitle(self.name)
@@ -614,13 +433,41 @@ class Window(QMainWindow):
         
         if "watch" in url.toString():
             self.tool_btn_previous.setEnabled(True)
-            self.tool_btn_next.setEnabled(True) 
+            self.tool_btn_previous.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_previous_white_24dp.svg"
+            ))     
+            self.tray_icon.previous_track_action.setEnabled(True)       
+
             self.tool_btn_play_pause.setEnabled(True)
+            self.tool_btn_play_pause.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+            ))
+            self.tray_icon.play_pause_action.setEnabled(True)  
+
+            self.tool_btn_next.setEnabled(True) 
+            self.tool_btn_next.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_next_white_24dp.svg"
+            ))   
+            self.tray_icon.next_track_action.setEnabled(True)  
         else:
             self.tool_btn_previous.setEnabled(False)
-            self.tool_btn_next.setEnabled(False) 
+            self.tool_btn_previous.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_previous_white_24dp.svg"
+            ))
+            self.tray_icon.previous_track_action.setEnabled(False)  
+
             self.tool_btn_play_pause.setEnabled(False)
-        
+            self.tool_btn_play_pause.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+            ))   
+            self.tray_icon.play_pause_action.setEnabled(False)  
+
+            self.tool_btn_next.setEnabled(False)
+            self.tool_btn_next.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_next_white_24dp.svg"
+            ))
+            self.tray_icon.next_track_action.setEnabled(False) 
+            
     def check_for_updates(self, startup=None):
         response = requests.get(
             "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest"
@@ -684,7 +531,7 @@ class Window(QMainWindow):
         self.settings.setValue("last_window_size", event.size())
         self.label.setMaximumWidth(self.width() * 0.8)
 
-    def closeInTray(self):
+    def close_in_tray(self):
         sys.exit(0)
 
     def closeEvent(self, event):

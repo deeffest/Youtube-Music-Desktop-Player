@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>296</height>
+    <width>431</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,11 +81,55 @@
          </widget>
         </item>
         <item>
-         <widget class="TitleLabel" name="TitleLabel">
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Youtube Music Desktop Player &lt;/span&gt;&lt;span style=&quot; font-size:14pt; color:#d3d3d3;&quot;&gt;v1.1.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>0</number>
           </property>
-         </widget>
+          <item>
+           <widget class="TitleLabel" name="TitleLabel">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Youtube Music Desktop Player&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="BodyLabel" name="BodyLabel_3">
+              <property name="text">
+               <string>Current app version:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="BodyLabel" name="BodyLabel_2">
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string>1.1.2</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -102,13 +146,13 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>100</height>
+            <height>110</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>100</height>
+            <height>110</height>
            </size>
           </property>
           <property name="contextMenuPolicy">
@@ -119,6 +163,9 @@
           </property>
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Displays Youtube Music site using QWebEngine to make your music listening experience even more convenient.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt;Created with &lt;/span&gt;&lt;a href=&quot;https://www.riverbankcomputing.com/software/pyqt/intro&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;PyQt5&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt; + &lt;/span&gt;&lt;a href=&quot;https://github.com/zhiyiYo/PyQt-Fluent-Widgets&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;PyQt-Fluent-Widgets&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt; and distributed under the &lt;/span&gt;&lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;GNU GPL v3&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt; license, source code is available on &lt;/span&gt;&lt;a href=&quot;https://github.com/deeffest/Youtube-Music-Desktop-Player&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt;. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="scaledContents">
+           <bool>false</bool>
           </property>
           <property name="wordWrap">
            <bool>true</bool>

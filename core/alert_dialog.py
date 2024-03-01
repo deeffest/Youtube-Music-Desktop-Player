@@ -1,4 +1,3 @@
-#alert_dialog.py
 from PyQt5.QtWidgets import QDialog, QSizePolicy
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QIcon
