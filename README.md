@@ -17,7 +17,7 @@ Download individual tracks or entire playlists in high quality MP3 format and li
 Minimize the main window and use the compact mini player to control playback. Playback controls can also be accessed using the window thumbnail buttons or the context menu in the system tray.
 
 ## Known bugs and defects
-1. large size of the installer (actual since version 1.1).
+1. ~~large size of the installer~~ (actual since version 1.1 to 1.1.2).
 2. When running the application as an administrator, the buttons in the window thumbnail disappear. (actual since version 1.1).
 3. The menu called in the system tray is located above the place where it should be. (actual since version 1.1).
 4. ~~When downloading existing music, the download indicator does not disappear.~~ (actual since version 1.1 to 1.1.1).
