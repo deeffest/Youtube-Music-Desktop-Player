@@ -107,7 +107,7 @@
             <item>
              <widget class="BodyLabel" name="BodyLabel_2">
               <property name="styleSheet">
-               <string notr="true"/>
+               <string notr="true">color: white;</string>
               </property>
               <property name="text">
                <string>1.1.2</string>

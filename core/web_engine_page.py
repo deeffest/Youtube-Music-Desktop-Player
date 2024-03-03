@@ -7,10 +7,12 @@ from core.alert_dialog import AlertDlg
 from core.confirm_dialog import ConfirmDlg
 from core.input_dialog import InputDlg
 
+import webbrowser
+
 class WebEnginePage(QWebEnginePage):
     def acceptNavigationRequest(self, url, _type, isMainFrame):
         if ("music.youtube.com" not in url.toString() and
-            "google.com" not in url.toString() and
+            "accounts.google.com" not in url.toString() and
             "googlesyndication.com" not in url.toString()):
             webbrowser.open_new_tab(url.toString())
             return False

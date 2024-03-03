@@ -1,4 +1,3 @@
-#main.py
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QSettings, Qt
 import os
@@ -9,7 +8,7 @@ import getpass
 from core.main_window import Window
 
 name = "Youtube Music Desktop Player"
-version = "1.1.2"
+version = "1.1.3"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 username = getpass.getuser()
 

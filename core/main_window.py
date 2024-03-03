@@ -469,9 +469,12 @@ class Window(QMainWindow):
             self.tray_icon.next_track_action.setEnabled(False) 
             
     def check_for_updates(self, startup=None):
-        response = requests.get(
-            "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest"
-        )
+        try:
+            response = requests.get(
+                "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest"
+            )
+        except Exception as e:
+            print(e)
         try:
             item_version = response.json()["name"]
             item_download = response.json().get("html_url")         

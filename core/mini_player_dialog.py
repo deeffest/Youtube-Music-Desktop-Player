@@ -32,7 +32,7 @@ class MiniPlayerDlg(QDialog):
         self.settings = settings
         self.drag_position = None
         self.isDragging = False
-        self.radius = 12        
+        self.radius = 12 
 
         self.win_toolbar = QWinThumbnailToolBar(self)
         self.create_win_toolbar_buttons()
@@ -179,8 +179,8 @@ class MiniPlayerDlg(QDialog):
                     self.BodyLabel_2, 0, 
                     ToolTipPosition.TOP
             ))
-        except pytube.exceptions.PytubeError as e:
-            print("pytube error:", e)
+        except Exception as e:
+            print(e)
 
     def change_info(self, url):
         self.set_track_image()
