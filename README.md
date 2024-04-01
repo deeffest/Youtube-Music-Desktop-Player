@@ -18,7 +18,7 @@ Minimize the main window and use the compact mini player to control playback. Pl
 
 ## Known bugs and defects
 1. ~~large size of the installer~~ (actual since version 1.1 to 1.1.2).
-2. The menu called in the system tray is located above the place where it should be. (actual since version 1.1).
+2. ~~The menu called in the system tray is located above the place where it should be.~~ (actual since version 1.1 to 1.1.4).
 3. ~~When downloading existing music, the download indicator does not disappear.~~ (actual since version 1.1 to 1.1.1).
 
 ## Start using
