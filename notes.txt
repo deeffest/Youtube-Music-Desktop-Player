@@ -1,4 +1,6 @@
-1.1.3 Update!
+1.1.4 Update!
  
-- Fixed a bug where when opening a link in the browser, the application would close.
+- All tooltips with fluent interface have been replaced by standard ones due to unstable operation.
+- The tray icon is now displayed regardless of whether the window is hidden or not (if minimizing the window to the tray on closing is enabled in the settings).
+- The tray menu now uses the standard interface instead of the fluent interface (due to a bug on the PyQtFluentWidgets side).
 - Other changes and improvements.
