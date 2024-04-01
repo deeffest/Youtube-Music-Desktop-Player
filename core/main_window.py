@@ -421,7 +421,7 @@ class Window(QMainWindow):
 
     def update_url(self, url):
         self.label.setText(url.toString())
-        self.label.setMaximumWidth(self.width() * 0.8)
+        self.label.setMaximumWidth(int(self.width() * 0.8))
         self.label.setToolTip(self.label.text())
         self.label.installEventFilter(
             ToolTipFilter(
@@ -532,7 +532,7 @@ class Window(QMainWindow):
 
     def resizeEvent(self, event):
         self.settings.setValue("last_window_size", event.size())
-        self.label.setMaximumWidth(self.width() * 0.8)
+        self.label.setMaximumWidth(int(self.width() * 0.8))
 
     def close_in_tray(self):
         sys.exit(0)
