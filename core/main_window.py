@@ -12,7 +12,7 @@ from PyQt5 import uic
 from qfluentwidgets import (
     InfoBar, InfoBarPosition, IndeterminateProgressRing,
     setTheme, setThemeColor, Theme, SplashScreen, 
-    PushButton, ToolTipFilter, ToolTipPosition
+    PushButton
 )
 
 import os
@@ -130,7 +130,6 @@ class Window(QMainWindow):
             self.settings, 
             parent=self
         )
-        self.tray_icon.hide()
 
     def _init_splash_screen(self):
         self.splash_screen_is_over = False
@@ -198,7 +197,7 @@ class Window(QMainWindow):
             title="",
             content=f"Downloading...",
             orient=Qt.Horizontal,
-            isClosable=False,
+            isClosable=True,
             position=InfoBarPosition.BOTTOM_RIGHT,
             duration=-1,
             parent=self
@@ -210,13 +209,6 @@ class Window(QMainWindow):
         self.download_info_bar.addWidget(spinner)   
 
     def on_download_finished(self, download_path):
-        if self.isHidden():
-            self.show()
-            self.download_info_bar.close()
-            self.hide()
-        else:
-            self.download_info_bar.close()
-
         InfoBar.info(
             title="",
             content=f"Successfully downloaded!",
@@ -228,13 +220,6 @@ class Window(QMainWindow):
         )
 
     def on_download_error(self, error_message):
-        if self.isHidden():
-            self.show()
-            self.download_info_bar.close()
-            self.hide()
-        else:
-            self.download_info_bar.close()
-
         InfoBar.error(
             title="",
             content=f"Download error:(",
@@ -373,26 +358,30 @@ class Window(QMainWindow):
                     f"{self.current_dir}/resources/icons/win_toolbar_icons/play_arrow_white_24dp.svg"
                 ))                   
                 self.tray_icon.play_pause_action.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/play_arrow_white_24dp.svg"
-                ))  
+                    f"{self.current_dir}/resources/icons/win_toolbar_icons/play_arrow_white_24dp.svg"
+                ))
             else:
                 self.tool_btn_play_pause.setIcon(QIcon(
                     f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/play_arrow_white_24dp.svg"
                 ))  
-                self.tray_icon.play_pause_action.setEnabled(False)
+                self.tray_icon.play_pause_action.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/play_arrow_white_24dp.svg"
+                ))
         else:
             if "watch" in self.webview.url().toString():            
                 self.tool_btn_play_pause.setIcon(QIcon(
                     f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
                 ))             
                 self.tray_icon.play_pause_action.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/pause_white_24dp.svg"
+                    f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
                 ))    
             else:
                 self.tool_btn_play_pause.setIcon(QIcon(
                     f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
                 ))  
-                self.tray_icon.play_pause_action.setEnabled(False)
+                self.tray_icon.play_pause_action.setIcon(QIcon(
+                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+                ))
 
     def _init_window(self):
         self.setWindowTitle(self.name)
@@ -412,22 +401,12 @@ class Window(QMainWindow):
     def update_window_title(self, title):
         self.setWindowTitle(title) 
         self.tray_icon.setToolTip(title)
-        self.tray_icon.installEventFilter(
-            ToolTipFilter(
-                self.tray_icon, 0, 
-                ToolTipPosition.TOP
-        ))
         self.update_play_pause_icon()
 
     def update_url(self, url):
         self.label.setText(url.toString())
         self.label.setMaximumWidth(int(self.width() * 0.8))
         self.label.setToolTip(self.label.text())
-        self.label.installEventFilter(
-            ToolTipFilter(
-                self.label, 0, 
-                ToolTipPosition.TOP
-        ))
         
         self.settings.setValue("last_url", url.toString())
         
@@ -436,37 +415,55 @@ class Window(QMainWindow):
             self.tool_btn_previous.setIcon(QIcon(
                 f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_previous_white_24dp.svg"
             ))     
-            self.tray_icon.previous_track_action.setEnabled(True)       
+            self.tray_icon.previous_track_action.setEnabled(True)
+            self.tray_icon.previous_track_action.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_previous_white_24dp.svg"
+            ))     
 
             self.tool_btn_play_pause.setEnabled(True)
             self.tool_btn_play_pause.setIcon(QIcon(
                 f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
             ))
-            self.tray_icon.play_pause_action.setEnabled(True)  
+            self.tray_icon.play_pause_action.setEnabled(True)
+            self.tray_icon.play_pause_action.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+            )) 
 
             self.tool_btn_next.setEnabled(True) 
             self.tool_btn_next.setIcon(QIcon(
                 f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_next_white_24dp.svg"
             ))   
-            self.tray_icon.next_track_action.setEnabled(True)  
+            self.tray_icon.next_track_action.setEnabled(True)
+            self.tray_icon.next_track_action.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_next_white_24dp.svg"
+            ))   
         else:
             self.tool_btn_previous.setEnabled(False)
             self.tool_btn_previous.setIcon(QIcon(
                 f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_previous_white_24dp.svg"
             ))
-            self.tray_icon.previous_track_action.setEnabled(False)  
+            self.tray_icon.previous_track_action.setEnabled(False)
+            self.tray_icon.previous_track_action.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_previous_white_24dp.svg"
+            ))
 
             self.tool_btn_play_pause.setEnabled(False)
             self.tool_btn_play_pause.setIcon(QIcon(
                 f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
             ))   
-            self.tray_icon.play_pause_action.setEnabled(False)  
+            self.tray_icon.play_pause_action.setEnabled(False)
+            self.tray_icon.play_pause_action.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+            )) 
 
             self.tool_btn_next.setEnabled(False)
             self.tool_btn_next.setIcon(QIcon(
                 f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_next_white_24dp.svg"
             ))
-            self.tray_icon.next_track_action.setEnabled(False) 
+            self.tray_icon.next_track_action.setEnabled(False)
+            self.tray_icon.next_track_action.setIcon(QIcon(
+                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_next_white_24dp.svg"
+            ))
             
     def check_for_updates(self, startup=None):
         try:

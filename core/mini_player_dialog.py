@@ -11,7 +11,6 @@ from PyQt5.QtWinExtras import (
     QWinThumbnailToolBar, QWinThumbnailToolButton  
 )
 from PyQt5.uic import loadUi
-from qfluentwidgets import ToolTipFilter, ToolTipPosition
 
 import requests
 import pytube
@@ -167,18 +166,8 @@ class MiniPlayerDlg(QDialog):
             yt = pytube.YouTube(QUrl(url).toString())
             self.StrongBodyLabel.setText(yt.title)
             self.StrongBodyLabel.setToolTip(yt.title)
-            self.StrongBodyLabel.installEventFilter(
-                ToolTipFilter(
-                    self.StrongBodyLabel, 0, 
-                    ToolTipPosition.TOP
-            ))
             self.BodyLabel_2.setText(yt.author)
             self.BodyLabel_2.setToolTip(yt.author)
-            self.BodyLabel_2.installEventFilter(
-                ToolTipFilter(
-                    self.BodyLabel_2, 0, 
-                    ToolTipPosition.TOP
-            ))
         except Exception as e:
             print(e)
 
