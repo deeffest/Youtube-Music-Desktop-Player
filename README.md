@@ -3,8 +3,8 @@
 Displays [Youtube Music](https://music.youtube.com) site using [PyQt5](https://www.riverbankcomputing.com/software/pyqt/intro) and its QWebEngine, as well as [PyQt Fluent Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets) to make your music listening experience even more convenient and enjoyable.
 
 ## Screenshots
-![Screenshot_134](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/cabc318a-7e8d-4841-b503-bf9db7034bc6)
-![Screenshot_266](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/47b3229e-3095-495a-afe6-6565c7a8c5d6)
+![Screenshot_2](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/ee91c055-65a8-40c1-83e3-dbd3741c53b1)
+![Screenshot_1](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/2b77376b-2dc4-4d1b-9483-8b0efe34c80c)
 
 ## Features
 1. **Background Playback**:
@@ -25,5 +25,23 @@ Minimize the main window and use the compact mini player to control playback. Pl
 1. Download and install `YTMDPlayer-Setup.exe` from the releases page: https://github.com/deeffest/Youtube-Music-Desktop-Player/releases
 2. Go to the directory of the installed application and run the `YTMDPlayer.exe` file 
 
+## References:
+- **Qt:** https://www.qt.io/
+
+- **PyQt:** https://riverbankcomputing.com/software/pyqt
+ 
+- **PyQt Fluent Widgets:** https://github.com/zhiyiYo/PyQt-Fluent-Widgets
+
+- **Bug Reports:** https://github.com/deeffest/DEEF-Lite-Image-Viewer/issues/new/choose
+
+## See Also:
+- **DEEF Lite Media Player:** https://github.com/deeffest/DEEF-Lite-Media-Player
+- **DEEF Lite Image Viewer:** https://github.com/deeffest/DEEF-Lite-Image-Viewer
+
+## License:
+Youtube Music Desktop Player is distributed under the GPLv3 license.
+
 ## Disclaimer
 Youtube Music Desktop Player is an unofficial application and not affiliated with YouTube or Google Inc. in any way. "Youtube", "Youtube Music" and the "Youtube Logo" are registered trademarks of Google Inc.
+
+**Please let us know if you have any questions or suggestions.**
