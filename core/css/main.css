@@ -9,7 +9,7 @@ QMenuBar::item:selected{
 QMenu {
     background-color: rgb(43,43,43);
     color: white;
-    border: 1px solid rgb(46,46,46);
+    border: 1px solid rgb(29,29,29);
     padding: 2px 2px; 
 }
 QMenu::icon {
@@ -39,7 +39,7 @@ QMenu::separator {
 
 QToolTip {
     background-color: rgb(44,44,44);
+    border: 1px solid rgb(29,29,29);
     color: white;
-    border: 1px solid rgb(55,60,67);
-    padding: 3px 4px;
+    padding: 3px;
 }

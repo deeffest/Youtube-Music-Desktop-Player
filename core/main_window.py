@@ -1,19 +1,15 @@
-from PyQt5.QtWidgets import (
-    QMainWindow, QApplication, QFileDialog, QShortcut
-)
+from PyQt5.QtWidgets import QMainWindow, QApplication, \
+    QFileDialog, QShortcut
 from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtCore import QSize, Qt, QUrl
-from PyQt5.QtWinExtras import (
-    QWinThumbnailToolBar, QWinThumbnailToolButton  
-)
+from PyQt5.QtCore import QSize, Qt, QUrl, QTimer
+from PyQt5.QtWinExtras import QWinThumbnailToolBar, \
+    QWinThumbnailToolButton
 from PyQt5.QtWebEngineWidgets import QWebEngineSettings
 from PyQt5 import uic
 
-from qfluentwidgets import (
-    InfoBar, InfoBarPosition, IndeterminateProgressRing,
-    setTheme, setThemeColor, Theme, SplashScreen, 
-    PushButton
-)
+from qfluentwidgets import InfoBar, InfoBarPosition, \
+    setTheme, setThemeColor, Theme, SplashScreen, \
+    PushButton, MessageBox
 
 import os
 import sys
@@ -138,6 +134,17 @@ class Window(QMainWindow):
         self.splashScreen.setIconSize(QSize(102, 102))
         self.show()
 
+    def copy_selected_text(self):
+        selected_text = self.webpage.selectedText()
+        clipboard = QApplication.clipboard()
+        clipboard.setText(selected_text)
+
+    def paste_copied_text(self):
+        clipboard = QApplication.clipboard()
+        text = clipboard.text()
+        if text:
+            self.webpage.runJavaScript('document.activeElement.value = "{}";'.format(text))
+
     def go_back(self):
         self.webview.back()
 
@@ -151,6 +158,13 @@ class Window(QMainWindow):
         self.webview.reload()
 
     def go_download(self, download_type):
+        if hasattr(self, "dots_timer"):
+            w = MessageBox(f"The current download request is denied.", 
+                "Wait for the app to finish the current track/playlist download.", self)
+            w.cancelButton.hide()
+            w.exec_()
+            return
+        
         if download_type == "track":
             if not "watch" in self.webview.url().toString():
                 return
@@ -192,44 +206,59 @@ class Window(QMainWindow):
             self.add_download_progress()
 
     def add_download_progress(self):
-        self.download_info_bar = InfoBar.new(
-            icon=QIcon(f"{self.current_dir}/resources/icons/file_download_white_24dp.svg"),
-            title="",
-            content=f"Downloading...",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM_RIGHT,
-            duration=-1,
-            parent=self
-        )
+        self.label_2.setText("Downloading...")
+        self.dots_count = 0
+        self.dots_timer = QTimer(self)
+        self.dots_timer.timeout.connect(self.update_dots)
+        self.dots_timer.start(500)
 
-        spinner = IndeterminateProgressRing(self)
-        spinner.setMaximumSize(20, 20)
-        spinner.setMinimumSize(20, 20)
-        self.download_info_bar.addWidget(spinner)   
+    def update_dots(self):
+        self.dots_count = (self.dots_count + 1) % 4
+        dots = "." * self.dots_count
+        self.label_2.setText("Downloading" + dots)
+
+    def stop_download_progress(self):
+        if hasattr(self, 'dots_timer'):
+            self.dots_timer.stop()
+            del self.dots_timer
+            self.label_2.setText("")
 
     def on_download_finished(self, download_path):
-        InfoBar.info(
+        self.stop_download_progress()
+
+        path_msg_box = InfoBar.info(
             title="",
             content=f"Successfully downloaded!",
             orient=Qt.Horizontal,
             isClosable=True,
-            position=InfoBarPosition.BOTTOM_RIGHT,
+            position=InfoBarPosition.BOTTOM,
             duration=-1,
             parent=self
         )
+        open_path_btn = PushButton("Download Path")
+        open_path_btn.clicked.connect(lambda: self.open_download_path(download_path))
+        path_msg_box.addWidget(open_path_btn)
+
+    def open_download_path(self, download_path):
+        os.startfile(download_path)
 
     def on_download_error(self, error_message):
-        InfoBar.error(
+        self.stop_download_progress()
+
+        error_msg_box = InfoBar.error(
             title="",
             content=f"Download error:(",
             orient=Qt.Horizontal,
             isClosable=True,
-            position=InfoBarPosition.BOTTOM_RIGHT,
+            position=InfoBarPosition.BOTTOM,
             duration=-1,
             parent=self
         )
+        open_error_btn = PushButton("Error Message")
+        open_error_btn.clicked.connect(lambda: self.open_temp_error(error_message))
+        error_msg_box.addWidget(open_error_btn)
 
+    def open_temp_error(self, error_message):
         import tempfile
         with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as f:
             if isinstance(error_message, str):
@@ -278,17 +307,10 @@ class Window(QMainWindow):
                     self.check_for_updates(startup=True)
             self.splash_screen_is_over = True
 
-            self.ProgressBar.hide()
-            self.ProgressBar.setValue(0)
-
             with open(f"{self.current_dir}/core/js/add_styles.js", "r") as js_file:
                 self.webview.page().runJavaScript(js_file.read())
 
             self.update_play_pause_icon() 
-        else:
-            self.ProgressBar.setValue(progress)
-            if self.ProgressBar.isHidden():
-                self.ProgressBar.show()
 
     def open_settings_dialog(self):
         Dlg = OptionsDlg(
@@ -468,11 +490,7 @@ class Window(QMainWindow):
     def check_for_updates(self, startup=None):
         try:
             response = requests.get(
-                "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest"
-            )
-        except Exception as e:
-            print(e)
-        try:
+                "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest")
             item_version = response.json()["name"]
             item_download = response.json().get("html_url")         
 
@@ -517,6 +535,27 @@ class Window(QMainWindow):
                 parent=self
             )
 
+    def open_changelog(self):
+        try:
+            response = requests.get(
+                "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest")
+            if response.status_code == 200:
+                data = response.json()
+                item_notes = data.get("body")
+                w = MessageBox(f"Change log of the latest version", item_notes, self)
+                w.cancelButton.hide()
+                w.exec_()
+        except Exception as e:
+            InfoBar.error(
+                title="Error in opening the change log:",
+                content=f"{e}",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.BOTTOM_RIGHT,
+                duration=-1,
+                parent=self
+            )
+
     def _move_window_to_center(self):    
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
@@ -531,7 +570,7 @@ class Window(QMainWindow):
         self.settings.setValue("last_window_size", event.size())
         self.label.setMaximumWidth(int(self.width() * 0.8))
 
-    def close_in_tray(self):
+    def exit_app(self):
         sys.exit(0)
 
     def closeEvent(self, event):
@@ -540,4 +579,4 @@ class Window(QMainWindow):
             self.tray_icon.show()
             event.ignore()
         else:
-            event.accept()
+            self.exit_app()

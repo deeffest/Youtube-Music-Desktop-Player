@@ -22,7 +22,3 @@ style.textContent = `
 `;
 
 document.head.appendChild(style);
-
-document.addEventListener('selectstart', function(e) {
-    e.preventDefault();
-});

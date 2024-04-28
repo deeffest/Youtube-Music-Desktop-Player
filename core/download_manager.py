@@ -11,16 +11,18 @@ class DownloadManager(QObject):
         self.settings = settings
 
     def download_external_process(self, url, download_path, download_type):
-        script_dir = self.settings.value("current_dir")
-        process = Popen(
-            [f'{self.current_dir}/core/download_script.exe', 
-            url, download_path, download_type, script_dir],
-            stdout=PIPE,
-            stderr=PIPE
-        )
-        output, error = process.communicate()
+        try:
+            process = Popen(
+                [f'{self.current_dir}/core/download_script.exe', 
+                url, download_path, download_type],
+                stdout=PIPE,
+                stderr=PIPE
+            )
+            error = process.communicate()
 
-        if process.returncode == 0:
-            self.downloadFinished.emit(download_path)
-        else:
-            self.downloadError.emit(str(error))
+            if process.returncode == 0:
+                self.downloadFinished.emit(download_path)
+            else:
+                self.downloadError.emit(str(error))
+        except Exception as e:
+            self.downloadError.emit(str(e))

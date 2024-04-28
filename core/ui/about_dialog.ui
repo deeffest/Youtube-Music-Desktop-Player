@@ -214,11 +214,11 @@
         <item>
          <widget class="HyperlinkButton" name="HyperlinkButton">
           <property name="text">
-           <string>Bug Report</string>
+           <string>Website</string>
           </property>
           <property name="url">
            <url>
-            <string>https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose</string>
+            <string>https://deeffest.pythonanywhere.com</string>
            </url>
           </property>
          </widget>
@@ -267,7 +267,39 @@
          <number>16</number>
         </property>
         <item>
-         <widget class="PushButton" name="PushButton">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="PushButton" name="PushButton_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>What's new</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="PrimaryPushButton" name="PushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>OK</string>
           </property>
@@ -289,6 +321,11 @@
   <customwidget>
    <class>PushButton</class>
    <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>PushButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>

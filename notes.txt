@@ -1,6 +1,11 @@
-1.1.4 Update!
+1.2 Update!
  
-- All tooltips with fluent interface have been replaced by standard ones due to unstable operation.
-- The tray icon is now displayed regardless of whether the window is hidden or not (if minimizing the window to the tray on closing is enabled in the settings).
-- The tray menu now uses the standard interface instead of the fluent interface (due to a bug on the PyQtFluentWidgets side).
+- Changed the way message boxes are displayed, they are now frameless.
+- The download finish info bar and download errors now contain buttons such as "Download Path" and "Error Message" for a more user-friendly app interface.
+- The download process indicator is now in the status bar.
+- The mini player is now not displayed in the taskbar and cannot be minimized to it.
+- App settings are now only applied when the save button is pressed.
+- The ffmpeg to convert a downloaded song to mp3 format is now bundled with the app and is not automatically downloaded.
+- Added the ability to view the changelog of the latest available version.
+- Now you can highlight web content again.
 - Other changes and improvements.

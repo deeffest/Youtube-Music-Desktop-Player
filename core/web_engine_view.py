@@ -1,10 +1,8 @@
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-from qfluentwidgets import (
-    RoundMenu, Action, MenuAnimationType
-)
+from qfluentwidgets import RoundMenu, Action, \
+    MenuAnimationType
 
 import webbrowser
 
@@ -73,7 +71,7 @@ class WebEngineView(QWebEngineView):
         download_playlist_action.setIcon(
             QIcon(f"{self.window().current_dir}/resources/icons/playlist_play_white_24dp.svg")
         )
-        download_menu.addAction(download_playlist_action)
+        download_menu.addAction(download_playlist_action)        
 
         open_mini_player_action = Action("Mini-Player", shortcut="Ctrl+M")
         open_mini_player_action.setIcon(

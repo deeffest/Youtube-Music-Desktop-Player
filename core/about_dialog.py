@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.uic import loadUi
-import os
 
 class AboutDlg(QDialog):
     def __init__(
@@ -33,7 +32,12 @@ class AboutDlg(QDialog):
         self.BodyLabel_2.setText(self.version)
     
     def _init_connect(self):
-    	self.PushButton.clicked.connect(self.close)
+        self.PushButton.clicked.connect(self.close)
+        self.PushButton_2.clicked.connect(self.open_changelog)
+
+    def open_changelog(self):
+        self.close()
+        self.window.open_changelog()
 
     def _init_window(self):
         self.setWindowTitle(self.name)

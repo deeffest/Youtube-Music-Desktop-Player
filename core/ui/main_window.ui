@@ -55,8 +55,10 @@
     <item>
      <widget class="QFrame" name="frame_2">
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(0,0,0);
-color: white;</string>
+       <string notr="true">QFrame {
+	background-color: rgb(0,0,0);
+	color: white;
+}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -135,14 +137,14 @@ QLabel::hover {
          </property>
          <property name="minimumSize">
           <size>
-           <width>100</width>
-           <height>16</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>100</width>
-           <height>16</height>
+           <width>16777215</width>
+           <height>16777215</height>
           </size>
          </property>
          <property name="frameShape">
@@ -167,19 +169,13 @@ QLabel::hover {
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item alignment="Qt::AlignVCenter">
-           <widget class="ProgressBar" name="ProgressBar">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>4</height>
-             </size>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>4</height>
-             </size>
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
@@ -192,13 +188,6 @@ QLabel::hover {
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ProgressBar</class>
-   <extends>QProgressBar</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
