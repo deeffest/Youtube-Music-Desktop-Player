@@ -34,7 +34,7 @@ Minimize the main window and use the compact mini player to control playback. Pl
  
 - **PyQt Fluent Widgets:** https://github.com/zhiyiYo/PyQt-Fluent-Widgets
 
-- **Bug Reports:** https://github.com/deeffest/DEEF-Lite-Image-Viewer/issues/new/choose
+- **Bug Reports:** https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose
 
 ## See Also:
 - **DEEF Lite Media Player:** https://github.com/deeffest/DEEF-Lite-Media-Player
