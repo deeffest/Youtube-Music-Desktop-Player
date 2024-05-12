@@ -3,8 +3,8 @@
 Displays [Youtube Music](https://music.youtube.com) site using [PyQt5](https://www.riverbankcomputing.com/software/pyqt/intro) and its QWebEngine, as well as [PyQt Fluent Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets) to make your music listening experience even more convenient and enjoyable.
 
 ## Screenshots
-![Screenshot_2](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/ee91c055-65a8-40c1-83e3-dbd3741c53b1)
-![Screenshot_1](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/2b77376b-2dc4-4d1b-9483-8b0efe34c80c)
+![Screenshot_9](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/b0ad5544-1c5f-4750-b77c-bb39a435b397)
+![Screenshot_3](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/7cb43919-3e95-46c4-8e3f-812fbacb211a)
 
 ## Features
 1. **Background Playback**:
