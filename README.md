@@ -25,7 +25,7 @@ Minimize the main window and use the compact mini player to control playback. Pl
 1. Download and install `YTMDPlayer-Setup.exe` from the releases page: https://github.com/deeffest/Youtube-Music-Desktop-Player/releases
 2. Go to the directory of the installed application and run the `YTMDPlayer.exe` file
 
-> If you are using a project from source, remember to load [ffmpeg.exe](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/download/1.0/ffmpeg.exe) into the "core" folder before loading tracks/playlists.
+> If you are using a project from source, remember to load [ffmpeg.exe](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/download/1.0/ffmpeg.exe) into the "core" folder before loading tracks/playlists in `mp3` format, otherwise the loading will be in `mp4` format.
 
 ## References:
 - **Qt:** https://www.qt.io/
