@@ -40,7 +40,7 @@ class AboutDlg(QDialog):
         self.window.open_changelog()
 
     def _init_window(self):
-        self.setWindowTitle(self.name)
+        self.setWindowTitle("About")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setFixedSize(self.size())
         self.setWindowIcon(QIcon(

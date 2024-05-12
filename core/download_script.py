@@ -39,9 +39,14 @@ def download_track(url, download_path, download_type):
         input_file = filename
         output_file = f"{name}.mp3" 
 
-        subprocess.run(["ffmpeg", "-i", input_file, "-y", output_file], creationflags=subprocess.CREATE_NO_WINDOW)
+        try:
+            subprocess.run(["ffmpeg", "-i", input_file, "-y", output_file], creationflags=subprocess.CREATE_NO_WINDOW)
+        except FileNotFoundError:
+            print("FFmpeg is not found. Conversion will be skipped.")
+            return
+        
         os.remove(input_file)
-
+        
         sys.exit(0)
 
     elif download_type == "playlist":
@@ -61,7 +66,12 @@ def download_track(url, download_path, download_type):
             input_file = filename
             output_file = f"{name}.mp3"
 
-            subprocess.run(["ffmpeg", "-i", input_file, "-y", output_file], creationflags=subprocess.CREATE_NO_WINDOW)
+            try:
+                subprocess.run(["ffmpeg", "-i", input_file, "-y", output_file], creationflags=subprocess.CREATE_NO_WINDOW)
+            except FileNotFoundError:
+                print("FFmpeg is not found. Conversion for this file will be skipped.")
+                continue
+
             os.remove(input_file)
 
         sys.exit(0)

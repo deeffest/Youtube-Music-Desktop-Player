@@ -119,7 +119,7 @@ class OptionsDlg(QDialog):
         self.temp_settings["hide_window_in_tray"] = state
 
     def _init_window(self):
-        self.setWindowTitle(self.name)
+        self.setWindowTitle("Settings")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setFixedSize(self.size())
         self.setWindowIcon(QIcon(

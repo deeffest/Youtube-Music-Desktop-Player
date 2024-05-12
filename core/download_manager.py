@@ -19,10 +19,12 @@ class DownloadManager(QObject):
                 stderr=PIPE
             )
             error = process.communicate()
+            error_message = error[1].decode('cp1251', errors='replace')
 
             if process.returncode == 0:
                 self.downloadFinished.emit(download_path)
             else:
-                self.downloadError.emit(str(error))
+                self.downloadError.emit(str(error_message))
+                
         except Exception as e:
             self.downloadError.emit(str(e))

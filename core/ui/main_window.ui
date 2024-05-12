@@ -74,13 +74,13 @@
         <number>6</number>
        </property>
        <property name="topMargin">
-        <number>5</number>
+        <number>4</number>
        </property>
        <property name="rightMargin">
         <number>6</number>
        </property>
        <property name="bottomMargin">
-        <number>5</number>
+        <number>4</number>
        </property>
        <item>
         <widget class="QLabel" name="label">
@@ -128,6 +128,28 @@ QLabel::hover {
         </spacer>
        </item>
        <item>
+        <widget class="QLabel" name="label_3">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>15</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>15</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap>../../resources/icons/file_download_white_24dp.svg</pixmap>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QFrame" name="frame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -172,7 +194,9 @@ QLabel::hover {
           <item>
            <widget class="QLabel" name="label_2">
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">QLabel {
+    font-weight: bold;
+}</string>
             </property>
             <property name="text">
              <string/>
