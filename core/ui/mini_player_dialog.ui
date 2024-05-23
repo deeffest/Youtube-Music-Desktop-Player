@@ -93,17 +93,20 @@
        <item>
         <widget class="StrongBodyLabel" name="StrongBodyLabel">
          <property name="text">
-          <string>Track name</string>
+          <string/>
          </property>
         </widget>
        </item>
        <item>
         <widget class="BodyLabel" name="BodyLabel_2">
          <property name="styleSheet">
-          <string notr="true">color: lightgray;</string>
+          <string notr="true">QLabel {
+	color: lightgray;
+	font-size: 13px;
+}</string>
          </property>
          <property name="text">
-          <string>Author</string>
+          <string/>
          </property>
         </widget>
        </item>

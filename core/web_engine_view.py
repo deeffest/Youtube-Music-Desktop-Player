@@ -9,6 +9,7 @@ import webbrowser
 class WebEngineView(QWebEngineView):
     def contextMenuEvent(self, event):
         url = self.window().webview.url().toString()
+
         menu = RoundMenu(parent=self.window())
 
         go_back_action = Action("Back", shortcut="Left")

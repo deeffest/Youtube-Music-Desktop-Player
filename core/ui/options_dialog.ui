@@ -72,6 +72,13 @@
          </widget>
         </item>
         <item>
+         <widget class="PillPushButton" name="PillPushButton_3">
+          <property name="text">
+           <string>Mini-Player</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -209,7 +216,7 @@
              <item>
               <widget class="BodyLabel" name="BodyLabel_2">
                <property name="text">
-                <string>Hide the window in the tray:</string>
+                <string>System Tray app icon:</string>
                </property>
                <property name="wordWrap">
                 <bool>false</bool>
@@ -323,7 +330,35 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6"/>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="BodyLabel" name="BodyLabel_5">
+               <property name="text">
+                <string>Mini-player opening location:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="ComboBox" name="ComboBox"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
@@ -432,6 +467,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>ComboBox</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
   <customwidget>
    <class>PushButton</class>
    <extends>QPushButton</extends>

@@ -93,13 +93,45 @@ class MiniPlayerDlg(QDialog):
         self.setFixedSize(360, 150)
         self.setWindowIcon(QIcon(
             f"{self.current_dir}/resources/icons/icon.ico"))
-        self.move_to_top_right_corner()
+        self.move_to()
 
-    def move_to_top_right_corner(self):
+    def move_to(self):
+        selected_index = self.settings.value("selected_location_index", 1)
+
         available_geometry = QApplication.desktop().availableGeometry()
 
-        x = available_geometry.right() - self.width() - 30
-        y = available_geometry.top() + 30
+        offset = 30
+        if selected_index == 0:  # Top Left
+            x = int(available_geometry.left() + offset)
+            y = int(available_geometry.top() + offset)
+        elif selected_index == 1:  # Top Right
+            x = int(available_geometry.right() - self.width() - offset)
+            y = int(available_geometry.top() + offset)
+        elif selected_index == 2:  # Center Left
+            x = int(available_geometry.left() + offset)
+            y = int(available_geometry.center().y() - self.height() / 2)
+        elif selected_index == 3:  # Center Right
+            x = int(available_geometry.right() - self.width() - offset)
+            y = int(available_geometry.center().y() - self.height() / 2)
+        elif selected_index == 4:  # Center Top
+            x = int(available_geometry.center().x() - self.width() / 2)
+            y = int(available_geometry.top() + offset)
+        elif selected_index == 5:  # Center Bottom
+            x = int(available_geometry.center().x() - self.width() / 2)
+            y = int(available_geometry.bottom() - self.height() - offset)
+        elif selected_index == 6:  # Center
+            x = int(available_geometry.center().x() - self.width() / 2)
+            y = int(available_geometry.center().y() - self.height() / 2)
+        elif selected_index == 7:  # Bottom Left
+            x = int(available_geometry.left() + offset)
+            y = int(available_geometry.bottom() - self.height() - offset)
+        elif selected_index == 8:  # Bottom Right
+            x = int(available_geometry.right() - self.width() - offset)
+            y = int(available_geometry.bottom() - self.height() - offset)
+        else:
+            x = int(available_geometry.right() - self.width() - offset)
+            y = int(available_geometry.top() + offset)
+
         self.move(x, y)
 
     def update_info(self, url):

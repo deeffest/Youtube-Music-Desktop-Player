@@ -43,6 +43,6 @@ class AboutDlg(QDialog):
         self.setWindowTitle("About")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setFixedSize(self.size())
-        self.setWindowIcon(QIcon(
-            f"{self.current_dir}/resources/icons/icon.ico")
-        )
+        self.setWindowIcon(
+            QIcon(f"{self.current_dir}/resources/icons/info_white_24dp.svg"
+        ))

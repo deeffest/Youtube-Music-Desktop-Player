@@ -32,16 +32,29 @@ class OptionsDlg(QDialog):
 
     def _init_tab_1(self):
         self.PillPushButton.setChecked(True)
+        self.PillPushButton_3.setChecked(False)
         self.PillPushButton_2.setChecked(False)
 
         self.frame_3.show()
         self.frame_4.hide()
+        self.frame_5.hide()
 
     def _init_tab_2(self):
         self.PillPushButton_2.setChecked(True)
+        self.PillPushButton_3.setChecked(False)
         self.PillPushButton.setChecked(False)
 
         self.frame_4.show()
+        self.frame_3.hide()
+        self.frame_5.hide()
+
+    def _init_tab_3(self):
+        self.PillPushButton_3.setChecked(True)
+        self.PillPushButton_2.setChecked(False)
+        self.PillPushButton.setChecked(False)
+
+        self.frame_5.show()
+        self.frame_4.hide()
         self.frame_3.hide()
 
     def _init_content(self):
@@ -51,6 +64,15 @@ class OptionsDlg(QDialog):
         self.temp_settings["support_for_animated_scrolling"] = self.settings.value("support_for_animated_scrolling", "true") == "true"
         self.temp_settings["support_full_screen_mode"] = self.settings.value("support_full_screen_mode", "true") == "true"
         self.temp_settings["hide_window_in_tray"] = self.settings.value("hide_window_in_tray", "true") == "true"
+
+        locations = ['Top Left', 'Top Right', 'Center Left', 'Center Right', 
+                     'Center Top', 'Center Bottom', 'Center', 'Bottom Left', 
+                     'Bottom Right']
+        for location in locations:
+            self.ComboBox.addItem(location)
+
+        saved_index = self.settings.value("selected_location_index", 1)
+        self.ComboBox.setCurrentIndex(saved_index)
 
         self.apply_settings()
 
@@ -68,23 +90,25 @@ class OptionsDlg(QDialog):
         self.settings.setValue("check_for_updates_at_startup", "true" if self.temp_settings["check_for_updates_at_startup"] else "false")
         self.settings.setValue("support_for_animated_scrolling", "true" if self.temp_settings["support_for_animated_scrolling"] else "false")
         self.settings.setValue("support_full_screen_mode", "true" if self.temp_settings["support_full_screen_mode"] else "false")
-        self.settings.setValue("hide_window_in_tray", "true" if self.temp_settings["hide_window_in_tray"] else "false")
+        self.settings.setValue("hide_window_in_tray", "true" if self.temp_settings["hide_window_in_tray"] else "false")        
         
-        self.apply_additional_settings()
-
-    def apply_additional_settings(self):
         self.window.websettings.setAttribute(
             QWebEngineSettings.FullScreenSupportEnabled, 
             self.settings.value("support_full_screen_mode", "true").lower() == "true"
         )
+
         self.window.websettings.setAttribute(
             QWebEngineSettings.ScrollAnimatorEnabled, 
             self.settings.value("support_for_animated_scrolling", "true").lower() == "true"
         )
+
         if self.settings.value("hide_window_in_tray", "true") == "true": 
             self.window.tray_icon.show() 
         else:
             self.window.tray_icon.hide()
+
+        selected_index = self.ComboBox.currentIndex()
+        self.settings.setValue("selected_location_index", selected_index)
 
     def _init_connect(self):
         self.PushButton.clicked.connect(self.save_and_close)
@@ -99,6 +123,7 @@ class OptionsDlg(QDialog):
 
         self.PillPushButton.clicked.connect(self._init_tab_1)
         self.PillPushButton_2.clicked.connect(self._init_tab_2)
+        self.PillPushButton_3.clicked.connect(self._init_tab_3)
 
     def set_temp_save_last_window_size(self, state):
         self.temp_settings["save_last_window_size"] = state
@@ -122,9 +147,9 @@ class OptionsDlg(QDialog):
         self.setWindowTitle("Settings")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setFixedSize(self.size())
-        self.setWindowIcon(QIcon(
-            f"{self.current_dir}/resources/icons/icon.ico")
-        )
+        self.setWindowIcon(
+            QIcon(f"{self.current_dir}/resources/icons/settings_white_24dp.svg"
+        ))
 
     def save_and_close(self):
         self.save_settings()

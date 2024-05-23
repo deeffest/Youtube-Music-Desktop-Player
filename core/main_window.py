@@ -57,7 +57,7 @@ class Window(QMainWindow):
         self._init_connect()
         
     def _init_attributes(self):
-        pass
+        self.timer_active = False
 
     def _init_connect(self):
         self.webview.titleChanged.connect(self.update_window_title)
@@ -289,7 +289,7 @@ class Window(QMainWindow):
             webbrowser.open_new_tab(
                 self.webview.url().toString()
             )
-
+            
     def on_load_progress(self, progress):
         if progress == 100:
             if not self.splash_screen_is_over:
@@ -381,10 +381,10 @@ class Window(QMainWindow):
                 ))
             else:
                 self.tool_btn_play_pause.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/play_arrow_white_24dp.svg"
+                    f"{self.current_dir}/resources/icons/disabled_icons/play_arrow_white_24dp.svg"
                 ))  
                 self.tray_icon.play_pause_action.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/play_arrow_white_24dp.svg"
+                    f"{self.current_dir}/resources/icons/disabled_icons/play_arrow_white_24dp.svg"
                 ))
         else:
             if "watch" in self.webview.url().toString():            
@@ -396,10 +396,10 @@ class Window(QMainWindow):
                 ))    
             else:
                 self.tool_btn_play_pause.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+                    f"{self.current_dir}/resources/icons/disabled_icons/pause_white_24dp.svg"
                 ))  
                 self.tray_icon.play_pause_action.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+                    f"{self.current_dir}/resources/icons/disabled_icons/pause_white_24dp.svg"
                 ))
 
     def _init_window(self):
@@ -425,7 +425,7 @@ class Window(QMainWindow):
     def update_url(self, url):
         self.label.setText(url.toString())
         self.label.setMaximumWidth(int(self.width() * 0.8))
-        self.label.setToolTip(self.label.text())
+        self.label.setToolTip(f"{self.label.text()}<br><br>Click to open the current URL in the browser.")
         
         self.settings.setValue("last_url", url.toString())
         
@@ -459,29 +459,29 @@ class Window(QMainWindow):
         else:
             self.tool_btn_previous.setEnabled(False)
             self.tool_btn_previous.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_previous_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/disabled_icons/skip_previous_white_24dp.svg"
             ))
             self.tray_icon.previous_track_action.setEnabled(False)
             self.tray_icon.previous_track_action.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_previous_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/disabled_icons/skip_previous_white_24dp.svg"
             ))
 
             self.tool_btn_play_pause.setEnabled(False)
             self.tool_btn_play_pause.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/disabled_icons/pause_white_24dp.svg"
             ))   
             self.tray_icon.play_pause_action.setEnabled(False)
             self.tray_icon.play_pause_action.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/pause_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/disabled_icons/pause_white_24dp.svg"
             )) 
 
             self.tool_btn_next.setEnabled(False)
             self.tool_btn_next.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_next_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/disabled_icons/skip_next_white_24dp.svg"
             ))
             self.tray_icon.next_track_action.setEnabled(False)
             self.tray_icon.next_track_action.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/disabled_win_toolbar_icons/skip_next_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/disabled_icons/skip_next_white_24dp.svg"
             ))
             
     def check_for_updates(self):
@@ -566,4 +566,12 @@ class Window(QMainWindow):
             self.tray_icon.show()
             event.ignore()
         else:
-            self.exit_app()
+            if "watch" in self.webview.url().toString():
+                w = MessageBox(f"Confirmation of exit", 
+                    "Do you really want to quit the app? The current playback will stop.", self)
+                if w.exec_():
+                    self.exit_app()
+                else:
+                    event.ignore()
+            else:
+                self.exit_app()
