@@ -333,7 +333,7 @@ class Window(QMainWindow):
         self.tool_btn_previous.setToolTip('Previous')
         self.tool_btn_previous.setEnabled(False)
         self.tool_btn_previous.setIcon(QIcon(
-            f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_previous_white_24dp.svg"
+            f"{self.current_dir}/resources/icons/win_toolbar_icons/previous.png"
         ))
         self.win_toolbar.addButton(self.tool_btn_previous)
 
@@ -341,7 +341,7 @@ class Window(QMainWindow):
         self.tool_btn_play_pause.setToolTip('Play/Pause')
         self.tool_btn_play_pause.setEnabled(False)
         self.tool_btn_play_pause.setIcon(QIcon(
-            f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+            f"{self.current_dir}/resources/icons/win_toolbar_icons/pause.png"
         ))                     
         self.win_toolbar.addButton(self.tool_btn_play_pause)
 
@@ -349,7 +349,7 @@ class Window(QMainWindow):
         self.tool_btn_next.setToolTip('Next')
         self.tool_btn_next.setEnabled(False)
         self.tool_btn_next.setIcon(QIcon(
-            f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_next_white_24dp.svg"
+            f"{self.current_dir}/resources/icons/win_toolbar_icons/next.png"
         ))
         self.win_toolbar.addButton(self.tool_btn_next)
 
@@ -374,7 +374,7 @@ class Window(QMainWindow):
         if is_paused: 
             if "watch" in self.webview.url().toString():           
                 self.tool_btn_play_pause.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/win_toolbar_icons/play_arrow_white_24dp.svg"
+                    f"{self.current_dir}/resources/icons/win_toolbar_icons/play.png"
                 ))                   
                 self.tray_icon.play_pause_action.setIcon(QIcon(
                     f"{self.current_dir}/resources/icons/win_toolbar_icons/play_arrow_white_24dp.svg"
@@ -389,7 +389,7 @@ class Window(QMainWindow):
         else:
             if "watch" in self.webview.url().toString():            
                 self.tool_btn_play_pause.setIcon(QIcon(
-                    f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+                    f"{self.current_dir}/resources/icons/win_toolbar_icons/pause.png"
                 ))             
                 self.tray_icon.play_pause_action.setIcon(QIcon(
                     f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
@@ -432,7 +432,7 @@ class Window(QMainWindow):
         if "watch" in url.toString():
             self.tool_btn_previous.setEnabled(True)
             self.tool_btn_previous.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_previous_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/previous.png"
             ))     
             self.tray_icon.previous_track_action.setEnabled(True)
             self.tray_icon.previous_track_action.setIcon(QIcon(
@@ -441,7 +441,7 @@ class Window(QMainWindow):
 
             self.tool_btn_play_pause.setEnabled(True)
             self.tool_btn_play_pause.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/win_toolbar_icons/pause_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/pause.png"
             ))
             self.tray_icon.play_pause_action.setEnabled(True)
             self.tray_icon.play_pause_action.setIcon(QIcon(
@@ -450,7 +450,7 @@ class Window(QMainWindow):
 
             self.tool_btn_next.setEnabled(True) 
             self.tool_btn_next.setIcon(QIcon(
-                f"{self.current_dir}/resources/icons/win_toolbar_icons/skip_next_white_24dp.svg"
+                f"{self.current_dir}/resources/icons/win_toolbar_icons/next.png"
             ))   
             self.tray_icon.next_track_action.setEnabled(True)
             self.tray_icon.next_track_action.setIcon(QIcon(

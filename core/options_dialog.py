@@ -148,7 +148,7 @@ class OptionsDlg(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setFixedSize(self.size())
         self.setWindowIcon(
-            QIcon(f"{self.current_dir}/resources/icons/settings_white_24dp.svg"
+            QIcon(f"{self.current_dir}/resources/icons/settings.png"
         ))
 
     def save_and_close(self):

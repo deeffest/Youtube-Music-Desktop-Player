@@ -1,8 +1,5 @@
-1.4 Update!
+1.4.1 Update!
 
-- Added confirmation to exit the app while playing a track.
-- Fixed a bug when downloading a `'NoneType' object has no attribute 'span'`.
-- Added a new settings tab - Mini-Player.
-- Added the ability to preset the position of the mini player window, 
-for example: top right.
-- Other changes and improvements.
+- Fixed the icons of the settings window and the about window, 
+as well as the icons in the window thumbnail - they will now 
+be visible in the light Windows theme.
