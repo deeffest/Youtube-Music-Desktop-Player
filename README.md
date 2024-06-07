@@ -3,8 +3,8 @@
 Displays [Youtube Music](https://music.youtube.com) site using [PyQt5](https://www.riverbankcomputing.com/software/pyqt/intro) and its QWebEngine, as well as [PyQt Fluent Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets) to make your music listening experience even more convenient and enjoyable.
 
 ## Screenshots
-![Screenshot_9](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/b0ad5544-1c5f-4750-b77c-bb39a435b397)
-![Screenshot_3](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/7cb43919-3e95-46c4-8e3f-812fbacb211a)
+![Screenshot_1](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/219f24f0-c52a-4846-9589-18eb7f40c649)
+![Screenshot_2](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/726fccb8-8eda-4d05-a4f6-b2c0acbdcf7b)
 
 ## Features
 1. **Background Playback**:
@@ -15,11 +15,6 @@ Download individual tracks or entire playlists in high quality MP3 format and li
 
 2. **Improved Navigation**:
 Minimize the main window and use the compact mini player to control playback. Playback controls can also be accessed using the window thumbnail buttons or the context menu in the system tray.
-
-## Known bugs and defects
-1. ~~large size of the installer~~ (actual since version 1.1 to 1.1.2).
-2. ~~The menu called in the system tray is located above the place where it should be.~~ (actual since version 1.1 to 1.1.4).
-3. ~~When downloading existing music, the download indicator does not disappear.~~ (actual since version 1.1 to 1.1.1).
 
 ## Start using
 1. Download and install `YTMDPlayer-Setup.exe` from the releases page: https://github.com/deeffest/Youtube-Music-Desktop-Player/releases
