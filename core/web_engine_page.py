@@ -1,9 +1,5 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
-
+from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from qfluentwidgets import MessageBox
-
 import webbrowser
 
 from core.input_message_box import InputMessageBox

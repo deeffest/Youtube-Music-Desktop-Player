@@ -1,10 +1,9 @@
 from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.uic import loadUi
 
 import requests
-import pytube
 
 class MiniPlayerDlg(QDialog):
     def __init__(
@@ -33,7 +32,7 @@ class MiniPlayerDlg(QDialog):
         self.show()
 
     def _init_content(self):
-        self.change_info(self.window.webview.url())
+        self.change_info()
         self.update_play_pause_icon()
 
         self.TransparentToolButton.setIcon(            
@@ -83,18 +82,6 @@ class MiniPlayerDlg(QDialog):
             except Exception as e:
                 print(e)
 
-    def _init_window(self):
-        self.window.hide()
-        self.window.tray_icon.hide()
-
-        self.setWindowTitle("Mini-Player")
-        self.setWindowFlags(Qt.Window)
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
-        self.setFixedSize(360, 150)
-        self.setWindowIcon(QIcon(
-            f"{self.current_dir}/resources/icons/icon.ico"))
-        self.move_to()
-
     def move_to(self):
         selected_index = self.settings.value("selected_location_index", 1)
 
@@ -133,20 +120,27 @@ class MiniPlayerDlg(QDialog):
             y = int(available_geometry.top() + offset)
 
         self.move(x, y)
+    
+    def update_info(self):
+        with open(f"{self.current_dir}/core/js/get_titile_and_author.js", "r") as js_file:
+            self.window.webpage.runJavaScript(js_file.read(), self.extract_info)
 
-    def update_info(self, url):
-        try:
-            yt = pytube.YouTube(QUrl(url).toString())
-            self.StrongBodyLabel.setText(yt.title)
-            self.StrongBodyLabel.setToolTip(yt.title)
-            self.BodyLabel_2.setText(yt.author)
-            self.BodyLabel_2.setToolTip(yt.author)
-        except Exception as e:
-            print(e)
+    def extract_info(self, result):
+        if result is not None and len(result) == 2:
+            title, author = result
+            self.StrongBodyLabel.setText(title)
+            self.StrongBodyLabel.setToolTip(title)
+            
+            author = author.strip().replace('\n', '') if  author else ""
+            
+            self.BodyLabel_2.setText(author)
+            self.BodyLabel_2.setToolTip(author)
+        else:
+            print("Failed to retrieve song and author information from a web page")
 
-    def change_info(self, url):
+    def change_info(self):
         self.set_track_image()
-        self.update_info(url)
+        self.update_info()
 
     def title_changed(self, title):
         if self.window.webview.url() != self.previous_url:
@@ -154,6 +148,18 @@ class MiniPlayerDlg(QDialog):
             self.previous_url = self.window.webview.url()
         
         self.update_play_pause_icon()
+
+    def _init_window(self):
+        self.window.hide()
+        self.window.tray_icon.hide()
+
+        self.setWindowTitle("Mini-Player")
+        self.setWindowFlags(Qt.Window)
+        self.setWindowFlag(Qt.WindowStaysOnTopHint)
+        self.setFixedSize(360, 150)
+        self.setWindowIcon(QIcon(
+            f"{self.current_dir}/resources/icons/icon.ico"))
+        self.move_to()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:

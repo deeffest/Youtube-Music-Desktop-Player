@@ -200,25 +200,25 @@
          </spacer>
         </item>
         <item>
-         <widget class="HyperlinkButton" name="HyperlinkButton_2">
+         <widget class="HyperlinkButton" name="HyperlinkButton">
           <property name="text">
-           <string>Donation</string>
+           <string>My Website</string>
           </property>
           <property name="url">
            <url>
-            <string>https://donationalerts.com/r/deeffest</string>
+            <string>https://deeffest.pythonanywhere.com</string>
            </url>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="HyperlinkButton" name="HyperlinkButton">
+         <widget class="HyperlinkButton" name="HyperlinkButton_2">
           <property name="text">
-           <string>Website</string>
+           <string>Donationalerts</string>
           </property>
           <property name="url">
            <url>
-            <string>https://deeffest.pythonanywhere.com</string>
+            <string>https://donationalerts.com/r/deeffest</string>
            </url>
           </property>
          </widget>

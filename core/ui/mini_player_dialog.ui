@@ -212,6 +212,9 @@
          <height>20</height>
         </size>
        </property>
+       <property name="shortcut">
+        <string>Left</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -234,6 +237,9 @@
          <height>20</height>
         </size>
        </property>
+       <property name="shortcut">
+        <string>Space</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -255,6 +261,9 @@
          <width>20</width>
          <height>20</height>
         </size>
+       </property>
+       <property name="shortcut">
+        <string>Right</string>
        </property>
       </widget>
      </item>

@@ -1,6 +1,6 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-
+from PyQt5.QtWebEngineWidgets import QWebEngineView, \
+    QWebEnginePage
 from qfluentwidgets import RoundMenu, Action, \
     MenuAnimationType
 
@@ -11,6 +11,7 @@ class WebEngineView(QWebEngineView):
         url = self.window().webview.url().toString()
 
         menu = RoundMenu(parent=self.window())
+        edit_menu = RoundMenu(parent=self.window())
 
         go_back_action = Action("Back", shortcut="Left")
         go_back_action.setIcon(
@@ -58,7 +59,7 @@ class WebEngineView(QWebEngineView):
 
         download_track_action = Action('Track', shortcut="Ctrl+D")
         download_track_action.triggered.connect(
-            lambda: self.window().go_download('track')
+            self.window().go_download
         )
         download_track_action.setIcon(
             QIcon(f"{self.window().current_dir}/resources/icons/audiotrack_white_24dp.svg")
@@ -67,7 +68,7 @@ class WebEngineView(QWebEngineView):
 
         download_playlist_action = Action('Playlist', shortcut="Ctrl+P")
         download_playlist_action.triggered.connect(
-            lambda: self.window().go_download('playlist')
+            self.window().go_download
         )
         download_playlist_action.setIcon(
             QIcon(f"{self.window().current_dir}/resources/icons/playlist_play_white_24dp.svg")
@@ -115,6 +116,27 @@ class WebEngineView(QWebEngineView):
             self.window().open_about_dialog
         )
         menu.addAction(open_about_action)
+
+        context_data = self.page().contextMenuData()
+        if self.page().selectedText() or context_data.isContentEditable():
+            copy_action = Action('Copy', shortcut="Ctrl+C")
+            copy_action.setIcon(
+                QIcon(f"{self.window().current_dir}/resources/icons/content_copy_24dp.svg")
+            )
+            copy_action.triggered.connect(self.window().handle_copy)
+            copy_action.setEnabled(self.page().action(QWebEnginePage.Copy).isEnabled())
+            edit_menu.addAction(copy_action)
+
+            paste_action = Action('Paste', shortcut="Ctrl+V")
+            paste_action.setIcon(
+                QIcon(f"{self.window().current_dir}/resources/icons/content_paste_24dp.svg")
+            )
+            paste_action.triggered.connect(self.window().handle_paste)
+            paste_action.setEnabled(context_data.isContentEditable())
+            edit_menu.addAction(paste_action)
+
+            edit_menu.exec(event.globalPos(), aniType=MenuAnimationType.DROP_DOWN)
+            return
 
         if not "watch" in url:
             download_track_action.setEnabled(False)

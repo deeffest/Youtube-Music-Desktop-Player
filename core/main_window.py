@@ -4,9 +4,9 @@ from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtCore import QSize, Qt, QUrl, QTimer
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, \
     QWinThumbnailToolButton
-from PyQt5.QtWebEngineWidgets import QWebEngineSettings
+from PyQt5.QtWebEngineWidgets import QWebEngineSettings, \
+    QWebEnginePage
 from PyQt5 import uic
-
 from qfluentwidgets import InfoBar, InfoBarPosition, \
     setTheme, setThemeColor, Theme, SplashScreen, \
     PushButton, MessageBox
@@ -57,16 +57,22 @@ class Window(QMainWindow):
         self._init_connect()
         
     def _init_attributes(self):
-        self.timer_active = False
+        pass
 
     def _init_connect(self):
         self.webview.titleChanged.connect(self.update_window_title)
         self.webview.urlChanged.connect(self.update_url)
         self.webview.loadProgress.connect(self.on_load_progress)
-        self.label.mousePressEvent = self.open_in_browser
         self.tool_btn_previous.clicked.connect(self.previous_track)
         self.tool_btn_next.clicked.connect(self.next_track)
         self.tool_btn_play_pause.clicked.connect(self.play_pause_track)
+        self.ToolButton.clicked.connect(self.go_back)
+        self.ToolButton_2.clicked.connect(self.go_forward)
+        self.ToolButton_3.clicked.connect(self.go_home)
+        self.ToolButton_4.clicked.connect(self.go_reload)
+        self.ToolButton_5.clicked.connect(self.go_download)
+        self.ToolButton_6.clicked.connect(self.open_mini_player)
+        self.ToolButton_7.clicked.connect(self.open_settings_dialog)
 
     def _init_shortcuts(self):
         shortcuts = {
@@ -87,6 +93,7 @@ class Window(QMainWindow):
         self._init_webview()
         self._init_splash_screen()
         self.label_3.hide()
+        self.label.setText(f"{self.name} {self.version}")
 
     def _init_webview(self):
         self.webview = WebEngineView()
@@ -148,7 +155,7 @@ class Window(QMainWindow):
     def go_reload(self):
         self.webview.reload()
 
-    def go_download(self, download_type):
+    def go_download(self):
         if hasattr(self, "dots_timer"):
             w = MessageBox(f"The current download request is denied.", 
                 "Wait for the app to finish the current track/playlist download.", self)
@@ -156,12 +163,12 @@ class Window(QMainWindow):
             w.exec_()
             return
         
-        if download_type == "track":
-            if not "watch" in self.webview.url().toString():
-                return
-        elif download_type == "playlist":
-            if not "playlist" in self.webview.url().toString():
-                return
+        if "watch" in self.webview.url().toString():
+            download_type = "track"
+        elif "playlist" in self.webview.url().toString():
+            download_type = "playlist"
+        else:
+            return
 
         last_download_path = self.settings.value(
             "last_download_path", 
@@ -279,10 +286,12 @@ class Window(QMainWindow):
             request.accept()
             self.showFullScreen()
             self.frame_2.hide()
+            self.horizontalFrame.hide()
         else:
             request.accept()
             self.showNormal()
             self.frame_2.show()
+            self.horizontalFrame.show()
 
     def open_in_browser(self, event):
         if event.button() == Qt.LeftButton:
@@ -327,6 +336,12 @@ class Window(QMainWindow):
             parent=self
             )
         Dlg.exec_()
+
+    def handle_copy(self):
+        self.webpage.triggerAction(QWebEnginePage.Copy)
+
+    def handle_paste(self):
+        self.webpage.triggerAction(QWebEnginePage.Paste)
 
     def create_win_toolbar_buttons(self):
         self.tool_btn_previous = QWinThumbnailToolButton(self.win_toolbar)
@@ -400,35 +415,37 @@ class Window(QMainWindow):
                 ))  
                 self.tray_icon.play_pause_action.setIcon(QIcon(
                     f"{self.current_dir}/resources/icons/disabled_icons/pause_white_24dp.svg"
-                ))
-
-    def _init_window(self):
-        self.setWindowTitle(self.name)
-        self.setWindowIcon(QIcon(
-            f"{self.current_dir}/resources/icons/icon.ico")
-        )    
-        if self.settings.value("save_last_window_size", "true") == "true":
-            size = self.settings.value("last_window_size", QSize(800,600))
-        else:
-            size = QSize(800,600)
-        self.resize(size)
-
-        self._move_window_to_center()
-        self.raise_()
-        self.activateWindow()
-
+                ))    
+    
     def update_window_title(self, title):
         self.setWindowTitle(title) 
         self.tray_icon.setToolTip(title)
         self.update_play_pause_icon()
 
     def update_url(self, url):
-        self.label.setText(url.toString())
-        self.label.setMaximumWidth(int(self.width() * 0.8))
-        self.label.setToolTip(f"{self.label.text()}<br><br>Click to open the current URL in the browser.")
+        self.LineEdit.setText(url.toString())
         
         self.settings.setValue("last_url", url.toString())
-        
+
+        if not self.webpage.history().canGoForward():
+            self.ToolButton_2.setEnabled(False)
+        else:
+            self.ToolButton_2.setEnabled(True)
+        if not self.webpage.history().canGoBack():
+            self.ToolButton.setEnabled(False)
+        else:
+            self.ToolButton.setEnabled(True)
+
+        if "watch" in url.toString():
+            self.ToolButton_5.setEnabled(True)
+            self.ToolButton_6.setEnabled(True)
+        elif "playlist" in url.toString():
+            self.ToolButton_5.setEnabled(True)
+            self.ToolButton_6.setEnabled(False)
+        else:
+            self.ToolButton_5.setEnabled(False)
+            self.ToolButton_6.setEnabled(False)
+
         if "watch" in url.toString():
             self.tool_btn_previous.setEnabled(True)
             self.tool_btn_previous.setIcon(QIcon(
@@ -483,6 +500,21 @@ class Window(QMainWindow):
             self.tray_icon.next_track_action.setIcon(QIcon(
                 f"{self.current_dir}/resources/icons/disabled_icons/skip_next_white_24dp.svg"
             ))
+
+    def _init_window(self):
+        self.setWindowTitle(self.name)
+        self.setWindowIcon(QIcon(
+            f"{self.current_dir}/resources/icons/icon.ico")
+        )    
+        if self.settings.value("save_last_window_size", "true") == "true":
+            size = self.settings.value("last_window_size", QSize(800,600))
+        else:
+            size = QSize(800,600)
+        self.resize(size)
+
+        self._move_window_to_center()
+        self.raise_()
+        self.activateWindow()
             
     def check_for_updates(self):
         try:
@@ -557,9 +589,6 @@ class Window(QMainWindow):
         self.settings.setValue("last_window_size", event.size())
         self.label.setMaximumWidth(int(self.width() * 0.8))
 
-    def exit_app(self):
-        sys.exit(0)
-
     def closeEvent(self, event):
         if self.settings.value("hide_window_in_tray", "true") == "true":
             self.hide()
@@ -567,7 +596,7 @@ class Window(QMainWindow):
             event.ignore()
         else:
             if "watch" in self.webview.url().toString():
-                w = MessageBox(f"Confirmation of exit", 
+                w = MessageBox(f"Confirmation of exit ✖️", 
                     "Do you really want to quit the app? The current playback will stop.", self)
                 if w.exec_():
                     self.exit_app()
@@ -575,3 +604,6 @@ class Window(QMainWindow):
                     event.ignore()
             else:
                 self.exit_app()
+
+    def exit_app(self):
+        sys.exit(0)
