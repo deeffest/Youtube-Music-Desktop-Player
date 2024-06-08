@@ -144,7 +144,7 @@ class MiniPlayerDlg(QDialog):
 
     def title_changed(self, title):
         if self.window.webview.url() != self.previous_url:
-            self.change_info(self.window.webview.url())
+            self.change_info()
             self.previous_url = self.window.webview.url()
         
         self.update_play_pause_icon()

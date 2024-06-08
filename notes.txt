@@ -1,10 +1,4 @@
-1.5 Update!
+1.5.2 Update!
 
-- Fixed some bugs in the downloader.
-- Added a toolbar at the top of the main window.
-- Improved detection of track name and author in miniplayer, 
-now uses js on current page instead of pytube.
-- Added a menu with Copy and Paste buttons on the web page.
-- Added Previous Track (Left Arrow), Pause/Play (Spacebar), 
-Next Track (Right Arrow) hotkeys to the mini-player.
-- Other changes and improvements.
+- Fixed application crash when changing track 
+information in the mini player.
