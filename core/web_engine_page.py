@@ -8,7 +8,8 @@ class WebEnginePage(QWebEnginePage):
     def acceptNavigationRequest(self, url, _type, isMainFrame):
         if ("music.youtube.com" not in url.toString() and
             "accounts.google.com" not in url.toString() and
-            "googlesyndication.com" not in url.toString()):
+            "googlesyndication.com" not in url.toString() and
+            "google.com/recaptcha" not in url.toString()):
             webbrowser.open_new_tab(url.toString())
             return False
 
