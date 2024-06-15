@@ -61,33 +61,33 @@
        <item>
         <widget class="ToolButton" name="ToolButton">
          <property name="toolTip">
-          <string>Back</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../resources/icons/arrow_back_white_24dp.svg</normaloff>../../resources/icons/arrow_back_white_24dp.svg</iconset>
+           <normaloff>../../resources/icons/left.svg</normaloff>../../resources/icons/left.svg</iconset>
          </property>
         </widget>
        </item>
        <item>
         <widget class="ToolButton" name="ToolButton_2">
          <property name="toolTip">
-          <string>Forward</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../resources/icons/arrow_forward_white_24dp.svg</normaloff>../../resources/icons/arrow_forward_white_24dp.svg</iconset>
+           <normaloff>../../resources/icons/right.svg</normaloff>../../resources/icons/right.svg</iconset>
          </property>
         </widget>
        </item>
        <item>
         <widget class="ToolButton" name="ToolButton_3">
          <property name="toolTip">
-          <string>Home</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../resources/icons/home_white_24dp.svg</normaloff>../../resources/icons/home_white_24dp.svg</iconset>
+           <normaloff>../../resources/icons/home.svg</normaloff>../../resources/icons/home.svg</iconset>
          </property>
         </widget>
        </item>
@@ -98,7 +98,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../resources/icons/refresh_white_24dp.svg</normaloff>../../resources/icons/refresh_white_24dp.svg</iconset>
+           <normaloff>../../resources/icons/sync.svg</normaloff>../../resources/icons/sync.svg</iconset>
          </property>
         </widget>
        </item>
@@ -118,22 +118,22 @@
        <item>
         <widget class="ToolButton" name="ToolButton_5">
          <property name="toolTip">
-          <string>Download Track/Playlist</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../resources/icons/file_download_white_24dp.svg</normaloff>../../resources/icons/file_download_white_24dp.svg</iconset>
+           <normaloff>../../resources/icons/download.svg</normaloff>../../resources/icons/download.svg</iconset>
          </property>
         </widget>
        </item>
        <item>
         <widget class="ToolButton" name="ToolButton_6">
          <property name="toolTip">
-          <string>Open Mini-Player</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../resources/icons/picture_in_picture_white_24dp.svg</normaloff>../../resources/icons/picture_in_picture_white_24dp.svg</iconset>
+           <normaloff>../../resources/icons/picture_in_picture.svg</normaloff>../../resources/icons/picture_in_picture.svg</iconset>
          </property>
         </widget>
        </item>
@@ -143,11 +143,11 @@
        <item>
         <widget class="ToolButton" name="ToolButton_7">
          <property name="toolTip">
-          <string>Open Settings</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../../resources/icons/settings_white_24dp.svg</normaloff>../../resources/icons/settings_white_24dp.svg</iconset>
+           <normaloff>../../resources/icons/settings.svg</normaloff>../../resources/icons/settings.svg</iconset>
          </property>
         </widget>
        </item>
@@ -280,7 +280,10 @@ QLabel::hover {
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>../../resources/icons/file_download_white_24dp.svg</pixmap>
+          <pixmap>../../resources/icons/download.svg</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

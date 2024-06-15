@@ -1,9 +1,10 @@
+import requests
+import pywinstyles
+
 from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.uic import loadUi
-
-import requests
 
 class MiniPlayerDlg(QDialog):
     def __init__(
@@ -23,6 +24,7 @@ class MiniPlayerDlg(QDialog):
         loadUi(
             f'{self.current_dir}/core/ui/mini_player_dialog.ui', self
         )
+        pywinstyles.apply_style(self, "dark")
 
         self._init_window()
         self._init_attributes()
@@ -36,9 +38,9 @@ class MiniPlayerDlg(QDialog):
         self.update_play_pause_icon()
 
         self.TransparentToolButton.setIcon(            
-            QIcon(f"{self.current_dir}/resources/icons/skip_previous_white_24dp.svg"))
+            QIcon(f"{self.window.icon_path}/previous-filled.svg"))
         self.TransparentToolButton_3.setIcon(
-            QIcon(f"{self.current_dir}/resources/icons/skip_next_white_24dp.svg"))
+            QIcon(f"{self.window.icon_path}/next-filled.svg"))
 
     def _init_connect(self):
         self.TransparentToolButton_2.clicked.connect(self.play_pause_track)
@@ -47,7 +49,8 @@ class MiniPlayerDlg(QDialog):
         self.window.webview.titleChanged.connect(self.title_changed)
 
     def _init_attributes(self):
-        self.previous_url = self.window.webview.url()
+        self.current_image_url = None
+        self.previous_image_url = None
 
     def play_pause_track(self):
         with open(f"{self.current_dir}/core/js/play_pause_track.js", "r") as js_file:
@@ -61,24 +64,28 @@ class MiniPlayerDlg(QDialog):
     def set_play_pause_icon(self, is_paused):
         if is_paused:            
             self.TransparentToolButton_2.setIcon(
-                QIcon(f"{self.current_dir}/resources/icons/play_arrow_white_24dp.svg"))
+                QIcon(f"{self.window.icon_path}/play-filled.svg"))
         else:
             self.TransparentToolButton_2.setIcon(
-                QIcon(f"{self.current_dir}/resources/icons/pause_white_24dp.svg"))
+                QIcon(f"{self.window.icon_path}/pause-filled.svg"))
     
     def set_track_image(self):
         with open(f"{self.current_dir}/core/js/get_track_image.js", "r") as js_file:
-            self.window.webview.page().runJavaScript(js_file.read(), self.displayImage)
+            self.window.webview.page().runJavaScript(js_file.read(), self.display_image)
 
-    def displayImage(self, url: str) -> None:
-        if url:
+    def display_image(self, url):
+        self.current_image_url = url
+
+        if self.current_image_url != self.previous_image_url:
             try:
                 response = requests.get(url)
                 if response.status_code == 200:
                     self.pixmap = QPixmap()
                     self.pixmap.loadFromData(response.content)
-                    self.pixmap = self.pixmap.scaled(60, 60, Qt.KeepAspectRatio) 
-                    self.label.setPixmap(self.pixmap) 
+                    self.pixmap = self.pixmap.scaled(60, 60, Qt.KeepAspectRatio)
+                    self.label.setPixmap(self.pixmap)
+                    
+                    self.previous_image_url = self.current_image_url
             except Exception as e:
                 print(e)
 
@@ -88,31 +95,31 @@ class MiniPlayerDlg(QDialog):
         available_geometry = QApplication.desktop().availableGeometry()
 
         offset = 30
-        if selected_index == 0:  # Top Left
+        if selected_index == 0:
             x = int(available_geometry.left() + offset)
             y = int(available_geometry.top() + offset)
-        elif selected_index == 1:  # Top Right
+        elif selected_index == 1:
             x = int(available_geometry.right() - self.width() - offset)
             y = int(available_geometry.top() + offset)
-        elif selected_index == 2:  # Center Left
+        elif selected_index == 2:
             x = int(available_geometry.left() + offset)
             y = int(available_geometry.center().y() - self.height() / 2)
-        elif selected_index == 3:  # Center Right
+        elif selected_index == 3:
             x = int(available_geometry.right() - self.width() - offset)
             y = int(available_geometry.center().y() - self.height() / 2)
-        elif selected_index == 4:  # Center Top
+        elif selected_index == 4:
             x = int(available_geometry.center().x() - self.width() / 2)
             y = int(available_geometry.top() + offset)
-        elif selected_index == 5:  # Center Bottom
+        elif selected_index == 5:
             x = int(available_geometry.center().x() - self.width() / 2)
             y = int(available_geometry.bottom() - self.height() - offset)
-        elif selected_index == 6:  # Center
+        elif selected_index == 6:
             x = int(available_geometry.center().x() - self.width() / 2)
             y = int(available_geometry.center().y() - self.height() / 2)
-        elif selected_index == 7:  # Bottom Left
+        elif selected_index == 7:
             x = int(available_geometry.left() + offset)
             y = int(available_geometry.bottom() - self.height() - offset)
-        elif selected_index == 8:  # Bottom Right
+        elif selected_index == 8:
             x = int(available_geometry.right() - self.width() - offset)
             y = int(available_geometry.bottom() - self.height() - offset)
         else:
@@ -128,13 +135,13 @@ class MiniPlayerDlg(QDialog):
     def extract_info(self, result):
         if result is not None and len(result) == 2:
             title, author = result
-            self.StrongBodyLabel.setText(title)
-            self.StrongBodyLabel.setToolTip(title)
-            
-            author = author.strip().replace('\n', '') if  author else ""
-            
-            self.BodyLabel_2.setText(author)
-            self.BodyLabel_2.setToolTip(author)
+            if title != self.StrongBodyLabel.text() or author != self.BodyLabel_2.text():
+                self.StrongBodyLabel.setText(title)
+                self.StrongBodyLabel.setToolTip(title)
+                
+                author = author.strip().replace('\n', '') if author else ""
+                self.BodyLabel_2.setText(author)
+                self.BodyLabel_2.setToolTip(author)
         else:
             print("Failed to retrieve song and author information from a web page")
 
@@ -143,10 +150,7 @@ class MiniPlayerDlg(QDialog):
         self.update_info()
 
     def title_changed(self, title):
-        if self.window.webview.url() != self.previous_url:
-            self.change_info()
-            self.previous_url = self.window.webview.url()
-        
+        self.change_info()
         self.update_play_pause_icon()
 
     def _init_window(self):

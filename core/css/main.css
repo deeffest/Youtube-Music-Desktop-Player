@@ -33,4 +33,5 @@ QToolTip {
     background-color: rgb(44,44,44);
     border: 1px solid rgb(93,93,93);
     color: white;
+    padding: 1px 1px;
 }

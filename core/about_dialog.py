@@ -1,3 +1,5 @@
+import pywinstyles
+
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
@@ -23,6 +25,7 @@ class AboutDlg(QDialog):
         loadUi(
             f'{self.current_dir}/core/ui/about_dialog.ui', self
         )
+        pywinstyles.apply_style(self, "dark")
 
         self._init_window()
         self._init_content()
@@ -43,6 +46,4 @@ class AboutDlg(QDialog):
         self.setWindowTitle("About this app")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setFixedSize(self.size())
-        self.setWindowIcon(
-            QIcon(f"{self.current_dir}/resources/icons/about.png"
-        ))
+        self.setWindowIcon(QIcon(f"{self.window.icon_path}/info.svg"))

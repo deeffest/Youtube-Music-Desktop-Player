@@ -1,6 +1,7 @@
+import webbrowser
+
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from qfluentwidgets import MessageBox
-import webbrowser
 
 from core.input_message_box import InputMessageBox
 

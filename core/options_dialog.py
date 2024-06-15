@@ -1,3 +1,5 @@
+import pywinstyles
+
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
@@ -24,6 +26,7 @@ class OptionsDlg(QDialog):
         loadUi(
             f'{self.current_dir}/core/ui/options_dialog.ui', self
         )
+        pywinstyles.apply_style(self, "dark")
 
         self._init_window()
         self._init_content()
@@ -65,9 +68,9 @@ class OptionsDlg(QDialog):
         self.temp_settings["support_full_screen_mode"] = self.settings.value("support_full_screen_mode", "true") == "true"
         self.temp_settings["hide_window_in_tray"] = self.settings.value("hide_window_in_tray", "true") == "true"
 
-        locations = ['Top Left', 'Top Right', 'Center Left', 'Center Right', 
-                     'Center Top', 'Center Bottom', 'Center', 'Bottom Left', 
-                     'Bottom Right']
+        locations = ['Top Left Corner', 'Top Right Corner', 'Center Left', 'Center Right', 
+                    'Center Top', 'Center Bottom', 'Center', 'Bottom Left Corner', 
+                    'Bottom Right Corner']
         for location in locations:
             self.ComboBox.addItem(location)
 
@@ -147,9 +150,7 @@ class OptionsDlg(QDialog):
         self.setWindowTitle("Settings")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setFixedSize(self.size())
-        self.setWindowIcon(
-            QIcon(f"{self.current_dir}/resources/icons/settings.png"
-        ))
+        self.setWindowIcon(QIcon(f"{self.window.icon_path}/settings.svg"))
 
     def save_and_close(self):
         self.save_settings()
