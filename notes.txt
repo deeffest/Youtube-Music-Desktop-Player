@@ -1,9 +1,4 @@
-1.6 Update!
+1.6.1 Update!
 
-- Fixed a bug that caused the mini-player to not update information
-about the track being played in full screen mode of the site.
-- Icons from Material Design have been replaced with Fluent Icons.
-- The mini-player is even more optimized.
-- The system tray icon now has the Fluent interface again.
-- Some elements of the interface got tooltips with Fluent interface.
-- Now the dark mode of the Windows window will always be enabled.
+- Fixed app crash when pressing CTRL+D and CTRL+P hotkeys.
+- Other minor fixes.

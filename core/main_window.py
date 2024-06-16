@@ -98,8 +98,7 @@ class Window(QMainWindow):
             Qt.Key_Right: self.go_forward,
             Qt.CTRL + Qt.Key_H: self.go_home,
             Qt.CTRL + Qt.Key_R: self.go_reload,
-            Qt.CTRL + Qt.Key_D: lambda: self.window().go_download('track'),
-            Qt.CTRL + Qt.Key_P: lambda: self.window().go_download('playlist'),
+            Qt.CTRL + Qt.Key_D: self.go_download,
             Qt.CTRL + Qt.Key_M: self.open_mini_player,
             Qt.CTRL + Qt.Key_S: self.open_settings_dialog,
         }
@@ -120,7 +119,7 @@ class Window(QMainWindow):
         self.webpage.setParent(self)
         self.webview.setPage(self.webpage)
         self.webpage.fullScreenRequested.connect(
-            self.handleFullscreen
+            self.handle_fullscreen
         )
 
         self.websettings = QWebEngineSettings.globalSettings()
@@ -299,17 +298,17 @@ class Window(QMainWindow):
             parent=self
         )
 
-    def handleFullscreen(self, request):
-        if(request.toggleOn()):
-            request.accept()
-            self.showFullScreen()
+    def handle_fullscreen(self, request):
+        if(request.toggleOn()):            
             self.frame_2.hide()
             self.horizontalFrame.hide()
-        else:
+            self.showFullScreen()
             request.accept()
-            self.showNormal()
+        else:            
             self.frame_2.show()
             self.horizontalFrame.show()
+            self.showNormal()
+            request.accept()
 
     def open_in_browser(self, event):
         if event.button() == Qt.LeftButton:

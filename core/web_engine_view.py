@@ -7,6 +7,9 @@ from qfluentwidgets import RoundMenu, Action, \
 import webbrowser
 
 class WebEngineView(QWebEngineView):
+    def __init__(self, parent=None):
+        super(WebEngineView, self).__init__(parent)
+
     def contextMenuEvent(self, event):
         url = self.window().webview.url().toString()
 
