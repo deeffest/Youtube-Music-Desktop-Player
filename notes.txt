@@ -1,4 +1,6 @@
-1.6.1 Update!
+1.7 Update!
 
-- Fixed app crash when pressing CTRL+D and CTRL+P hotkeys.
-- Other minor fixes.
+- Added integration of the application with Discord (enable in Settings/Discord Integration).
+- Added saving the current zoom factor on exit.
+- You can set the default zoom factor in (Settings/Default Page Zoom Factor)
+- Other fixes and improvements.

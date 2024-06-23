@@ -4,6 +4,7 @@ import requests
 import webbrowser
 import pywinstyles
 from threading import Thread
+from pypresence import Presence
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, \
     QFileDialog, QShortcut
@@ -62,6 +63,13 @@ class Window(QMainWindow):
     def _init_attributes(self):
         self.icon_path = f"{self.window().current_dir}/resources/icons"
         self.win_toolbar_icon_path = f"{self.window().current_dir}/resources/win_toolbar_icons"
+        self.discord_rpc = None
+        self.track_title = None
+        self.track_author = None
+        self.current_image_url = None
+        self.previous_image_url = None
+        self.previous_track_title = None
+        self.previous_track_author = None
 
     def _init_connect(self):
         self.webview.titleChanged.connect(self.update_window_title)
@@ -111,6 +119,7 @@ class Window(QMainWindow):
         self._init_splash_screen()
         self.label_3.hide()
         self.label.setText(f"{self.name} {self.version}")
+        self.setup_ds_integration()
 
     def _init_webview(self):
         self.webview = WebEngineView()
@@ -121,6 +130,8 @@ class Window(QMainWindow):
         self.webpage.fullScreenRequested.connect(
             self.handle_fullscreen
         )
+        zoom_factor = self.settings.value("default_page_zoom_factor", 1.0)
+        self.webpage.setZoomFactor(float(zoom_factor))
 
         self.websettings = QWebEngineSettings.globalSettings()
         self.websettings.setAttribute(
@@ -159,6 +170,10 @@ class Window(QMainWindow):
         self.splashScreen.titleBar.hide()
         self.splashScreen.setIconSize(QSize(102, 102))
         self.show()
+
+    def _init_ds_integration(self):
+        self.discord_rpc = Presence("1254202610781655050")
+        self.discord_rpc.connect()
 
     def go_back(self):
         self.webview.back()
@@ -333,7 +348,14 @@ class Window(QMainWindow):
             with open(f"{self.current_dir}/core/js/add_styles.js", "r") as js_file:
                 self.webview.page().runJavaScript(js_file.read())
 
-            self.update_play_pause_icon() 
+            self.update_play_pause_icon()
+
+    def setup_ds_integration(self):
+        if self.settings.value("discord_integration", "false") == "true":
+            try:
+                self._init_ds_integration()
+            except Exception as e:
+                print(f"Discord initialization was not successful: {e}")
 
     def open_settings_dialog(self):
         Dlg = OptionsDlg(
@@ -400,7 +422,7 @@ class Window(QMainWindow):
         if is_paused: 
             if "watch" in self.webview.url().toString():           
                 self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/play.png"))
-                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_path}/play.svg")) 
+                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_path}/play.svg"))
             else:
                 self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/play-disabled.png"))
         else:
@@ -409,15 +431,82 @@ class Window(QMainWindow):
                 self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_path}/pause.svg"))
             else:
                 self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/pause-disabled.png"))
+        self.change_info()
+
+    def set_track_image(self):
+        with open(f"{self.current_dir}/core/js/get_track_image.js", "r") as js_file:
+            self.webview.page().runJavaScript(js_file.read(), self.extract_image_url)
+
+    def extract_image_url(self, url):
+        current_image_url = url
+
+        if current_image_url != self.previous_image_url:
+            self.current_image_url = current_image_url
+            self.previous_image_url = self.current_image_url
+            
+        self.update_discord_rpc()
+
+    def update_info(self):
+        with open(f"{self.current_dir}/core/js/get_titile_and_author.js", "r") as js_file:
+            self.webpage.runJavaScript(js_file.read(), self.extract_info)
+
+    def extract_info(self, result):
+        if result is not None and len(result) == 2:
+            title, author = result
+            author = author.strip().replace('\n', '') if author else ""
+
+            if title != self.previous_track_title:
+                self.track_title = title
+                self.previous_track_title = self.track_title
+            if author != self.previous_track_author:
+                self.track_author = author
+                self.previous_track_author = self.track_author
+
+        self.update_discord_rpc()
+
+    def change_info(self):
+        self.update_info()
+        self.set_track_image()
     
     def update_window_title(self, title):
         self.setWindowTitle(title) 
         self.tray_icon.setToolTip(title)
         self.update_play_pause_icon()
+        self.change_info()
+    
+    def update_discord_rpc(self):
+        discord_enabled = self.settings.value("discord_integration", "false") == "true"
+        if not discord_enabled:
+            return
+
+        url = self.webview.url().toString()
+        if "watch" not in url:
+            try:
+                self.discord_rpc.update()
+            except Exception as e:
+                print(f"Discord RPC Error: {e}")
+            return
+
+        btn_list = [
+            {"label": "▶ Play in Browser", "url": url},
+            {"label": "🌐 YTMDPlayer on GitHub", "url": "https://github.com/deeffest/Youtube-Music-Desktop-Player"}
+        ]
+
+        try:
+            self.discord_rpc.update(
+                large_image=self.current_image_url,
+                details=self.track_title,
+                state=self.track_author,
+                buttons=btn_list,
+            )
+        except Exception as e:
+            print(f"Discord RPC Error: {e}")
 
     def update_url(self, url):
         self.LineEdit.setText(url.toString())
         self.settings.setValue("last_url", url.toString())
+
+        self.change_info()
 
         if not self.webpage.history().canGoForward():
             self.ToolButton_2.setEnabled(False)
@@ -555,13 +644,14 @@ class Window(QMainWindow):
         self.label.setMaximumWidth(int(self.width() * 0.8))
 
     def closeEvent(self, event):
-        if self.settings.value("hide_window_in_tray", "true") == "true":
+        if self.settings.value("hide_window_in_tray", "false") == "true":
             self.hide()
             self.tray_icon.show()
             event.ignore()
         else:
             if "watch" in self.webview.url().toString():
-                self.activateWindow() 
+                self.showNormal()
+                self.activateWindow()
                 w = MessageBox(f"Confirmation of exit ✖️", 
                     "Do you really want to quit the app? The current playback will stop.", self)
                 if w.exec_():
@@ -572,4 +662,5 @@ class Window(QMainWindow):
                 self.exit_app()
 
     def exit_app(self):
+        self.settings.setValue("default_page_zoom_factor", self.webpage.zoomFactor())
         sys.exit(0)

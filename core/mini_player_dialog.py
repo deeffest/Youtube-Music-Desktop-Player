@@ -49,8 +49,7 @@ class MiniPlayerDlg(QDialog):
         self.window.webview.titleChanged.connect(self.title_changed)
 
     def _init_attributes(self):
-        self.current_image_url = None
-        self.previous_image_url = None
+        pass
 
     def play_pause_track(self):
         with open(f"{self.current_dir}/core/js/play_pause_track.js", "r") as js_file:
@@ -68,26 +67,6 @@ class MiniPlayerDlg(QDialog):
         else:
             self.TransparentToolButton_2.setIcon(
                 QIcon(f"{self.window.icon_path}/pause-filled.svg"))
-    
-    def set_track_image(self):
-        with open(f"{self.current_dir}/core/js/get_track_image.js", "r") as js_file:
-            self.window.webview.page().runJavaScript(js_file.read(), self.display_image)
-
-    def display_image(self, url):
-        self.current_image_url = url
-
-        if self.current_image_url != self.previous_image_url:
-            try:
-                response = requests.get(url)
-                if response.status_code == 200:
-                    self.pixmap = QPixmap()
-                    self.pixmap.loadFromData(response.content)
-                    self.pixmap = self.pixmap.scaled(60, 60, Qt.KeepAspectRatio)
-                    self.label.setPixmap(self.pixmap)
-                    
-                    self.previous_image_url = self.current_image_url
-            except Exception as e:
-                print(e)
 
     def move_to(self):
         selected_index = self.settings.value("selected_location_index", 1)
@@ -128,27 +107,26 @@ class MiniPlayerDlg(QDialog):
 
         self.move(x, y)
     
-    def update_info(self):
-        with open(f"{self.current_dir}/core/js/get_titile_and_author.js", "r") as js_file:
-            self.window.webpage.runJavaScript(js_file.read(), self.extract_info)
+    def display_image(self):
+        try:
+            response = requests.get(self.window.current_image_url)
+            if response.status_code == 200:
+                self.pixmap = QPixmap()
+                self.pixmap.loadFromData(response.content)
+                self.pixmap = self.pixmap.scaled(60, 60, Qt.KeepAspectRatio)
+                self.label.setPixmap(self.pixmap)
 
-    def extract_info(self, result):
-        if result is not None and len(result) == 2:
-            title, author = result
-            if title != self.StrongBodyLabel.text() or author != self.BodyLabel_2.text():
-                self.StrongBodyLabel.setText(title)
-                self.StrongBodyLabel.setToolTip(title)
-                
-                author = author.strip().replace('\n', '') if author else ""
-                self.BodyLabel_2.setText(author)
-                self.BodyLabel_2.setToolTip(author)
-        else:
-            print("Failed to retrieve song and author information from a web page")
+                self.window.previous_image_url = self.window.current_image_url
+        except Exception as e:
+            print(f"Error displaying image in mini-player: {e}")
 
     def change_info(self):
-        self.set_track_image()
-        self.update_info()
-
+        self.StrongBodyLabel.setText(self.window.track_title)
+        self.StrongBodyLabel.setToolTip(self.window.track_title)
+        self.BodyLabel_2.setText(self.window.track_author)
+        self.BodyLabel_2.setToolTip(self.window.track_author)
+        self.display_image()
+        
     def title_changed(self, title):
         self.change_info()
         self.update_play_pause_icon()
@@ -173,6 +151,6 @@ class MiniPlayerDlg(QDialog):
 
     def closeEvent(self, event):
         self.window.show()
-        if self.settings.value("hide_window_in_tray", "true") == "true":
+        if self.settings.value("hide_window_in_tray", "false") == "true":
             self.window.tray_icon.show()
         self.deleteLater()
