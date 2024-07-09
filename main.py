@@ -9,7 +9,7 @@ from PyQt5.QtCore import QSettings, Qt
 from core.main_window import Window
 
 name = "Youtube Music Desktop Player"
-version = "1.7"
+version = "1.7.1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 username = getpass.getuser()
 

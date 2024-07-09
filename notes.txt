@@ -1,6 +1,4 @@
-1.7 Update!
+1.7.1 Update!
 
-- Added integration of the application with Discord (enable in Settings/Discord Integration).
-- Added saving the current zoom factor on exit.
-- You can set the default zoom factor in (Settings/Default Page Zoom Factor)
-- Other fixes and improvements.
+- Fixed `RegexMatchError: get_throttling_function_name: could not find match for multiple`
+when downloading a track/playlist.
