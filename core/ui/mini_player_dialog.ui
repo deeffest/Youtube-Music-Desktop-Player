@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>MiniPlayerDialog</class>
+ <widget class="QDialog" name="MiniPlayerDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -35,9 +35,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDialog {
-	background-color: rgb(39,39,39);
-}</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -91,14 +89,14 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4"/>
        </item>
        <item>
-        <widget class="StrongBodyLabel" name="StrongBodyLabel">
+        <widget class="StrongBodyLabel" name="title_label">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="BodyLabel" name="BodyLabel_2">
+        <widget class="BodyLabel" name="author_label">
          <property name="styleSheet">
           <string notr="true">QLabel {
 	color: lightgray;
@@ -139,7 +137,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="thumbnail_label">
        <property name="minimumSize">
         <size>
          <width>60</width>
@@ -156,7 +154,7 @@
         <string/>
        </property>
        <property name="scaledContents">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -193,7 +191,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="TransparentToolButton" name="TransparentToolButton">
+      <widget class="TransparentToolButton" name="previous_button">
        <property name="minimumSize">
         <size>
          <width>40</width>
@@ -205,6 +203,10 @@
          <width>40</width>
          <height>40</height>
         </size>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../../resources/icons/previous-filled.png</normaloff>../../resources/icons/previous-filled.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -218,7 +220,7 @@
       </widget>
      </item>
      <item>
-      <widget class="TransparentToolButton" name="TransparentToolButton_2">
+      <widget class="TransparentToolButton" name="play_pause_button">
        <property name="minimumSize">
         <size>
          <width>40</width>
@@ -231,10 +233,14 @@
          <height>40</height>
         </size>
        </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../../resources/icons/play-filled.png</normaloff>../../resources/icons/play-filled.png</iconset>
+       </property>
        <property name="iconSize">
         <size>
-         <width>20</width>
-         <height>20</height>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
        <property name="shortcut">
@@ -243,7 +249,7 @@
       </widget>
      </item>
      <item>
-      <widget class="TransparentToolButton" name="TransparentToolButton_3">
+      <widget class="TransparentToolButton" name="next_button">
        <property name="minimumSize">
         <size>
          <width>40</width>
@@ -255,6 +261,10 @@
          <width>40</width>
          <height>40</height>
         </size>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>../../resources/icons/next-filled.png</normaloff>../../resources/icons/next-filled.png</iconset>
        </property>
        <property name="iconSize">
         <size>

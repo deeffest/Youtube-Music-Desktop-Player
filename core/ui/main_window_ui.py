@@ -15,201 +15,82 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QMainWindow, QSizePolicy, QSpacerItem, QVBoxLayout,
-    QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QMainWindow,
+    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
-from qfluentwidgets import (LineEdit, ToolButton, VerticalSeparator)
+from qfluentwidgets import (LineEdit, SplitToolButton, ToolButton)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(563, 369)
-        MainWindow.setStyleSheet(u"QMainWindow {\n"
-"	background-color: rgb(39,39,39);\n"
-"}")
+        MainWindow.resize(789, 495)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalFrame = QFrame(self.centralwidget)
-        self.horizontalFrame.setObjectName(u"horizontalFrame")
-        self.horizontalFrame.setStyleSheet(u"QFrame {\n"
-"	background: rgb(33,33,33);\n"
-"}")
-        self.horizontalLayout_3 = QHBoxLayout(self.horizontalFrame)
-        self.horizontalLayout_3.setSpacing(6)
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalLayout_3.setContentsMargins(6, 6, 6, 6)
-        self.ToolButton = ToolButton(self.horizontalFrame)
-        self.ToolButton.setObjectName(u"ToolButton")
-        icon = QIcon()
-        icon.addFile(u"../../resources/icons/left.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ToolButton.setIcon(icon)
+        self.toolbar_frame = QFrame(self.centralwidget)
+        self.toolbar_frame.setObjectName(u"toolbar_frame")
+        self.toolbar_layout = QHBoxLayout(self.toolbar_frame)
+        self.toolbar_layout.setSpacing(6)
+        self.toolbar_layout.setObjectName(u"toolbar_layout")
+        self.toolbar_layout.setContentsMargins(6, 6, 6, 6)
+        self.back_tbutton = ToolButton(self.toolbar_frame)
+        self.back_tbutton.setObjectName(u"back_tbutton")
+        self.back_tbutton.setEnabled(False)
 
-        self.horizontalLayout_3.addWidget(self.ToolButton)
+        self.toolbar_layout.addWidget(self.back_tbutton)
 
-        self.ToolButton_2 = ToolButton(self.horizontalFrame)
-        self.ToolButton_2.setObjectName(u"ToolButton_2")
-        icon1 = QIcon()
-        icon1.addFile(u"../../resources/icons/right.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ToolButton_2.setIcon(icon1)
+        self.forward_tbutton = ToolButton(self.toolbar_frame)
+        self.forward_tbutton.setObjectName(u"forward_tbutton")
+        self.forward_tbutton.setEnabled(False)
 
-        self.horizontalLayout_3.addWidget(self.ToolButton_2)
+        self.toolbar_layout.addWidget(self.forward_tbutton)
 
-        self.ToolButton_3 = ToolButton(self.horizontalFrame)
-        self.ToolButton_3.setObjectName(u"ToolButton_3")
-        icon2 = QIcon()
-        icon2.addFile(u"../../resources/icons/home.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ToolButton_3.setIcon(icon2)
+        self.home_tbutton = ToolButton(self.toolbar_frame)
+        self.home_tbutton.setObjectName(u"home_tbutton")
 
-        self.horizontalLayout_3.addWidget(self.ToolButton_3)
+        self.toolbar_layout.addWidget(self.home_tbutton)
 
-        self.ToolButton_4 = ToolButton(self.horizontalFrame)
-        self.ToolButton_4.setObjectName(u"ToolButton_4")
-        icon3 = QIcon()
-        icon3.addFile(u"../../resources/icons/sync.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ToolButton_4.setIcon(icon3)
+        self.reload_tbutton = ToolButton(self.toolbar_frame)
+        self.reload_tbutton.setObjectName(u"reload_tbutton")
 
-        self.horizontalLayout_3.addWidget(self.ToolButton_4)
+        self.toolbar_layout.addWidget(self.reload_tbutton)
 
-        self.VerticalSeparator_2 = VerticalSeparator(self.horizontalFrame)
-        self.VerticalSeparator_2.setObjectName(u"VerticalSeparator_2")
-
-        self.horizontalLayout_3.addWidget(self.VerticalSeparator_2)
-
-        self.LineEdit = LineEdit(self.horizontalFrame)
+        self.LineEdit = LineEdit(self.toolbar_frame)
         self.LineEdit.setObjectName(u"LineEdit")
         self.LineEdit.setReadOnly(True)
 
-        self.horizontalLayout_3.addWidget(self.LineEdit)
+        self.toolbar_layout.addWidget(self.LineEdit)
 
-        self.VerticalSeparator_3 = VerticalSeparator(self.horizontalFrame)
-        self.VerticalSeparator_3.setObjectName(u"VerticalSeparator_3")
+        self.download_stbutton = SplitToolButton(self.toolbar_frame)
+        self.download_stbutton.setObjectName(u"download_stbutton")
 
-        self.horizontalLayout_3.addWidget(self.VerticalSeparator_3)
+        self.toolbar_layout.addWidget(self.download_stbutton)
 
-        self.ToolButton_5 = ToolButton(self.horizontalFrame)
-        self.ToolButton_5.setObjectName(u"ToolButton_5")
-        icon4 = QIcon()
-        icon4.addFile(u"../../resources/icons/download.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ToolButton_5.setIcon(icon4)
+        self.mini_player_tbutton = ToolButton(self.toolbar_frame)
+        self.mini_player_tbutton.setObjectName(u"mini_player_tbutton")
 
-        self.horizontalLayout_3.addWidget(self.ToolButton_5)
+        self.toolbar_layout.addWidget(self.mini_player_tbutton)
 
-        self.ToolButton_6 = ToolButton(self.horizontalFrame)
-        self.ToolButton_6.setObjectName(u"ToolButton_6")
-        icon5 = QIcon()
-        icon5.addFile(u"../../resources/icons/picture_in_picture.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ToolButton_6.setIcon(icon5)
+        self.settings_tbutton = ToolButton(self.toolbar_frame)
+        self.settings_tbutton.setObjectName(u"settings_tbutton")
 
-        self.horizontalLayout_3.addWidget(self.ToolButton_6)
-
-        self.VerticalSeparator = VerticalSeparator(self.horizontalFrame)
-        self.VerticalSeparator.setObjectName(u"VerticalSeparator")
-
-        self.horizontalLayout_3.addWidget(self.VerticalSeparator)
-
-        self.ToolButton_7 = ToolButton(self.horizontalFrame)
-        self.ToolButton_7.setObjectName(u"ToolButton_7")
-        icon6 = QIcon()
-        icon6.addFile(u"../../resources/icons/settings.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.ToolButton_7.setIcon(icon6)
-
-        self.horizontalLayout_3.addWidget(self.ToolButton_7)
+        self.toolbar_layout.addWidget(self.settings_tbutton)
 
 
-        self.verticalLayout.addWidget(self.horizontalFrame)
+        self.verticalLayout.addWidget(self.toolbar_frame)
 
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.verticalSpacer = QSpacerItem(0, 37, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.main_layout = QHBoxLayout()
+        self.main_layout.setObjectName(u"main_layout")
+        self.verticalSpacer = QSpacerItem(0, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.horizontalLayout.addItem(self.verticalSpacer)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout)
-
-        self.frame_2 = QFrame(self.centralwidget)
-        self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setStyleSheet(u"QFrame {\n"
-"	background-color: rgb(0,0,0);\n"
-"	color: white;\n"
-"}")
-        self.frame_2.setFrameShape(QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_4 = QHBoxLayout(self.frame_2)
-        self.horizontalLayout_4.setSpacing(3)
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.horizontalLayout_4.setContentsMargins(6, 4, 6, 4)
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setSpacing(0)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(0, -1, 0, -1)
-        self.label = QLabel(self.frame_2)
-        self.label.setObjectName(u"label")
-        self.label.setMinimumSize(QSize(5, 0))
-        font = QFont()
-        font.setFamilies([u"Segoe UI"])
-        self.label.setFont(font)
-        self.label.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
-        self.label.setStyleSheet(u"QLabel {\n"
-"	color: lightgray;\n"
-"}\n"
-"QLabel::hover {\n"
-"	color: white;\n"
-"}")
-        self.label.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
-
-        self.horizontalLayout_2.addWidget(self.label)
+        self.main_layout.addItem(self.verticalSpacer)
 
 
-        self.horizontalLayout_4.addLayout(self.horizontalLayout_2)
-
-        self.horizontalSpacer_2 = QSpacerItem(30, 7, QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_4.addItem(self.horizontalSpacer_2)
-
-        self.label_3 = QLabel(self.frame_2)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setMinimumSize(QSize(0, 15))
-        self.label_3.setMaximumSize(QSize(16777215, 15))
-        self.label_3.setPixmap(QPixmap(u"../../resources/icons/download.svg"))
-        self.label_3.setScaledContents(True)
-
-        self.horizontalLayout_4.addWidget(self.label_3)
-
-        self.frame = QFrame(self.frame_2)
-        self.frame.setObjectName(u"frame")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
-        self.frame.setSizePolicy(sizePolicy)
-        self.frame.setMinimumSize(QSize(0, 0))
-        self.frame.setMaximumSize(QSize(16777215, 16777215))
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_2 = QVBoxLayout(self.frame)
-        self.verticalLayout_2.setSpacing(0)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.label_2 = QLabel(self.frame)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setStyleSheet(u"QLabel {\n"
-"    font-weight: bold;\n"
-"}")
-
-        self.verticalLayout_2.addWidget(self.label_2)
-
-
-        self.horizontalLayout_4.addWidget(self.frame)
-
-
-        self.verticalLayout.addWidget(self.frame_2)
+        self.verticalLayout.addLayout(self.main_layout)
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -221,28 +102,26 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
 #if QT_CONFIG(tooltip)
-        self.ToolButton.setToolTip("")
+        self.back_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Back", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.ToolButton_2.setToolTip("")
+        self.forward_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Forward", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.ToolButton_3.setToolTip("")
+        self.home_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Home", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.ToolButton_4.setToolTip(QCoreApplication.translate("MainWindow", u"Reload", None))
+        self.reload_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Reload", None))
+#endif // QT_CONFIG(tooltip)
+        self.LineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"https://music.youtube.com/", None))
+#if QT_CONFIG(tooltip)
+        self.download_stbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Download track/playlist in MP3 format or choose another one.", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.ToolButton_5.setToolTip("")
+        self.mini_player_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Mini-Player", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.ToolButton_6.setToolTip("")
+        self.settings_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
 #endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.ToolButton_7.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.label.setText("")
-        self.label_3.setText("")
-        self.label_2.setText("")
     # retranslateUi
 

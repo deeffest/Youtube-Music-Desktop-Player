@@ -6,22 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>431</width>
-    <height>306</height>
+    <width>383</width>
+    <height>312</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>383</width>
+    <height>232</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(39,39,39);</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>9</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
     <number>0</number>
@@ -30,216 +36,14 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="frame_3">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <property name="leftMargin">
-       <number>12</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>12</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="minimumSize">
-           <size>
-            <width>64</width>
-            <height>64</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>64</width>
-            <height>64</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap>../../resources/icons/icon.ico</pixmap>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="TitleLabel" name="TitleLabel">
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Youtube Music Desktop Player&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <item>
-             <widget class="BodyLabel" name="BodyLabel_3">
-              <property name="text">
-               <string>Current app version:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="BodyLabel" name="BodyLabel_2">
-              <property name="styleSheet">
-               <string notr="true">color: white;</string>
-              </property>
-              <property name="text">
-               <string>1.1.2</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
-        <item>
-         <widget class="BodyLabel" name="BodyLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>110</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>110</height>
-           </size>
-          </property>
-          <property name="contextMenuPolicy">
-           <enum>Qt::NoContextMenu</enum>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">color: gray;</string>
-          </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Displays Youtube Music site using QWebEngine to make your music listening experience even more convenient.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt;Created with &lt;/span&gt;&lt;a href=&quot;https://www.riverbankcomputing.com/software/pyqt/intro&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;PyQt5&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt; + &lt;/span&gt;&lt;a href=&quot;https://github.com/zhiyiYo/PyQt-Fluent-Widgets&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;PyQt-Fluent-Widgets&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt; and distributed under the &lt;/span&gt;&lt;a href=&quot;https://www.gnu.org/licenses/gpl-3.0.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;GNU GPL v3&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt; license, source code is available on &lt;/span&gt;&lt;a href=&quot;https://github.com/deeffest/Youtube-Music-Desktop-Player&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#d3d3d3;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt; color:#d3d3d3;&quot;&gt;. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="scaledContents">
-           <bool>false</bool>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-          <property name="openExternalLinks">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="CaptionLabel" name="CaptionLabel">
-          <property name="text">
-           <string>Created with ❤ by deeffest, 2024</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="HyperlinkButton" name="HyperlinkButton">
-          <property name="text">
-           <string>My Website</string>
-          </property>
-          <property name="url">
-           <url>
-            <string>https://deeffest.pythonanywhere.com</string>
-           </url>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="HyperlinkButton" name="HyperlinkButton_2">
-          <property name="text">
-           <string>Donationalerts</string>
-          </property>
-          <property name="url">
-           <url>
-            <string>https://donationalerts.com/r/deeffest</string>
-           </url>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <widget class="QFrame" name="frame">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(32,32,32);</string>
-     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -255,19 +59,113 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="leftMargin">
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="topMargin">
-         <number>16</number>
+         <number>9</number>
+        </property>
+        <item alignment="Qt::AlignTop">
+         <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>72</width>
+            <height>72</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>72</width>
+            <height>72</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap>../../resources/icons/icon.ico</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="leftMargin">
+         <number>3</number>
+        </property>
+        <property name="topMargin">
+         <number>6</number>
         </property>
         <property name="rightMargin">
          <number>9</number>
         </property>
         <property name="bottomMargin">
-         <number>16</number>
+         <number>14</number>
         </property>
         <item>
-         <spacer name="horizontalSpacer_3">
+         <widget class="SubtitleLabel" name="SubtitleLabel">
+          <property name="text">
+           <string>Youtube Music Desktop Player</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="BodyLabel" name="BodyLabel_2">
+          <property name="text">
+           <string>Version: 1.8-beta</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="BodyLabel" name="BodyLabel">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Displays Youtube Music site using QWebEngine to make your music listening experience even more convenient. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;This App is licensed under GNU GPLv3 and the source code is available on Github.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Enjoy listening:)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="BodyLabel" name="BodyLabel_3">
+          <property name="text">
+           <string>Created with ❤️ by deeffest, 2024</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="ButtonBox">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="leftMargin">
+       <number>12</number>
+      </property>
+      <property name="topMargin">
+       <number>16</number>
+      </property>
+      <property name="rightMargin">
+       <number>12</number>
+      </property>
+      <property name="bottomMargin">
+       <number>16</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <spacer name="horizontalSpacer_7">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -280,7 +178,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="PushButton" name="PushButton_2">
+         <widget class="PushButton" name="PushButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -288,20 +186,45 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>What's new</string>
+           <string>Visit Github</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../resources/icons/github.png</normaloff>../../resources/icons/github.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="hasIcon" stdset="0">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="PrimaryPushButton" name="PushButton">
+         <widget class="PrimaryPushButton" name="PrimaryPushButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
-           <string>OK</string>
+           <string>Close</string>
           </property>
          </widget>
         </item>
@@ -314,11 +237,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HyperlinkButton</class>
-   <extends>PushButton</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
    <class>PushButton</class>
    <extends>QPushButton</extends>
    <header>qfluentwidgets</header>
@@ -329,17 +247,12 @@
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>CaptionLabel</class>
-   <extends>QLabel</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
    <class>BodyLabel</class>
    <extends>QLabel</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>TitleLabel</class>
+   <class>SubtitleLabel</class>
    <extends>QLabel</extends>
    <header>qfluentwidgets</header>
   </customwidget>

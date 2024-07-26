@@ -1,2 +1,10 @@
-# .gitignore
+# python
 __pycache__/
+
+# deployment
+output
+deploy_config.json
+setup.smm
+
+# yt-dlp and ffmpeg builds
+bin

@@ -1,49 +1,42 @@
 import pywinstyles
+import webbrowser
 
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 
-class AboutDlg(QDialog):
-    def __init__(
-        self,
-        current_dir,
-        name,
-        settings,
-        version,
-        parent=None
-    ):
+class AboutDialog(QDialog):
+    def __init__(self, parent=None):
         super().__init__(parent)
-
-        self.current_dir = current_dir
-        self.name = name
         self.window = parent
-        self.settings = settings
-        self.version = version
 
-        loadUi(
-            f'{self.current_dir}/core/ui/about_dialog.ui', self
-        )
+        self.load_ui()
+        self.setup_connect()
+        self.setup_content()
+
+    def setup_content(self):
+        self.BodyLabel_2.setText(f"Version: {self.window.version}")
+
+    def setup_connect(self):
+        self.PrimaryPushButton.clicked.connect(self.close)
+        self.PushButton.clicked.connect(self.go_to_github)
+
+    def go_to_github(self):
+        webbrowser.open("https://github.com/deeffest/Youtube-Music-Desktop-Player")
+
+    def load_ui(self):
+        loadUi(f'{self.window.current_dir}/core/ui/about_dialog.ui', self)
         pywinstyles.apply_style(self, "dark")
-
-        self._init_window()
-        self._init_content()
-        self._init_connect()
-
-    def _init_content(self):
-        self.BodyLabel_2.setText(self.version)
-    
-    def _init_connect(self):
-        self.PushButton.clicked.connect(self.close)
-        self.PushButton_2.clicked.connect(self.open_changelog)
-
-    def open_changelog(self):
-        self.close()
-        self.window.open_changelog()
-
-    def _init_window(self):
-        self.setWindowTitle("About this app")
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setWindowTitle("About app")
         self.setFixedSize(self.size())
-        self.setWindowIcon(QIcon(f"{self.window.icon_path}/info.svg"))
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about-red.png"))
+
+    def keyPressEvent(self, key_event):
+        if key_event.key() == Qt.Key_Escape:
+            self.close()
+
+    def closeEvent(self, event):
+        self.window.show()
+        event.accept()

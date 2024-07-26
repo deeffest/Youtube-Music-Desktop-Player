@@ -6,17 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
-    <height>369</height>
+    <width>789</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">QMainWindow {
-	background-color: rgb(39,39,39);
-}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -36,13 +31,8 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QFrame" name="horizontalFrame">
-      <property name="styleSheet">
-       <string notr="true">QFrame {
-	background: rgb(33,33,33);
-}</string>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <widget class="QFrame" name="toolbar_frame">
+      <layout class="QHBoxLayout" name="toolbar_layout">
        <property name="spacing">
         <number>6</number>
        </property>
@@ -59,95 +49,67 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="ToolButton" name="ToolButton">
-         <property name="toolTip">
-          <string/>
+        <widget class="ToolButton" name="back_tbutton">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../resources/icons/left.svg</normaloff>../../resources/icons/left.svg</iconset>
+         <property name="toolTip">
+          <string>Back</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="ToolButton" name="ToolButton_2">
-         <property name="toolTip">
-          <string/>
+        <widget class="ToolButton" name="forward_tbutton">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../resources/icons/right.svg</normaloff>../../resources/icons/right.svg</iconset>
+         <property name="toolTip">
+          <string>Forward</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="ToolButton" name="ToolButton_3">
+        <widget class="ToolButton" name="home_tbutton">
          <property name="toolTip">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../resources/icons/home.svg</normaloff>../../resources/icons/home.svg</iconset>
+          <string>Home</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="ToolButton" name="ToolButton_4">
+        <widget class="ToolButton" name="reload_tbutton">
          <property name="toolTip">
           <string>Reload</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../resources/icons/sync.svg</normaloff>../../resources/icons/sync.svg</iconset>
-         </property>
         </widget>
-       </item>
-       <item>
-        <widget class="VerticalSeparator" name="VerticalSeparator_2"/>
        </item>
        <item>
         <widget class="LineEdit" name="LineEdit">
          <property name="readOnly">
           <bool>true</bool>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="VerticalSeparator" name="VerticalSeparator_3"/>
-       </item>
-       <item>
-        <widget class="ToolButton" name="ToolButton_5">
-         <property name="toolTip">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../resources/icons/download.svg</normaloff>../../resources/icons/download.svg</iconset>
+         <property name="placeholderText">
+          <string>https://music.youtube.com/</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="ToolButton" name="ToolButton_6">
+        <widget class="SplitToolButton" name="download_stbutton">
          <property name="toolTip">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../resources/icons/picture_in_picture.svg</normaloff>../../resources/icons/picture_in_picture.svg</iconset>
+          <string>Download track/playlist in MP3 format or choose another one.</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="VerticalSeparator" name="VerticalSeparator"/>
+        <widget class="ToolButton" name="mini_player_tbutton">
+         <property name="toolTip">
+          <string>Mini-Player</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="ToolButton" name="ToolButton_7">
+        <widget class="ToolButton" name="settings_tbutton">
          <property name="toolTip">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../resources/icons/settings.svg</normaloff>../../resources/icons/settings.svg</iconset>
+          <string>Settings</string>
          </property>
         </widget>
        </item>
@@ -155,7 +117,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="main_layout">
       <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
@@ -164,188 +126,12 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>0</width>
-          <height>37</height>
+          <height>40</height>
          </size>
         </property>
        </spacer>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame_2">
-      <property name="styleSheet">
-       <string notr="true">QFrame {
-	background-color: rgb(0,0,0);
-	color: white;
-}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <property name="spacing">
-        <number>3</number>
-       </property>
-       <property name="leftMargin">
-        <number>6</number>
-       </property>
-       <property name="topMargin">
-        <number>4</number>
-       </property>
-       <property name="rightMargin">
-        <number>6</number>
-       </property>
-       <property name="bottomMargin">
-        <number>4</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="minimumSize">
-            <size>
-             <width>5</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Segoe UI</family>
-            </font>
-           </property>
-           <property name="cursor">
-            <cursorShape>ArrowCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QLabel {
-	color: lightgray;
-}
-QLabel::hover {
-	color: white;
-}</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>30</width>
-           <height>7</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>15</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap>../../resources/icons/download.svg</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QFrame" name="frame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="styleSheet">
-             <string notr="true">QLabel {
-    font-weight: bold;
-}</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </item>
    </layout>
   </widget>
@@ -357,7 +143,7 @@ QLabel::hover {
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>VerticalSeparator</class>
+   <class>SplitToolButton</class>
    <extends>QWidget</extends>
    <header>qfluentwidgets</header>
   </customwidget>

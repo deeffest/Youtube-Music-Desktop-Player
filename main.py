@@ -4,38 +4,25 @@ import shutil
 import getpass
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QSettings, Qt
+from PyQt5.QtCore import Qt
+from core.main_window import MainWindow
 
-from core.main_window import Window
-
-name = "Youtube Music Desktop Player"
-version = "1.7.1"
+name = "Youtube-Music-Desktop-Player"
+version = "1.8-rc1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
-username = getpass.getuser()
 
 if __name__ == '__main__':
-    settings = QSettings("deeffest", name)
-    settings.setValue("current_dir", current_dir)
-    
     app = QApplication(sys.argv)
     app.setApplicationName(name)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
-    with open(f"{current_dir}/core/css/main.css", 'r') as file:
+    with open(f"{current_dir}/core/css/styles.css", 'r') as file:
         app.setStyleSheet(file.read())
+    
+    username = getpass.getuser()
+    sw_dir = f"C:/Users/{username}/AppData/Local/{name}/QtWebEngine/Default/Service Worker"
+    shutil.rmtree(sw_dir, ignore_errors=True)
 
-    try:
-        shutil.rmtree(
-            f"C:/Users/{username}/AppData/Local/{name}/QtWebEngine/Default/Service Worker"
-        )
-    except Exception as e:
-        print(e)
-
-    main_window = Window(
-        name,
-        version,
-        current_dir,
-        settings
-    )
+    main_window = MainWindow(app_info=[name, version, current_dir])
     
     sys.exit(app.exec_())

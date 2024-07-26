@@ -1,1 +1,0 @@
-document.querySelector(".image.style-scope.ytmusic-player-bar").getAttribute("src")

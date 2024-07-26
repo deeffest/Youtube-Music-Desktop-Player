@@ -1,666 +1,726 @@
-import os
-import sys
-import requests
-import webbrowser
 import pywinstyles
-from threading import Thread
-from pypresence import Presence
+import webbrowser
+import sys
+import subprocess
+import subprocess
+import os
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, \
-    QFileDialog, QShortcut
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QShortcut, \
+    QFileDialog, QApplication
+from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings, \
+    QWebEngineScript
+from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtCore import QSettings, QUrl, Qt, QSize, pyqtSlot, QPoint, \
+    QProcess
 from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtCore import QSize, Qt, QUrl, QTimer
-from PyQt5.QtWinExtras import QWinThumbnailToolBar, \
-    QWinThumbnailToolButton
-from PyQt5.QtWebEngineWidgets import QWebEngineSettings, \
-    QWebEnginePage
-from PyQt5 import uic
-from qfluentwidgets import InfoBar, InfoBarPosition, \
-    setTheme, setThemeColor, Theme, SplashScreen, \
-    PushButton, MessageBox, ToolTipFilter, ToolTipPosition
-
-from core.web_engine_page import WebEnginePage
+from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
+from PyQt5.uic import loadUi
+from qfluentwidgets import setTheme, setThemeColor, Theme, \
+    RoundMenu, Action, SplashScreen, MessageBox
 from core.web_engine_view import WebEngineView
-from core.download_manager import DownloadManager
-from core.options_dialog import OptionsDlg
-from core.about_dialog import AboutDlg
-from core.mini_player_dialog import MiniPlayerDlg
-from core.tray_icon import TrayIcon
+from core.web_engine_page import WebEnginePage
+from core.settings_dialog import SettingsDialog
+from core.about_dialog import AboutDialog
+from core.mini_player_dialog import MiniPlayerDialog
+from pypresence import Presence
+from core.system_tray_icon import SystemTrayIcon
+from core.update_checker import UpdateChecker
 
-class Window(QMainWindow):
-    def __init__(
-        self,
-        name,
-        version,
-        current_dir,
-        settings,
-        parent=None
-    ):
+class MainWindow(QMainWindow):
+    def __init__(self, app_info, parent=None):
         super().__init__(parent)
-
-        self.name = name
-        self.version = version
-        self.current_dir = current_dir
-        self.settings = settings
+        self.name = app_info[0]
+        self.version = app_info[1]
+        self.current_dir = app_info[2]
+        self.icon_folder = f"{self.current_dir}/resources/icons"
+    
+        self.load_settings()
+        self.load_ui()
+        self.show_splash_screen()
+        self.create_webengine()
+        self.setup_webchannel()
+        self.create_menu()
+        self.create_toolbar()
+        self.setup_shortcuts()
+        self.activate_plugins()
+        self.check_updates()
         
-        self._init_attributes()
-        self.win_toolbar = QWinThumbnailToolBar(self)
-        self.create_win_toolbar_buttons()
+        self.mini_player_dialog = MiniPlayerDialog(self)
 
-        uic.loadUi(
-            f"{self.current_dir}/core/ui/main_window.ui", self
-        ) 
+    def previous_youtube_video(self):
+        self.webview.page().runJavaScript(self.read_script("previous_youtube_video.js"))
 
-        setTheme(Theme.DARK)
-        setThemeColor("red")
-        pywinstyles.apply_style(self, "dark")
+    def play_pause_youtube_video(self):
+        self.webview.page().runJavaScript(self.read_script("play_pause_youtube_video.js"))
+
+    def next_youtube_video(self):
+        self.webview.page().runJavaScript(self.read_script("next_youtube_video.js"))
+
+    def setup_webchannel(self):
+        self.webchannel = QWebChannel()
+        self.webview.page().setWebChannel(self.webchannel)
+        self.webchannel.registerObject("backend", self)
+
+    @pyqtSlot(str, str, str)
+    def track_info_changed(self, title, author, thumbnail_url):
+        if title == '' or author == '' or thumbnail_url == '':
+            print("No track is currently playing.")
+            self.setWindowTitle("Youtube Music Desktop Player")
+
+            if self.tray_icon is not None:
+                self.tray_icon.setToolTip("Youtube Music Desktop Player")
+
+            if self.discord_rpc:
+                self.discord_rpc.clear()
+        else:
+            print(f"Track info changed: Title='{title}', Author='{author}', Thumbnail URL='{thumbnail_url}'")
+            self.mini_player_dialog.update_track_info(title, author, thumbnail_url)
+            self.update_discord_rpc(title, author, thumbnail_url)
+            self.setWindowTitle(f"{title} - Youtube Music Desktop Player")
+            if self.tray_icon:
+                self.tray_icon.setToolTip(f"{title} - Youtube Music Desktop Player")
+
+    def update_discord_rpc(self, title, author, thumbnail_url):
+        if self.discord_rpc:
+            try:
+                self.discord_rpc.update(
+                    details=title,
+                    state=author,
+                    large_image=thumbnail_url, 
+                    small_image="https://music.youtube.com/img/favicon_32.png",
+                )
+                print("Discord RPC updated.")
+            except Exception as e:
+                print(f"Error updating Discord RPC: {e}")
         
-        self._init_window()
-        self._init_content()
-        self._init_connect()
-        self._init_tooltips()
-        
-    def _init_attributes(self):
-        self.icon_path = f"{self.window().current_dir}/resources/icons"
-        self.win_toolbar_icon_path = f"{self.window().current_dir}/resources/win_toolbar_icons"
-        self.discord_rpc = None
-        self.track_title = None
-        self.track_author = None
-        self.current_image_url = None
-        self.previous_image_url = None
-        self.previous_track_title = None
-        self.previous_track_author = None
+    @pyqtSlot(str)
+    def video_state_changed(self, state):
+        print(f"Video state changed: {state}")
 
-    def _init_connect(self):
-        self.webview.titleChanged.connect(self.update_window_title)
-        self.webview.urlChanged.connect(self.update_url)
-        self.webview.loadProgress.connect(self.on_load_progress)
-        self.tool_btn_previous.clicked.connect(self.previous_track)
-        self.tool_btn_next.clicked.connect(self.next_track)
-        self.tool_btn_play_pause.clicked.connect(self.play_pause_track)
-        self.ToolButton.clicked.connect(self.go_back)
-        self.ToolButton_2.clicked.connect(self.go_forward)
-        self.ToolButton_3.clicked.connect(self.go_home)
-        self.ToolButton_4.clicked.connect(self.go_reload)
-        self.ToolButton_5.clicked.connect(self.go_download)
-        self.ToolButton_6.clicked.connect(self.open_mini_player)
-        self.ToolButton_7.clicked.connect(self.open_settings_dialog)
+        if state == "VideoPlaying":
+            self.mini_player_dialog.previous_button.setEnabled(True)
+            self.mini_player_dialog.play_pause_button.setIcon(
+                    QIcon(f"{self.icon_folder}/pause-filled.png"))
+            self.mini_player_dialog.play_pause_button.setEnabled(True)
+            self.mini_player_dialog.next_button.setEnabled(True)
+            
+            if self.win_thumbmail_buttons_setting == 1:
+                if self.win_thumbnail_toolbar is not None:
+                    self.tool_btn_previous.setIcon(
+                        QIcon(f"{self.icon_folder}/previous-border.png"))
+                    self.tool_btn_play_pause.setIcon(
+                        QIcon(f"{self.icon_folder}/pause-border.png"))            
+                    self.tool_btn_next.setIcon(
+                        QIcon(f"{self.icon_folder}/next-border.png"))
+                    self.tool_btn_previous.setEnabled(True)
+                    self.tool_btn_play_pause.setEnabled(True)
+                    self.tool_btn_next.setEnabled(True)
 
-    def _init_tooltips(self):
-        tooltips = {
-            self.ToolButton: "Back",
-            self.ToolButton_2: "Forward",
-            self.ToolButton_3: "Go to Home",
-            self.ToolButton_4: "Reload Page",
-            self.ToolButton_5: "Download Track/Playlist",
-            self.ToolButton_6: "Open Mini-Player",
-            self.ToolButton_7: "Open Settings"
-        }
-        for widget, tip_text in tooltips.items():
-            widget.setToolTip(tip_text)
-            widget.installEventFilter(ToolTipFilter(widget, 0, ToolTipPosition.TOP))
+            if self.tray_icon_setting == 1:
+                if self.tray_icon is not None:
+                    self.tray_icon.previous_action.setEnabled(True)
+                    self.tray_icon.play_pause_action.setIcon(
+                            QIcon(f"{self.icon_folder}/pause.png"))
+                    self.tray_icon.play_pause_action.setEnabled(True)
+                    self.tray_icon.next_action.setEnabled(True)
 
-    def _init_shortcuts(self):
+        elif state == "VideoPaused":
+            self.mini_player_dialog.previous_button.setEnabled(True)
+            self.mini_player_dialog.play_pause_button.setIcon(
+                    QIcon(f"{self.icon_folder}/play-filled.png"))
+            self.mini_player_dialog.play_pause_button.setEnabled(True)
+            self.mini_player_dialog.next_button.setEnabled(True)
+                
+            if self.win_thumbmail_buttons_setting == 1:
+                if self.win_thumbnail_toolbar is not None:
+                    self.tool_btn_previous.setIcon(
+                        QIcon(f"{self.icon_folder}/previous-border.png"))
+                    self.tool_btn_play_pause.setIcon(
+                        QIcon(f"{self.icon_folder}/play-border.png"))            
+                    self.tool_btn_next.setIcon(
+                        QIcon(f"{self.icon_folder}/next-border.png"))
+                    self.tool_btn_previous.setEnabled(True)
+                    self.tool_btn_play_pause.setEnabled(True)
+                    self.tool_btn_next.setEnabled(True)
+
+            if self.tray_icon_setting == 1:
+                if self.tray_icon is not None:
+                    self.tray_icon.previous_action.setEnabled(True)
+                    self.tray_icon.play_pause_action.setIcon(
+                            QIcon(f"{self.icon_folder}/play.png"))
+                    self.tray_icon.play_pause_action.setEnabled(True)
+                    self.tray_icon.next_action.setEnabled(True)
+
+        elif state == "NoVideo":
+            self.mini_player_dialog.previous_button.setEnabled(False)
+            self.mini_player_dialog.play_pause_button.setIcon(
+                    QIcon(f"{self.icon_folder}/play-filled.png"))
+            self.mini_player_dialog.play_pause_button.setEnabled(False)
+            self.mini_player_dialog.next_button.setEnabled(False)
+            
+            if self.win_thumbmail_buttons_setting == 1:
+                if self.win_thumbnail_toolbar is not None:
+                    self.tool_btn_previous.setIcon(
+                        QIcon(f"{self.icon_folder}/previous-border-disabled.png"))
+                    self.tool_btn_play_pause.setIcon(
+                        QIcon(f"{self.icon_folder}/play-border-disabled.png"))            
+                    self.tool_btn_next.setIcon(
+                        QIcon(f"{self.icon_folder}/next-border-disabled.png"))
+                    self.tool_btn_previous.setEnabled(False)
+                    self.tool_btn_play_pause.setEnabled(False)
+                    self.tool_btn_next.setEnabled(False)
+
+            if self.tray_icon_setting == 1:
+                if self.tray_icon is not None:
+                    self.tray_icon.previous_action.setEnabled(False)
+                    self.tray_icon.play_pause_action.setIcon(
+                            QIcon(f"{self.icon_folder}/play.png"))
+                    self.tray_icon.play_pause_action.setEnabled(False)
+                    self.tray_icon.next_action.setEnabled(False)
+
+    def show_splash_screen(self):
+        self.splash_screen = SplashScreen(self.windowIcon(), self)
+        self.splash_screen.setIconSize(QSize(102, 102))
+        self.splash_screen.titleBar.hide()
+
+        self.show()
+
+    def activate_plugins(self):
+        if self.youtube_ad_blocker_setting == 1:
+            self.youtube_ad_blocker_plugin = QWebEngineScript()
+            self.youtube_ad_blocker_plugin.setName("YoutubeAdBlocker")
+            self.youtube_ad_blocker_plugin.setSourceCode(self.read_script("youtube_ad_blocker.js"))
+            self.youtube_ad_blocker_plugin.setInjectionPoint(QWebEngineScript.DocumentReady)
+            self.youtube_ad_blocker_plugin.setWorldId(QWebEngineScript.ApplicationWorld)
+            self.youtube_ad_blocker_plugin.setRunsOnSubFrames(True)
+            self.webpage.profile().scripts().insert(self.youtube_ad_blocker_plugin)
+
+        scrollbar_stylizer_plugin = QWebEngineScript()
+        scrollbar_stylizer_plugin.setName("ScrollbarStylizer")
+        scrollbar_stylizer_plugin.setSourceCode(self.read_script("scrollbar_stylizer.js"))
+        scrollbar_stylizer_plugin.setInjectionPoint(QWebEngineScript.DocumentReady)
+        scrollbar_stylizer_plugin.setWorldId(QWebEngineScript.ApplicationWorld)
+        scrollbar_stylizer_plugin.setRunsOnSubFrames(True)
+        self.webpage.profile().scripts().insert(scrollbar_stylizer_plugin)
+
+        if self.discord_rpc_setting == 1:
+            self.discord_rpc = Presence("1254202610781655050")
+            try:
+                self.discord_rpc.connect()
+            except Exception as e:
+                self.discord_rpc = None
+        else:
+            self.discord_rpc = None
+
+        youtube_music_player_observer_plugin = QWebEngineScript()
+        youtube_music_player_observer_plugin.setName("YoutubeMusicPlayerObserver")
+        youtube_music_player_observer_plugin.setSourceCode(
+            self.read_script("youtube_music_player_observer.js"))
+        youtube_music_player_observer_plugin.setInjectionPoint(QWebEngineScript.Deferred)
+        youtube_music_player_observer_plugin.setWorldId(QWebEngineScript.MainWorld)
+        youtube_music_player_observer_plugin.setRunsOnSubFrames(True)
+        self.webpage.profile().scripts().insert(youtube_music_player_observer_plugin)
+
+        if self.win_thumbmail_buttons_setting == 1:
+            self.win_thumbnail_toolbar = QWinThumbnailToolBar(self)
+            
+            self.tool_btn_previous = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
+            self.tool_btn_previous.setToolTip('Previous')
+            self.tool_btn_previous.setEnabled(False)
+            self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-border-disabled.png"))
+            self.tool_btn_previous.clicked.connect(self.previous_youtube_video)
+            self.win_thumbnail_toolbar.addButton(self.tool_btn_previous)
+
+            self.tool_btn_play_pause = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
+            self.tool_btn_play_pause.setToolTip('Play/Pause')
+            self.tool_btn_play_pause.setEnabled(False)
+            self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/pause-border-disabled.png"))  
+            self.tool_btn_play_pause.clicked.connect(self.play_pause_youtube_video)                   
+            self.win_thumbnail_toolbar.addButton(self.tool_btn_play_pause)
+
+            self.tool_btn_next = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
+            self.tool_btn_next.setToolTip('Next')
+            self.tool_btn_next.setEnabled(False)
+            self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-border-disabled.png"))
+            self.tool_btn_next.clicked.connect(self.next_youtube_video)
+            self.win_thumbnail_toolbar.addButton(self.tool_btn_next)
+
+            self.win_thumbnail_toolbar.setWindow(self.windowHandle())
+        else:
+            self.win_thumbnail_toolbar = None
+
+        if self.tray_icon_setting == 1:
+            self.tray_icon = SystemTrayIcon(self.windowIcon(), self)
+            self.tray_icon.show()
+        else:
+            self.tray_icon = None
+
+    def read_script(self, filename):
+        with open(f"{self.current_dir}/core/js/{filename}", "r", encoding='utf-8') as f:
+            return f.read()
+
+    def load_settings(self):
+        self.settings = QSettings("deeffest", self.name)
+
+        self.youtube_ad_blocker_setting = int(self.settings.value("ad_blocker", 0))
+        self.save_last_win_size_setting = int(self.settings.value("save_last_win_size", 1))
+        self.open_last_url_at_startup_setting = int(self.settings.value("open_last_url_at_startup", 1))
+        self.last_url_setting = self.settings.value("last_url", "https://music.youtube.com/")
+        self.fullscreen_mode_support_setting = int(self.settings.value("fullscreen_mode_support", 1))
+        self.support_animated_scrolling_setting = int(self.settings.value("support_animated_scrolling", 0))
+        self.save_last_pos_of_mp_setting = int(self.settings.value("save_last_pos_of_mp", 1))
+        self.last_win_size_setting = self.settings.value("last_win_size", QSize(1080, 600))
+        self.save_last_zoom_factor_setting = int(self.settings.value("save_last_zoom_factor", 1))
+        self.last_zoom_factor_setting = float(self.settings.value("last_zoom_factor", 1.0))
+        self.last_download_folder_setting = self.settings.value("last_download_folder", self.current_dir)
+        self.discord_rpc_setting = int(self.settings.value("discord_rpc", 0))
+        self.save_last_pos_of_mp_setting = int(self.settings.value("save_last_pos_of_mp", 1))
+        self.last_pos_of_mp_setting = self.settings.value("last_pos_of_mp", QPoint(30, 30))
+        self.win_thumbmail_buttons_setting = int(self.settings.value("win_thumbmail_buttons", 1))
+        self.tray_icon_setting = int(self.settings.value("tray_icon", 0))
+
+    def setup_shortcuts(self):
         shortcuts = {
-            Qt.Key_Left: self.go_back,
-            Qt.Key_Right: self.go_forward,
-            Qt.CTRL + Qt.Key_H: self.go_home,
-            Qt.CTRL + Qt.Key_R: self.go_reload,
-            Qt.CTRL + Qt.Key_D: self.go_download,
+            Qt.ALT + Qt.Key_Left: self.back,
+            Qt.ALT + Qt.Key_Right: self.forward,
+            Qt.CTRL + Qt.Key_H: self.home,
+            Qt.CTRL + Qt.Key_R: self.reload,
+            Qt.CTRL + Qt.Key_D: self.download_mp3,
+            Qt.CTRL + Qt.SHIFT + Qt.Key_D: self.download_mp4,
+            Qt.CTRL + Qt.Key_A: self.download_with_custom_args,
             Qt.CTRL + Qt.Key_M: self.open_mini_player,
-            Qt.CTRL + Qt.Key_S: self.open_settings_dialog,
+            Qt.CTRL + Qt.Key_S: self.open_settings,
         }
         for key, value in shortcuts.items():
             shortcut = QShortcut(QKeySequence(key), self)
             shortcut.activated.connect(value)
 
-    def _init_content(self):
-        self._init_webview()
-        self._init_splash_screen()
-        self.label_3.hide()
-        self.label.setText(f"{self.name} {self.version}")
-        self.setup_ds_integration()
-
-    def _init_webview(self):
-        self.webview = WebEngineView()
-
-        self.webpage = WebEnginePage(self.webview)
-        self.webpage.setParent(self)
-        self.webview.setPage(self.webpage)
-        self.webpage.fullScreenRequested.connect(
-            self.handle_fullscreen
-        )
-        zoom_factor = self.settings.value("default_page_zoom_factor", 1.0)
-        self.webpage.setZoomFactor(float(zoom_factor))
-
-        self.websettings = QWebEngineSettings.globalSettings()
-        self.websettings.setAttribute(
-            QWebEngineSettings.FullScreenSupportEnabled, 
-            self.settings.value(
-                "support_full_screen_mode", "true").lower() == "true"
-        )
-        self.websettings.setAttribute(
-            QWebEngineSettings.ScrollAnimatorEnabled, 
-            self.settings.value(
-                "support_for_animated_scrolling", "true").lower() == "true"
-        )
-
-        if self.settings.value("open_last_url_at_startup", "false") == "true":
-            self.webview.load(QUrl(self.settings.value("last_url")))
-        else:
-            self.webview.load(QUrl("https://music.youtube.com"))
-        
-        self.horizontalLayout.addWidget(self.webview)
-
-        self._init_tray_icon()
-        self._init_shortcuts()
-
-    def _init_tray_icon(self):
-        self.tray_icon = TrayIcon(            
-            self.current_dir,
-            self.name,
-            self.settings, 
-            parent=self
-        )
-
-    def _init_splash_screen(self):
-        self.splash_screen_is_over = False
-        
-        self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.titleBar.hide()
-        self.splashScreen.setIconSize(QSize(102, 102))
-        self.show()
-
-    def _init_ds_integration(self):
-        self.discord_rpc = Presence("1254202610781655050")
-        self.discord_rpc.connect()
-
-    def go_back(self):
+    def back(self):
         self.webview.back()
 
-    def go_forward(self):
+    def forward(self):
         self.webview.forward()
 
-    def go_home(self):
-        self.webview.load(QUrl("https://music.youtube.com"))
+    def home(self):
+        self.webview.load(QUrl("https://music.youtube.com/"))
 
-    def go_reload(self):
+    def reload(self):
         self.webview.reload()
 
-    def go_download(self):
-        if hasattr(self, "dots_timer"):
-            w = MessageBox(f"The current download request is denied.", 
-                "Wait for the app to finish the current track/playlist download.", self)
-            w.cancelButton.hide()
-            w.exec_()
-            return
-        
+    def download_mp3(self):
         if "watch" in self.webview.url().toString():
-            download_type = "track"
+            try:
+                self.download_mp3_track()
+            except Exception as e:
+                print(e)
         elif "playlist" in self.webview.url().toString():
-            download_type = "playlist"
-        else:
+            try:
+                self.download_mp3_playlist()
+            except Exception as e:
+                print(e)
+
+    def download_mp4(self):
+        if "watch" in self.webview.url().toString():
+            try:
+                self.download_mp4_track()
+            except Exception as e:
+                print(e)
+        elif "playlist" in self.webview.url().toString():
+            try:
+                self.download_mp4_playlist()
+            except Exception as e:
+                print(e)
+
+    def select_download_folder(self):
+        folder = QFileDialog.getExistingDirectory(self, "Select Download Folder", 
+                                                  self.last_download_folder_setting)
+        return folder if folder else None
+
+    def download_mp3_track(self):
+        url = self.webview.url().toString()
+        clean_url = url.split('&list')[0]
+
+        download_folder = self.select_download_folder()
+        if download_folder is None:
             return
+        self.last_download_folder_setting = download_folder
+        self.settings.setValue("last_download_folder", download_folder)
 
-        last_download_path = self.settings.value(
-            "last_download_path", 
-            self.current_dir
+        yt_dlp_path = os.path.join(self.current_dir, "bin/yt-dlp.exe")
+        CREATE_NEW_CONSOLE = subprocess.CREATE_NEW_CONSOLE
+
+        subprocess.Popen(
+            [yt_dlp_path,
+            "-U",
+            "-x", 
+            "--audio-format", "mp3", 
+            "--audio-quality","0",
+            "-o", f"{download_folder}/%(title)s.%(ext)s", 
+            clean_url],
+            creationflags=CREATE_NEW_CONSOLE
         )
-        download_path = QFileDialog.getExistingDirectory(
-            self, 
-            "Select Directory", 
-            last_download_path, 
-            QFileDialog.ShowDirsOnly
-        )
+
+    def download_mp3_playlist(self):
+        url = self.webview.url().toString()
+        playlist_id = url.split('list=')[-1]
+
+        download_folder = self.select_download_folder()
+        if download_folder is None:
+            return
+        self.last_download_folder = download_folder
+        self.settings.setValue("last_download_folder", download_folder)        
         
-        if download_path:
-            self.settings.setValue(
-                "last_download_path", 
-                download_path
-            )
-            url = self.webview.url().toString()
+        playlist_folder = os.path.join(download_folder, f"Playlist_{playlist_id}")
+        os.makedirs(playlist_folder, exist_ok=True)
 
-            self.download_manager = DownloadManager(self.current_dir, self.settings)
-            self.download_manager.downloadFinished.connect(
-                self.on_download_finished
-            )
-            self.download_manager.downloadError.connect(
-                self.on_download_error
-            )
+        yt_dlp_path = os.path.join(self.current_dir, "bin/yt-dlp.exe")
+        CREATE_NEW_CONSOLE = subprocess.CREATE_NEW_CONSOLE
 
-            Thread(
-                target=self.download_manager.download_external_process, 
-                args=(url, download_path, download_type)
-            ).start()
-
-            self.add_download_progress(download_type)
-
-    def add_download_progress(self, download_type):
-        self.label_2.setText(f"Downloading {download_type}...")
-        self.label_3.show()
-        self.dots_count = 0
-        self.dots_timer = QTimer(self)
-        self.dots_timer.timeout.connect(lambda: self.update_dots(download_type))
-        self.dots_timer.start(500)
-
-    def update_dots(self, download_type):
-        self.dots_count = (self.dots_count + 1) % 4
-        dots = "." * self.dots_count
-        self.label_2.setText(f"Downloading {download_type}" + dots)
-
-    def stop_download_progress(self):
-        if hasattr(self, 'dots_timer'):
-            self.dots_timer.stop()
-            del self.dots_timer
-            self.label_2.setText("")
-            self.label_3.hide()
-
-    def on_download_finished(self, download_path):
-        self.stop_download_progress()
-
-        path_msg_box = InfoBar.success(
-            title="Successfully downloaded!",
-            content="",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM,
-            duration=-1,
-            parent=self
+        subprocess.Popen(
+            [yt_dlp_path,
+            "-U",
+            "-x",
+            "--audio-format", "mp3", 
+            "--audio-quality", "0",
+            "-o", f"{playlist_folder}/%(title)s.%(ext)s", 
+            url],
+            creationflags=CREATE_NEW_CONSOLE
         )
-        open_path_btn = PushButton("Download Path")
-        open_path_btn.clicked.connect(lambda: self.open_download_path(download_path, path_msg_box))
-        path_msg_box.addWidget(open_path_btn)
 
-    def open_download_path(self, download_path, path_msg_box):
-        os.startfile(download_path)
-        path_msg_box.close()
+    def download_mp4_track(self):
+        url = self.webview.url().toString()
+        clean_url = url.split('&list')[0]
 
-    def on_download_error(self, error_message):
-        self.stop_download_progress()
+        download_folder = self.select_download_folder()
+        if download_folder is None:
+            return
+        self.last_download_folder = download_folder
+        self.settings.setValue("last_download_folder", download_folder)
 
-        error_msg_box = InfoBar.error(
-            title="Download error:(",
-            content="",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM,
-            duration=-1,
-            parent=self
+        yt_dlp_path = os.path.join(self.current_dir, "bin/yt-dlp.exe")
+        CREATE_NEW_CONSOLE = subprocess.CREATE_NEW_CONSOLE
+
+        subprocess.Popen(
+            [yt_dlp_path,
+            "-U",
+            "-f", "best[ext=mp4]",
+            "--merge-output-format", "mp4",
+            "-o", f"{download_folder}/%(title)s.%(ext)s", 
+            clean_url],
+            creationflags=CREATE_NEW_CONSOLE
         )
-        open_error_btn = PushButton("Error Message")
-        open_error_btn.clicked.connect(lambda: self.open_temp_error(error_message, error_msg_box))
-        error_msg_box.addWidget(open_error_btn)
 
-    def open_temp_error(self, error_message, error_msg_box):
-        import tempfile
-        
-        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False, mode='w') as f:
-            if isinstance(error_message, bytes):
-                error_message = error_message.decode('utf-8')
-            f.write(error_message)
-            f.flush()
-            os.startfile(f.name)
+    def download_mp4_playlist(self):
+        url = self.webview.url().toString()
+        playlist_id = url.split('list=')[-1]
 
-        error_msg_box.close()
+        download_folder = self.select_download_folder()
+        if download_folder is None:
+            return
+        self.last_download_folder = download_folder
+        self.settings.setValue("last_download_folder", download_folder)        
+
+        playlist_folder = os.path.join(download_folder, f"Playlist_{playlist_id}")
+        os.makedirs(playlist_folder, exist_ok=True)
+
+        yt_dlp_path = os.path.join(self.current_dir, "bin/yt-dlp.exe")
+        CREATE_NEW_CONSOLE = subprocess.CREATE_NEW_CONSOLE
+
+        subprocess.Popen(
+            [yt_dlp_path,
+            "-U",
+            "-f", "best[ext=mp4]",
+            "--merge-output-format", "mp4",
+            "-o", f"{playlist_folder}/%(title)s.%(ext)s", 
+            url],
+            creationflags=CREATE_NEW_CONSOLE
+        )
+
+    def download_with_custom_args(self):
+        CREATE_NEW_CONSOLE = subprocess.CREATE_NEW_CONSOLE
+        try:
+            subprocess.Popen(
+                ["cmd.exe", "/K", "yt-dlp.exe --help"],
+                creationflags=CREATE_NEW_CONSOLE,
+                cwd=self.current_dir + "/bin"
+            )
+        except Exception as e:
+            print(e)
 
     def open_mini_player(self):
-        if not "watch" in self.webview.url().toString():
-            return
-        Dlg = MiniPlayerDlg(
-            self.current_dir,
-            self.name,
-            self.settings, 
-            parent=self
-        )
+        if "watch" in self.webview.url().toString():
+            pywinstyles.apply_style(self.mini_player_dialog, "dark")
+            self.mini_player_dialog.show()
+            self.hide()
+            if self.tray_icon is not None:
+                self.tray_icon.hide()
 
-    def handle_fullscreen(self, request):
-        if(request.toggleOn()):            
-            self.frame_2.hide()
-            self.horizontalFrame.hide()
-            self.showFullScreen()
-            request.accept()
-        else:            
-            self.frame_2.show()
-            self.horizontalFrame.show()
-            self.showNormal()
-            request.accept()
+    def open_settings(self):
+        dlg = SettingsDialog(self)
+        dlg.exec()
+        
+    def create_toolbar(self):
+        self.back_tbutton.setIcon(QIcon(f"{self.icon_folder}/left.png"))
+        self.back_tbutton.clicked.connect(self.webview.back)
 
-    def open_in_browser(self, event):
-        if event.button() == Qt.LeftButton:
-            webbrowser.open_new_tab(
-                self.webview.url().toString()
-            )
-            
-    def on_load_progress(self, progress):
-        if progress == 100:
-            if not self.splash_screen_is_over:
-                if self.isHidden():
-                    self.show()
-                    self.splashScreen.finish()
-                    self.hide()
-                else:
-                    self.splashScreen.finish()
+        self.forward_tbutton.setIcon(QIcon(f"{self.icon_folder}/right.png"))
+        self.forward_tbutton.clicked.connect(self.webview.forward)
 
-                if self.settings.value("check_for_updates_at_startup", "true") == "true":
-                    self.check_for_updates()
-            self.splash_screen_is_over = True
+        self.home_tbutton.setIcon(QIcon(f"{self.icon_folder}/home.png"))
+        self.home_tbutton.clicked.connect(self.home)
 
-            with open(f"{self.current_dir}/core/js/add_styles.js", "r") as js_file:
-                self.webview.page().runJavaScript(js_file.read())
+        self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
+        self.reload_tbutton.clicked.connect(self.webview.reload)
 
-            self.update_play_pause_icon()
+        self.download_stbutton.setIcon(QIcon(f"{self.icon_folder}/download.png"))
+        self.download_stbutton.setFlyout(self.download_menu)
+        self.download_stbutton.clicked.connect(self.download_mp3)
 
-    def setup_ds_integration(self):
-        if self.settings.value("discord_integration", "false") == "true":
-            try:
-                self._init_ds_integration()
-            except Exception as e:
-                print(f"Discord initialization was not successful: {e}")
+        self.mini_player_tbutton.setIcon(QIcon(f"{self.icon_folder}/mini-player.png"))
+        self.mini_player_tbutton.clicked.connect(self.open_mini_player)
 
-    def open_settings_dialog(self):
-        Dlg = OptionsDlg(
-            self.current_dir,
-            self.name,
-            self.settings, 
-            parent=self
-            )
-        Dlg.exec_()
+        self.settings_tbutton.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
+        self.settings_tbutton.clicked.connect(self.open_settings)
 
-    def open_about_dialog(self):
-        Dlg = AboutDlg(
-            self.current_dir,
-            self.name,
-            self.settings, 
-            self.version,
-            parent=self
-            )
-        Dlg.exec_()
+    def create_menu(self):
+        self.back_action = Action("Back", shortcut="Alt+Left")
+        self.back_action.setIcon(QIcon(f"{self.icon_folder}/left.png"))
+        self.back_action.triggered.connect(self.webview.back)
 
-    def handle_copy(self):
+        self.forward_action = Action("Forward", shortcut="Alt+Right")
+        self.forward_action.setIcon(QIcon(f"{self.icon_folder}/right.png"))
+        self.forward_action.triggered.connect(self.webview.forward)
+
+        self.home_action = Action("Home", shortcut="Ctrl+H")
+        self.home_action.setIcon(QIcon(f"{self.icon_folder}/home.png"))
+        self.home_action.triggered.connect(self.home)
+
+        self.reload_action = Action("Reload", shortcut="Ctrl+R")
+        self.reload_action.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
+        self.reload_action.triggered.connect(self.webview.reload)
+
+        self.download_menu = RoundMenu("Download...")
+        self.download_menu.setIcon(QIcon(f"{self.icon_folder}/download.png"))
+
+        self.mp3_track_playlist_action = Action("MP3 Track/Playlist", shortcut="Ctrl+D")
+        self.mp3_track_playlist_action.setIcon(QIcon(f"{self.icon_folder}/track.png"))
+        self.mp3_track_playlist_action.triggered.connect(self.download_mp3)
+
+        self.mp4_track_playlist_action = Action("MP4 Track/Playlist", shortcut="Ctrl+Shift+D")
+        self.mp4_track_playlist_action.setIcon(QIcon(f"{self.icon_folder}/video.png"))
+        self.mp4_track_playlist_action.triggered.connect(self.download_mp4)
+
+        self.custom_args_action = Action("Custom args...", shortcut="Ctrl+A")
+        self.custom_args_action.setIcon(QIcon(f"{self.icon_folder}/cmd.png"))
+        self.custom_args_action.triggered.connect(self.download_with_custom_args)
+
+        self.mini_player_action = Action("Mini-Player", shortcut="Ctrl+M")
+        self.mini_player_action.setIcon(QIcon(f"{self.icon_folder}/mini-player.png"))
+        self.mini_player_action.triggered.connect(self.open_mini_player)
+
+        self.settings_action = Action("Settings", shortcut="Ctrl+S")
+        self.settings_action.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
+        self.settings_action.triggered.connect(self.open_settings)
+
+        self.bug_report_action = Action("Bug Report")
+        self.bug_report_action.setIcon(QIcon(f"{self.icon_folder}/bug.png"))
+        self.bug_report_action.triggered.connect(self.bug_report)
+
+        self.about_app_action = Action("About...")
+        self.about_app_action.setIcon(QIcon(f"{self.icon_folder}/about.png"))
+        self.about_app_action.triggered.connect(self.about_app)
+
+        self.copy_action = Action("Copy", shortcut="Ctrl+C")
+        self.copy_action.setIcon(QIcon(f"{self.icon_folder}/copy.png"))
+        self.copy_action.triggered.connect(self.copy)
+
+        self.paste_action = Action("Paste", shortcut="Ctrl+V")
+        self.paste_action.setIcon(QIcon(f"{self.icon_folder}/paste.png"))
+        self.paste_action.triggered.connect(self.paste)
+
+        self.main_menu = RoundMenu(self)
+        self.edit_menu = RoundMenu(self)
+
+        self.main_menu.addAction(self.back_action)
+        self.main_menu.addAction(self.forward_action)
+        self.main_menu.addAction(self.home_action)
+        self.main_menu.addAction(self.reload_action)
+        self.main_menu.addSeparator()
+        self.main_menu.addMenu(self.download_menu)
+
+        self.main_menu.addAction(self.mini_player_action)
+        self.main_menu.addSeparator()
+        self.main_menu.addAction(self.settings_action)
+        self.main_menu.addSeparator()
+        self.main_menu.addAction(self.bug_report_action)
+        self.main_menu.addAction(self.about_app_action)        
+        
+        self.download_menu.addAction(self.mp3_track_playlist_action)
+        self.download_menu.addAction(self.mp4_track_playlist_action)
+        self.download_menu.addSeparator()
+        self.download_menu.addAction(self.custom_args_action)
+
+        self.edit_menu.addAction(self.copy_action)
+        self.edit_menu.addAction(self.paste_action)
+
+    def about_app(self):
+        dlg = AboutDialog(self)
+        dlg.exec()
+
+    def bug_report(self):
+        webbrowser.open_new_tab(
+            "https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose")
+
+    def copy(self):
         self.webpage.triggerAction(QWebEnginePage.Copy)
 
-    def handle_paste(self):
+    def paste(self):
         self.webpage.triggerAction(QWebEnginePage.Paste)
 
-    def create_win_toolbar_buttons(self):
-        self.tool_btn_previous = QWinThumbnailToolButton(self.win_toolbar)
-        self.tool_btn_previous.setToolTip('Previous')
-        self.tool_btn_previous.setEnabled(False)
-        self.tool_btn_previous.setIcon(QIcon(f"{self.win_toolbar_icon_path}/previous.png"))
-        self.win_toolbar.addButton(self.tool_btn_previous)
-
-        self.tool_btn_play_pause = QWinThumbnailToolButton(self.win_toolbar)
-        self.tool_btn_play_pause.setToolTip('Play/Pause')
-        self.tool_btn_play_pause.setEnabled(False)
-        self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/pause.png"))                     
-        self.win_toolbar.addButton(self.tool_btn_play_pause)
-
-        self.tool_btn_next = QWinThumbnailToolButton(self.win_toolbar)
-        self.tool_btn_next.setToolTip('Next')
-        self.tool_btn_next.setEnabled(False)
-        self.tool_btn_next.setIcon(QIcon(f"{self.win_toolbar_icon_path}/next.png"))
-        self.win_toolbar.addButton(self.tool_btn_next)
-
-    def previous_track(self):
-        with open(f"{self.current_dir}/core/js/previous_track.js", "r") as js_file:
-            self.webview.page().runJavaScript(js_file.read())  
-
-    def next_track(self):
-        with open(f"{self.current_dir}/core/js/next_track.js", "r") as js_file:
-            self.webview.page().runJavaScript(js_file.read())  
-
-    def play_pause_track(self):
-        with open(f"{self.current_dir}/core/js/play_pause_track.js", "r") as js_file:
-            self.webview.page().runJavaScript(js_file.read())
-        self.update_play_pause_icon()
-
-    def update_play_pause_icon(self):
-        with open(f"{self.current_dir}/core/js/get_play_pause_state.js", "r") as js_file:
-            self.webview.page().runJavaScript(js_file.read(), self.set_play_pause_icon)
-  
-    def set_play_pause_icon(self, is_paused):
-        if is_paused: 
-            if "watch" in self.webview.url().toString():           
-                self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/play.png"))
-                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_path}/play.svg"))
-            else:
-                self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/play-disabled.png"))
+    def create_webengine(self):
+        self.webview = WebEngineView(self)
+        self.webpage = WebEnginePage(self)
+        self.websettings = QWebEngineSettings.globalSettings()
+        self.webview.setPage(self.webpage)
+        if self.open_last_url_at_startup_setting == 1:
+            self.webview.load(QUrl(self.last_url_setting))
         else:
-            if "watch" in self.webview.url().toString():            
-                self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/pause.png"))
-                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_path}/pause.svg"))
-            else:
-                self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/pause-disabled.png"))
-        self.change_info()
+            self.home()
+        self.webview.urlChanged.connect(self.url_changed)
+        self.webview.loadProgress.connect(self.load_progress)
+        self.websettings.setAttribute(QWebEngineSettings.FullScreenSupportEnabled, 
+                                      self.fullscreen_mode_support_setting)
+        self.websettings.setAttribute(QWebEngineSettings.ScrollAnimatorEnabled,
+                                      self.support_animated_scrolling_setting)
+        if self.save_last_zoom_factor_setting == 1:
+            self.webview.setZoomFactor(self.last_zoom_factor_setting)
+        self.webpage.fullScreenRequested.connect(self.handle_fullscreen)
+        self.main_layout.addWidget(self.webview)
 
-    def set_track_image(self):
-        with open(f"{self.current_dir}/core/js/get_track_image.js", "r") as js_file:
-            self.webview.page().runJavaScript(js_file.read(), self.extract_image_url)
+    def load_progress(self, progress):
+        if progress > 80:
+            if self.splash_screen:
+                self.showNormal()
+                self.splash_screen.finish()
+                self.splash_screen = None
 
-    def extract_image_url(self, url):
-        current_image_url = url
+    def handle_fullscreen(self, request):
+        request.accept()
+        if not self.isFullScreen():
+            self.toolbar_frame.hide()
+            self.showFullScreen()
+        else:
+            self.toolbar_frame.show()
+            self.showNormal()
 
-        if current_image_url != self.previous_image_url:
-            self.current_image_url = current_image_url
-            self.previous_image_url = self.current_image_url
-            
-        self.update_discord_rpc()
-
-    def update_info(self):
-        with open(f"{self.current_dir}/core/js/get_titile_and_author.js", "r") as js_file:
-            self.webpage.runJavaScript(js_file.read(), self.extract_info)
-
-    def extract_info(self, result):
-        if result is not None and len(result) == 2:
-            title, author = result
-            author = author.strip().replace('\n', '') if author else ""
-
-            if title != self.previous_track_title:
-                self.track_title = title
-                self.previous_track_title = self.track_title
-            if author != self.previous_track_author:
-                self.track_author = author
-                self.previous_track_author = self.track_author
-
-        self.update_discord_rpc()
-
-    def change_info(self):
-        self.update_info()
-        self.set_track_image()
-    
-    def update_window_title(self, title):
-        self.setWindowTitle(title) 
-        self.tray_icon.setToolTip(title)
-        self.update_play_pause_icon()
-        self.change_info()
-    
-    def update_discord_rpc(self):
-        discord_enabled = self.settings.value("discord_integration", "false") == "true"
-        if not discord_enabled:
-            return
-
-        url = self.webview.url().toString()
-        if "watch" not in url:
-            try:
-                self.discord_rpc.update()
-            except Exception as e:
-                print(f"Discord RPC Error: {e}")
-            return
-
-        btn_list = [
-            {"label": "▶ Play in Browser", "url": url},
-            {"label": "🌐 YTMDPlayer on GitHub", "url": "https://github.com/deeffest/Youtube-Music-Desktop-Player"}
-        ]
-
-        try:
-            self.discord_rpc.update(
-                large_image=self.current_image_url,
-                details=self.track_title,
-                state=self.track_author,
-                buttons=btn_list,
-            )
-        except Exception as e:
-            print(f"Discord RPC Error: {e}")
-
-    def update_url(self, url):
+    def url_changed(self, url):
         self.LineEdit.setText(url.toString())
-        self.settings.setValue("last_url", url.toString())
 
-        self.change_info()
-
-        if not self.webpage.history().canGoForward():
-            self.ToolButton_2.setEnabled(False)
+        if url.toString() == "https://music.youtube.com/":
+            self.home_tbutton.setIcon(QIcon(f"{self.icon_folder}/home-filled.png"))
         else:
-            self.ToolButton_2.setEnabled(True)
-        if not self.webpage.history().canGoBack():
-            self.ToolButton.setEnabled(False)
+            self.home_tbutton.setIcon(QIcon(f"{self.icon_folder}/home.png"))
+
+        self.back_action.setEnabled(self.webview.history().canGoBack())
+        self.back_tbutton.setEnabled(self.webview.history().canGoBack())
+        self.forward_action.setEnabled(self.webview.history().canGoForward())
+        self.forward_tbutton.setEnabled(self.webview.history().canGoForward())
+
+        self.mp3_track_playlist_action.setEnabled(
+            "watch" in url.toString() or "playlist" in url.toString())
+        self.mp4_track_playlist_action.setEnabled(
+            "watch" in url.toString() or "playlist" in url.toString())
+        self.download_stbutton.setEnabled("watch" in url.toString() or "playlist" in url.toString())
+        self.mini_player_action.setEnabled("watch" in url.toString())
+        self.mini_player_tbutton.setEnabled("watch" in url.toString())
+
+        self.last_url_setting = self.webview.url().toString()
+        self.settings.setValue("last_url", self.last_url_setting)
+
+    def check_updates(self):
+        self.update_checker = UpdateChecker()
+        self.update_checker.update_checked.connect(self.handle_update_checked)
+        self.update_checker.start()
+        
+    def handle_update_checked(self, version, download, notes):
+        print(f"{version},\n{download},\n{notes}")
+        if not self.version == version:
+            w = MessageBox(f"A new update {version} is available!", notes, self)
+            w.yesButton.setText("Download")
+            w.cancelButton.setText("Later")
+            if w.exec_():
+                webbrowser.open_new_tab(download)
+                self.exit_app()
+
+    def load_ui(self):
+        pywinstyles.apply_style(self, "dark")
+        setTheme(Theme.DARK)
+        setThemeColor("red")
+        loadUi(f"{self.current_dir}/core/ui/main_window.ui", self)
+        self.setWindowTitle("Youtube Music Desktop Player")
+        self.setWindowIcon(QIcon(f"{self.icon_folder}/icon.ico"))
+        if self.save_last_win_size_setting == 1:
+            self.resize(self.last_win_size_setting)
         else:
-            self.ToolButton.setEnabled(True)
+            self.resize(1080, 600)
+        self.center()
 
-        if "watch" in url.toString():
-            self.ToolButton_5.setEnabled(True)
-            self.ToolButton_6.setEnabled(True)
-        elif "playlist" in url.toString():
-            self.ToolButton_5.setEnabled(True)
-            self.ToolButton_6.setEnabled(False)
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def restart_app(self):
+        self.save_settings()
+        QApplication.quit()
+        QProcess.startDetached(sys.executable, sys.argv)
+
+    def save_settings(self):
+        self.last_win_size_setting = self.size()
+        self.settings.setValue("last_win_size", self.last_win_size_setting)
+        
+        self.last_zoom_factor_setting = self.webview.zoomFactor()
+        self.settings.setValue("last_zoom_factor", self.last_zoom_factor_setting)
+
+        self.last_pos_of_mp_setting = self.mini_player_dialog.pos()
+        self.settings.setValue("last_pos_of_mp", self.last_pos_of_mp_setting)
+
+    def exit_app(self):
+        self.save_settings()
+        sys.exit(0)
+
+    def hide_show_window(self):
+        if self.isMinimized():
+            self.showNormal()
+            self.activateWindow()
         else:
-            self.ToolButton_5.setEnabled(False)
-            self.ToolButton_6.setEnabled(False)
-
-        if "watch" in url.toString():
-            self.tool_btn_previous.setEnabled(True)
-            self.tool_btn_previous.setIcon(QIcon(f"{self.win_toolbar_icon_path}/previous.png"))     
-            self.tray_icon.previous_track_action.setEnabled(True)
-            self.tray_icon.previous_track_action.setIcon(QIcon(f"{self.icon_path}/previous.svg"))     
-
-            self.tool_btn_play_pause.setEnabled(True)
-            self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/pause.png"))
-            self.tray_icon.play_pause_action.setEnabled(True)
-            self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_path}/pause.svg")) 
-
-            self.tool_btn_next.setEnabled(True) 
-            self.tool_btn_next.setIcon(QIcon(f"{self.win_toolbar_icon_path}/next.png"))   
-            self.tray_icon.next_track_action.setEnabled(True)
-            self.tray_icon.next_track_action.setIcon(QIcon(f"{self.icon_path}/next.svg"))   
-        else:
-            self.tool_btn_previous.setEnabled(False)
-            self.tool_btn_previous.setIcon(QIcon(f"{self.win_toolbar_icon_path}/previous-disabled.png"))
-            self.tray_icon.previous_track_action.setEnabled(False)
-
-            self.tool_btn_play_pause.setEnabled(False)
-            self.tool_btn_play_pause.setIcon(QIcon(f"{self.win_toolbar_icon_path}/pause-disabled.png")) 
-            self.tray_icon.play_pause_action.setEnabled(False)
-
-            self.tool_btn_next.setEnabled(False)
-            self.tool_btn_next.setIcon(QIcon(f"{self.win_toolbar_icon_path}/next-disabled.png")) 
-            self.tray_icon.next_track_action.setEnabled(False)
-
-    def _init_window(self):
-        self.setWindowTitle(self.name)
-        self.setWindowIcon(QIcon(
-            f"{self.current_dir}/resources/icons/icon.ico")
-        )    
-        if self.settings.value("save_last_window_size", "true") == "true":
-            size = self.settings.value("last_window_size", QSize(800,600))
-        else:
-            size = QSize(800,600)
-        self.resize(size)
-
-        self._move_window_to_center()
-        self.raise_()
-        self.activateWindow()
-            
-    def check_for_updates(self):
-        try:
-            response = requests.get(
-                "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest")
-            item_version = response.json()["name"]
-            item_download = response.json().get("html_url")         
-
-            if item_version != self.version:
-                update_msg_box = InfoBar.new(
-                    icon=f"{self.icon_path}/new.svg",
-                    title=f"New update {item_version} is available!",
-                    content="",
-                    orient=Qt.Horizontal,
-                    isClosable=True,
-                    position=InfoBarPosition.BOTTOM,
-                    duration=-1,
-                    parent=self
-                )
-                download_btn = PushButton("Download")
-                download_btn.clicked.connect(
-                    lambda: [
-                        webbrowser.open_new_tab(item_download),
-                        sys.exit(),
-                    ]
-                )
-                update_msg_box.addWidget(download_btn)
-
-        except Exception as e:
-            InfoBar.error(
-                title="Update search error:",
-                content=f"{e}",
-                orient=Qt.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.BOTTOM,
-                duration=-1,
-                parent=self
-            )
-
-    def open_changelog(self):
-        try:
-            response = requests.get(
-                "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest")
-            data = response.json()
-            item_notes = data.get("body")
-            w = MessageBox(f"Change log of the latest version", item_notes, self)
-            w.cancelButton.hide()
-            w.exec_()
-
-        except Exception as e:
-            InfoBar.error(
-                title="Error in opening the change log:",
-                content=f"{e}",
-                orient=Qt.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.BOTTOM,
-                duration=-1,
-                parent=self
-            )
-
-    def _move_window_to_center(self):    
-        desktop = QApplication.desktop().availableGeometry()
-        w, h = desktop.width(), desktop.height()
-        self.move(w//2 - self.width()//2, h//2 - self.height()//2)
-
-    def showEvent(self, event):
-        super().showEvent(event)
-        if not self.win_toolbar.window():
-            self.win_toolbar.setWindow(self.windowHandle())
-
-    def resizeEvent(self, event):
-        self.settings.setValue("last_window_size", event.size())
-        self.label.setMaximumWidth(int(self.width() * 0.8))
+            if self.isMinimized():
+                self.showNormal()
+                self.activateWindow()
+            elif self.isVisible():
+                self.hide()
+            else:
+                self.showNormal()
+                self.activateWindow()
 
     def closeEvent(self, event):
-        if self.settings.value("hide_window_in_tray", "false") == "true":
-            self.hide()
-            self.tray_icon.show()
+        if self.tray_icon_setting == 1 and self.tray_icon is not None:
             event.ignore()
+            self.hide()
         else:
             if "watch" in self.webview.url().toString():
                 self.showNormal()
                 self.activateWindow()
-                w = MessageBox(f"Confirmation of exit ✖️", 
-                    "Do you really want to quit the app? The current playback will stop.", self)
-                if w.exec_():
-                    self.exit_app()
+                w = MessageBox(f"Exit confirmation ✕", 
+                            "Do you really want to stop the current playback and exit the app?", self)
+                w.yesButton.setText("Yes")
+                w.cancelButton.setText("No")
+                if w.exec_() == True:
+                    self.save_settings()
+                    event.accept()
                 else:
                     event.ignore()
             else:
-                self.exit_app()
-
-    def exit_app(self):
-        self.settings.setValue("default_page_zoom_factor", self.webpage.zoomFactor())
-        sys.exit(0)
+                self.save_settings()
+                event.accept()
