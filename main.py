@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt
 from core.main_window import MainWindow
 
 name = "Youtube-Music-Desktop-Player"
-version = "1.8-rc1"
+version = "1.8-rc2"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 if __name__ == '__main__':

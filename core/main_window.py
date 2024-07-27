@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QShortcut, \
 from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings, \
     QWebEngineScript
 from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtCore import QSettings, QUrl, Qt, QSize, pyqtSlot, QPoint, \
+from PyQt5.QtCore import QSettings, QUrl, Qt, QSize, pyqtSlot, QRect, \
     QProcess
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
@@ -25,6 +25,7 @@ from core.mini_player_dialog import MiniPlayerDialog
 from pypresence import Presence
 from core.system_tray_icon import SystemTrayIcon
 from core.update_checker import UpdateChecker
+from packaging import version as pkg_version
 
 class MainWindow(QMainWindow):
     def __init__(self, app_info, parent=None):
@@ -274,8 +275,8 @@ class MainWindow(QMainWindow):
         self.last_zoom_factor_setting = float(self.settings.value("last_zoom_factor", 1.0))
         self.last_download_folder_setting = self.settings.value("last_download_folder", self.current_dir)
         self.discord_rpc_setting = int(self.settings.value("discord_rpc", 0))
-        self.save_last_pos_of_mp_setting = int(self.settings.value("save_last_pos_of_mp", 1))
-        self.last_pos_of_mp_setting = self.settings.value("last_pos_of_mp", QPoint(30, 30))
+        self.save_geometry_of_mp_setting = int(self.settings.value("save_geometry_of_mp", 1))
+        self.geometry_of_mp_setting = self.settings.value("geometry_of_mp", QRect(30, 60, 360, 150))
         self.win_thumbmail_buttons_setting = int(self.settings.value("win_thumbmail_buttons", 1))
         self.tray_icon_setting = int(self.settings.value("tray_icon", 0))
 
@@ -600,8 +601,7 @@ class MainWindow(QMainWindow):
     def load_progress(self, progress):
         if progress > 80:
             if self.splash_screen:
-                self.showNormal()
-                self.splash_screen.finish()
+                self.splash_screen.hide()
                 self.splash_screen = None
 
     def handle_fullscreen(self, request):
@@ -643,8 +643,7 @@ class MainWindow(QMainWindow):
         self.update_checker.start()
         
     def handle_update_checked(self, version, download, notes):
-        print(f"{version},\n{download},\n{notes}")
-        if not self.version == version:
+        if pkg_version.parse(self.version) < pkg_version.parse(version):
             w = MessageBox(f"A new update {version} is available!", notes, self)
             w.yesButton.setText("Download")
             w.cancelButton.setText("Later")
@@ -682,9 +681,6 @@ class MainWindow(QMainWindow):
         
         self.last_zoom_factor_setting = self.webview.zoomFactor()
         self.settings.setValue("last_zoom_factor", self.last_zoom_factor_setting)
-
-        self.last_pos_of_mp_setting = self.mini_player_dialog.pos()
-        self.settings.setValue("last_pos_of_mp", self.last_pos_of_mp_setting)
 
     def exit_app(self):
         self.save_settings()

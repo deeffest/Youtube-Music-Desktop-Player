@@ -1,5 +1,4 @@
 import requests
-
 from PyQt5.QtCore import QThread, pyqtSignal
 
 class UpdateChecker(QThread):
@@ -12,11 +11,16 @@ class UpdateChecker(QThread):
         try:
             response = requests.get(
                 "https://api.github.com/repos/deeffest/Youtube-Music-Desktop-Player/releases/latest")
-            item_version = response.json()["name"]
-            item_download = response.json().get("html_url")
+            response.raise_for_status()
+            
             data = response.json()
+            item_version = data["name"]
+            item_download = data.get("html_url")
             item_notes = data.get("body")
+
         except Exception as e:
+            print(f"Error while checking updates: {e}")
             return
+        
         if response.status_code == 200:
             self.update_checked.emit(item_version, item_download, item_notes)

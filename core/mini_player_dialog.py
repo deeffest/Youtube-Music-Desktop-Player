@@ -50,7 +50,7 @@ class MiniPlayerDialog(QDialog):
         self.setWindowFlag(Qt.WindowStaysOnTopHint)
 
         if self.window.save_last_pos_of_mp_setting == 1:
-            self.move(self.window.last_pos_of_mp_setting)
+            self.setGeometry(self.window.geometry_of_mp_setting)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -59,7 +59,11 @@ class MiniPlayerDialog(QDialog):
             super().keyPressEvent(event)
             
     def closeEvent(self, event):
+        self.window.geometry_of_mp_setting = self.geometry()
+        self.window.settings.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
+
         self.window.show()
         if self.window.tray_icon is not None:
             self.window.tray_icon.show()
+
         event.accept()

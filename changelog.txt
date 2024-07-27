@@ -1,0 +1,24 @@
+Update 1.8-rc2 🎉 (July 27, 2024)
+
+- Enhanced Update Check Process: Say goodbye to uncertainty! 
+Our new update verification system is more accurate and reliable than ever. 🔍
+- Mini Player Fix: No more mini player mishaps! The player now correctly 
+maintains its position, ensuring a seamless experience every time you open it. 🙌
+- Refined Shortcut Names: Updated installation shortcuts for a cleaner and 
+more intuitive setup. ✨
+
+Update 1.8-rc1 🎉 (July 26, 2024)
+
+- Revamped "About" Window: Enjoy a fresh new look!
+- Stylish Tooltips: Updated styles and new additions for better clarity.
+- New Download Engine: Switched to yt-dlp for tracks/playlists (CLI only for now, GUI coming soon!).
+- Enhanced Track Info Retrieval: Faster and simpler way to get details about the currently playing track. 🚀
+- Introducing "Plugins" Section:
+    Ad Blocker 🛑
+    Rich Discord Integration 💬
+    Playback controls on taskbar thumbnail 🎵
+    Taskbar tray icon 🌟
+- Updated Settings Interface: Sleeker design for easier navigation.
+- Icon Improvements: Fresh look with more refined icons.
+- Code Refactor: Optimized for better performance and maintainability.
+- Additional Changes: Various enhancements throughout! ✨
