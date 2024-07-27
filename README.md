@@ -38,11 +38,11 @@ Experience your music like never before with the **YouTube Music Desktop Player*
 1. Download and install [Python](https://www.python.org/) (tested on 3.11.3 64-bit).
 2. Download or clone this repository.
 3. Run the following command:
-   ```shell
+   ```
    pip install -r requirements.txt
    ```
 4. Finally, execute:
-   ```shell
+   ```
    python main.py
    ```
 
