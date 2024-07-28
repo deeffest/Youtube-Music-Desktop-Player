@@ -1,5 +1,7 @@
 pypresence==4.3.0
 PyQt5==5.15.11
+PyQtWebEngine==5.15.7
 PyQt_Fluent_Widgets==1.6.0
 pywinstyles==1.8
 Requests==2.32.3
+packaging==24.0
