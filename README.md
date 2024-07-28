@@ -35,7 +35,7 @@ Experience your music like never before with the **YouTube Music Desktop Player*
 3. Navigate to the installation directory and run **YTMDPlayer.exe**.
 
 ### Using the Source Code:
-1. Download and install [Python](https://www.python.org/) (tested on 3.11.3 64-bit).
+1. Download and install [Python](https://www.python.org/) (tested on windows 10 22H2 & python 3.11.3 / windows 11 23H2 & python 3.12.4 64-bit).
 2. Download or clone this repository.
 3. Run the following command:
    ```
