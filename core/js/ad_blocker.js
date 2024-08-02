@@ -1,5 +1,3 @@
-console.log("Ad Blocker Enabled")
-
 try {
     var adSkipperIntervalID = setInterval(findVideo, 100);
     var adSkipperIterations = 0;

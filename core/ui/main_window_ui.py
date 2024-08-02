@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QMainWindow,
     QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
-from qfluentwidgets import (LineEdit, SplitToolButton, ToolButton)
+from qfluentwidgets import (LineEdit, ToolButton)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -65,10 +65,10 @@ class Ui_MainWindow(object):
 
         self.toolbar_layout.addWidget(self.LineEdit)
 
-        self.download_stbutton = SplitToolButton(self.toolbar_frame)
-        self.download_stbutton.setObjectName(u"download_stbutton")
+        self.download_tbutton = ToolButton(self.toolbar_frame)
+        self.download_tbutton.setObjectName(u"download_tbutton")
 
-        self.toolbar_layout.addWidget(self.download_stbutton)
+        self.toolbar_layout.addWidget(self.download_tbutton)
 
         self.mini_player_tbutton = ToolButton(self.toolbar_frame)
         self.mini_player_tbutton.setObjectName(u"mini_player_tbutton")
@@ -115,7 +115,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.LineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"https://music.youtube.com/", None))
 #if QT_CONFIG(tooltip)
-        self.download_stbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Download track/playlist in MP3 format or choose another one.", None))
+        self.download_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Download Track/Playlist", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.mini_player_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Mini-Player", None))

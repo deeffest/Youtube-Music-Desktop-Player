@@ -93,9 +93,9 @@
         </widget>
        </item>
        <item>
-        <widget class="SplitToolButton" name="download_stbutton">
+        <widget class="ToolButton" name="download_tbutton">
          <property name="toolTip">
-          <string>Download track/playlist in MP3 format or choose another one.</string>
+          <string>Download Track/Playlist</string>
          </property>
         </widget>
        </item>
@@ -140,11 +140,6 @@
   <customwidget>
    <class>ToolButton</class>
    <extends>QToolButton</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
-   <class>SplitToolButton</class>
-   <extends>QWidget</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>

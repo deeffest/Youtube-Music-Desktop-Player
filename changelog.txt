@@ -1,3 +1,15 @@
+Update 1.8-rc3 🎉 (August 2, 2024)
+
+- Performance Refactoring: Boosted application performance with a series of optimizations! 🚀
+- UI Enhancements: The pop-up menu and toolbar interface have been revamped 
+for a more user-friendly experience. 🎨
+- Download Format Change: The option to download tracks/playlists in mp4 format or open 
+yt-dlp in CMD for custom downloads has been removed. Only mp3 download option remains! 🎵
+- Automatic Dependency Management: All dependencies (yt-dlp and ffmpeg builds) will now be 
+automatically downloaded, reducing the installer size and speeding up the setup process 
+when using the application from the source code. ⚙️
+- Minor Improvements: A variety of small enhancements and bug fixes for an even smoother experience. 🔧
+
 Update 1.8-rc2 🎉 (July 27, 2024)
 
 - Enhanced Update Check Process: Say goodbye to uncertainty! 

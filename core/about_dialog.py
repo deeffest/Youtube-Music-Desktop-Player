@@ -28,10 +28,12 @@ class AboutDialog(QDialog):
     def load_ui(self):
         loadUi(f'{self.window.current_dir}/core/ui/about_dialog.ui', self)
         pywinstyles.apply_style(self, "dark")
+
         self.setWindowTitle("About app")
-        self.setFixedSize(self.size())
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about-red.png"))
+
+        self.setFixedSize(self.size())
 
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Escape:

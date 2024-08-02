@@ -1,3 +1,5 @@
+import pywinstyles
+
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -15,19 +17,12 @@ class MiniPlayerDialog(QDialog):
 
     def setup_content(self):
         self.thumbnail = QPixmap()
-        self.current_loader = None 
+        self.current_loader = None
     
     def setup_connect(self):
-        self.previous_button.clicked.connect(self.window.previous_youtube_video)
-        self.play_pause_button.clicked.connect(self.window.play_pause_youtube_video)
-        self.next_button.clicked.connect(self.window.next_youtube_video)
-
-    def update_track_info(self, title, author, thumbnail_url):
-        self.title_label.setText(title)
-        self.title_label.setToolTip(title)
-        self.author_label.setText(author)
-        self.author_label.setToolTip(author)
-        self.load_thumbnail(thumbnail_url)
+        self.previous_button.clicked.connect(self.window.skip_previous)
+        self.play_pause_button.clicked.connect(self.window.play_pause)
+        self.next_button.clicked.connect(self.window.skip_next)
 
     def load_thumbnail(self, url):
         if hasattr(self, 'thumbnail_loader') and self.thumbnail_loader.is_running():
@@ -43,12 +38,14 @@ class MiniPlayerDialog(QDialog):
         self.thumbnail_label.setPixmap(self.thumbnail)
 
     def init_ui(self):
+        pywinstyles.apply_style(self, "dark")
         loadUi(f'{self.window.current_dir}/core/ui/mini_player_dialog.ui', self)
-        self.setWindowTitle("Mini-Player")
-        self.setFixedSize(360, 150)
+
+        self.setWindowTitle("Mini-Player")        
         self.setWindowFlags(Qt.Window)
         self.setWindowFlag(Qt.WindowStaysOnTopHint)
 
+        self.setFixedSize(360, 150)
         if self.window.save_last_pos_of_mp_setting == 1:
             self.setGeometry(self.window.geometry_of_mp_setting)
 
@@ -60,10 +57,10 @@ class MiniPlayerDialog(QDialog):
             
     def closeEvent(self, event):
         self.window.geometry_of_mp_setting = self.geometry()
-        self.window.settings.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
-
+        self.window.settings_.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
+        
         self.window.show()
-        if self.window.tray_icon is not None:
-            self.window.tray_icon.show()
+        self.window.show_tray_icon()
 
+        self.window.mini_player_dialog = None
         event.accept()

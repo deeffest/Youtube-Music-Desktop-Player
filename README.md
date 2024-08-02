@@ -8,7 +8,7 @@ Experience your music like never before with the **YouTube Music Desktop Player*
   
 2. **Minimalistic Mini Player**: For those who love simplicity, our compact mini player allows you to control playback effortlessly, without cluttering your workspace. ✨
 
-3. **Intuitive Interface**: Navigate your music seamlessly with our clean and user-friendly interface, inspired by Fluent UI design principles. 💻
+3. **Intuitive Interface**: Easily navigate through the application with a clean and friendly interface based on Fluent UI design principles. 💻
 
 4. **Handy Plugins**: Enhance your experience with various plugins available:
    - **Ad Blocker**: Enjoy uninterrupted music without annoying ads! 🚫
@@ -35,19 +35,27 @@ Experience your music like never before with the **YouTube Music Desktop Player*
 3. Navigate to the installation directory and run **YTMDPlayer.exe**.
 
 ### Using the Source Code:
-1. Download and install [Python](https://www.python.org/) (tested on windows 10 22H2 & python 3.11.3 / windows 11 23H2 & python 3.12.4 64-bit).
-2. Download or clone this repository.
-3. Run the following command:
+1. **Install Python**  
+   Ensure Python is installed on your system. This project has been tested on the following configurations:
+   - Windows 10 (22H2) with Python 3.11.3 (64-bit)
+   - Windows 11 (23H2) with Python 3.12.4 (64-bit)  
+   [Download Python](https://www.python.org/downloads/).
+
+2. **Clone the Repository**  
+   Download or clone the repository to your local machine.
+
+3. **Install Dependencies**  
+   Navigate to the project directory and install the required dependencies using:
    ```
    pip install -r requirements.txt
    ```
-4. Finally, execute:
+   
+4. **Run the Application**  
+   Execute the following command to start the application:
    ```
    python main.py
    ```
-
-> **Note**: To enable track/playlist downloads, create a `bin` folder in the project root and load the [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe) and [FFmpeg builds](https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip) into it.
-
+   
 ## 🔗 References:
 - **Qt:** [Learn More](https://www.qt.io/)
 - **PyQt:** [Learn More](https://riverbankcomputing.com/software/pyqt)

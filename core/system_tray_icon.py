@@ -15,7 +15,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.tray_menu = SystemTrayMenu()
 
         self.show_action = Action('Hide/Show', self)
-        self.show_action.triggered.connect(self.window.hide_show_window)
+        self.show_action.triggered.connect(self.hide_show_window)
         self.show_action.setIcon(
             QIcon(f"{self.window.icon_folder}/show.png"))
         self.tray_menu.addAction(self.show_action)
@@ -23,27 +23,30 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.tray_menu.addSeparator()
         
         self.play_pause_action = Action('Play/Pause', self)
-        self.play_pause_action.triggered.connect(self.window.play_pause_youtube_video)
+        self.play_pause_action.triggered.connect(self.window.play_pause)
         self.play_pause_action.setIcon(
             QIcon(f"{self.window.icon_folder}/play.png"))
+        self.play_pause_action.setEnabled(False)
         self.tray_menu.addAction(self.play_pause_action)
         
         self.previous_action = Action('Previous', self)
-        self.previous_action.triggered.connect(self.window.previous_youtube_video)
+        self.previous_action.triggered.connect(self.window.skip_previous)
         self.previous_action.setIcon(
             QIcon(f"{self.window.icon_folder}/previous.png"))
+        self.previous_action.setEnabled(False)
         self.tray_menu.addAction(self.previous_action) 
 
         self.next_action = Action('Next', self)
-        self.next_action.triggered.connect(self.window.next_youtube_video)
+        self.next_action.triggered.connect(self.window.skip_next)
         self.next_action.setIcon(
             QIcon(f"{self.window.icon_folder}/next.png"))
+        self.next_action.setEnabled(False)
         self.tray_menu.addAction(self.next_action)
 
         self.tray_menu.addSeparator()
 
         self.exit_action = Action('Exit', self)
-        self.exit_action.triggered.connect(self.window.exit_app)
+        self.exit_action.triggered.connect(self.close_window)
         self.exit_action.setIcon(
             QIcon(f"{self.window.icon_folder}/exit.png"))
         self.tray_menu.addAction(self.exit_action)
@@ -52,4 +55,15 @@ class SystemTrayIcon(QSystemTrayIcon):
 
     def on_tray_icon_activated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
-            self.window.hide_show_window()
+            self.hide_show_window()
+
+    def hide_show_window(self):
+        if self.window.isMinimized() or not self.window.isVisible():
+            self.window.showNormal()
+        else:
+            self.window.hide()
+
+    def close_window(self):
+        self.window.force_exit = True
+        self.window.close()
+        

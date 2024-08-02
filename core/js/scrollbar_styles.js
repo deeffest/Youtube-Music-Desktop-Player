@@ -1,5 +1,3 @@
-console.log("Scrollbar Stylizer Enabled")
-
 var style = document.createElement('style');
 
 style.textContent = `

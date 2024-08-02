@@ -26,7 +26,8 @@ QFrame#SettingBox6,
 QFrame#SettingBox7,
 QFrame#SettingBox8,
 QFrame#SettingBox9,
-QFrame#SettingBox10 {
+QFrame#SettingBox10,
+QFrame#SettingBox11 {
     border-radius: 5px;
     background-color: rgb(50,50,50);
     border: 1px solid rgb(35,35,35);
