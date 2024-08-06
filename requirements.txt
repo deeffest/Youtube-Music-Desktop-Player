@@ -5,3 +5,4 @@ PyQt_Fluent_Widgets==1.6.0
 pywinstyles==1.8
 Requests==2.32.3
 packaging==24.0
+pytubefix==6.8.1
