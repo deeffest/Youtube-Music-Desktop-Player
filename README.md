@@ -4,7 +4,7 @@
 Experience your music like never before with the **YouTube Music Desktop Player**! This application brings the power of YouTube Music to your desktop, designed with a sleek **Fluent UI** and packed with features to elevate your listening experience! 
 
 ## 🎨 Features
-1. **Download Tracks & Playlists**: Easily download individual tracks or entire playlists in any format using **yt-dlp**. Enjoy your favorite music offline without any hassle! 🎧
+1. **Download Tracks & Playlists**: Easily download individual tracks or entire playlists in any format using **pytube**. Enjoy your favorite music offline without any hassle! 🎧
   
 2. **Minimalistic Mini Player**: For those who love simplicity, our compact mini player allows you to control playback effortlessly, without cluttering your workspace. ✨
 
