@@ -5,6 +5,3 @@ __pycache__/
 output
 deploy_config.json
 setup.smm
-
-# logs
-logs
