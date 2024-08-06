@@ -6,5 +6,5 @@ output
 deploy_config.json
 setup.smm
 
-# yt-dlp and ffmpeg builds
-bin
+# logs
+logs

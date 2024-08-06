@@ -1,4 +1,6 @@
 import requests
+import logging
+
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
 
@@ -14,12 +16,16 @@ class ThumbnailLoader(QThread):
         self._is_running = True
         try:
             response = requests.get(self.url)
-            if response.status_code == 200:
-                pixmap = QPixmap()
-                pixmap.loadFromData(response.content)
-                self.thumbnail_loaded.emit(pixmap)
-            else:
-                self.thumbnail_loaded.emit(QPixmap())
+            response.raise_for_status()
+
+            pixmap = QPixmap()
+            pixmap.loadFromData(response.content)
+            self.thumbnail_loaded.emit(pixmap)
+        except requests.exceptions.RequestException as e:
+            logging.error("ThumbnailLoader RequestException: " + str(e))
+            self.thumbnail_loaded.emit(QPixmap())
+        except Exception as e:
+            logging.error("ThumbnailLoader UnexpectedError: " + str(e))
         finally:
             self._is_running = False
             

@@ -1,4 +1,5 @@
 import webbrowser
+import logging
 
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from qfluentwidgets import MessageBox
@@ -38,4 +39,4 @@ class WebEnginePage(QWebEnginePage):
             return (False, "")
         
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
-        print(f"js: {level} - {message} - {lineNumber} - {sourceID}")
+        logging.error(f"JavaScript Console Message: {message} (Level: {level}, Line: {lineNumber}, Source: {sourceID})")

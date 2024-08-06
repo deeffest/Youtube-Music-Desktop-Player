@@ -1,8 +1,8 @@
 import pywinstyles
 import webbrowser
-import subprocess
 import pypresence
 import os
+import logging
 
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QShortcut, \
     QFileDialog
@@ -14,7 +14,8 @@ from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 from PyQt5.uic import loadUi
 from qfluentwidgets import setTheme, setThemeColor, Theme, \
-    RoundMenu, Action, SplashScreen, MessageBox
+    RoundMenu, Action, SplashScreen, MessageBox, InfoBar, InfoBarPosition, \
+    PushButton
 from core.web_engine_view import WebEngineView
 from core.web_engine_page import WebEnginePage
 from core.settings_dialog import SettingsDialog
@@ -23,6 +24,7 @@ from core.mini_player_dialog import MiniPlayerDialog
 from core.system_tray_icon import SystemTrayIcon
 from core.update_checker import UpdateChecker
 from packaging import version as pkg_version
+from core.ytmusic_downloader import DownloadThread
 
 class MainWindow(QMainWindow):
     def __init__(self, app_info, parent=None):
@@ -37,9 +39,12 @@ class MainWindow(QMainWindow):
         self.video_state = "NoVideo"
         self.mini_player_dialog = None
         self.force_exit = False
+        self.is_downloading = False
+        self.is_video_or_playlist = False
     
         self.load_settings()
         self.load_ui()
+        self.setup_shortcuts()
         self.show_splash_screen()
         self.create_webengine()
         self.setup_webchannel()
@@ -48,9 +53,9 @@ class MainWindow(QMainWindow):
         self.activate_plugins()
 
     def load_settings(self):
-        self.settings_ = QSettings("deeffest", self.name)
+        self.settings_ = QSettings()
 
-        self.ad_blocker_setting = int(self.settings_.value("ad_blocker", 0))
+        self.ad_blocker_setting = int(self.settings_.value("ad_blocker", 1))
         self.save_last_win_size_setting = int(self.settings_.value("save_last_win_size", 1))
         self.open_last_url_at_startup_setting = int(self.settings_.value("open_last_url_at_startup", 1))
         self.last_url_setting = self.settings_.value("last_url", "https://music.youtube.com/")
@@ -66,7 +71,6 @@ class MainWindow(QMainWindow):
         self.geometry_of_mp_setting = self.settings_.value("geometry_of_mp", QRect(30, 60, 360, 150))
         self.win_thumbmail_buttons_setting = int(self.settings_.value("win_thumbmail_buttons", 1))
         self.tray_icon_setting = int(self.settings_.value("tray_icon", 0))
-        self.close_cmd_after_downloading_setting = int(self.settings_.value("close_cmd_after_downloading", 1))
 
     def load_ui(self):
         pywinstyles.apply_style(self, "dark")
@@ -122,13 +126,13 @@ class MainWindow(QMainWindow):
 
     def load_progress(self, progress):
         if progress > 80 and self.splash_screen:
-            if self.isMinimized or self.isHidden():
+            if self.isHidden():
                 self.showNormal()
+                self.activateWindow()
 
             self.splash_screen.finish()
             self.splash_screen = None
-
-            self.setup_shortcuts()
+            
             self.check_updates()
 
     def check_updates(self):
@@ -147,18 +151,26 @@ class MainWindow(QMainWindow):
                 self.close()
 
     def setup_shortcuts(self):
-        shortcuts = {
-            Qt.ALT + Qt.Key_Left: self.back,
-            Qt.ALT + Qt.Key_Right: self.forward,
-            Qt.CTRL + Qt.Key_H: self.home,
-            Qt.CTRL + Qt.Key_R: self.reload,
-            Qt.CTRL + Qt.Key_D: self.download,
-            Qt.CTRL + Qt.Key_M: self.mini_player,
-            Qt.CTRL + Qt.Key_S: self.settings,
-        }
-        for key, value in shortcuts.items():
-            shortcut = QShortcut(QKeySequence(key), self)
-            shortcut.activated.connect(value)
+        self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
+        self.back_shortcut.activated.connect(self.back)
+
+        self.forward_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Right), self)
+        self.forward_shortcut.activated.connect(self.forward)
+
+        self.home_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_H), self)
+        self.home_shortcut.activated.connect(self.home)
+
+        self.reload_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_R), self)
+        self.reload_shortcut.activated.connect(self.reload)
+
+        self.download_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_D), self)
+        self.download_shortcut.activated.connect(self.download)
+
+        self.mini_player_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_M), self)
+        self.mini_player_shortcut.activated.connect(self.mini_player)
+
+        self.settings_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
+        self.settings_shortcut.activated.connect(self.settings)
 
     def handle_fullscreen(self, request):
         if not self.isFullScreen():
@@ -181,12 +193,16 @@ class MainWindow(QMainWindow):
         self.forward_action.setEnabled(can_go_forward)
         self.forward_tbutton.setEnabled(can_go_forward)
 
-        is_video_or_playlist = "watch" in self.current_url or "playlist" in self.current_url
-        is_video = "watch" in self.current_url
-        self.download_action.setEnabled(is_video_or_playlist)
-        self.download_tbutton.setEnabled(is_video_or_playlist)
-        self.mini_player_action.setEnabled(is_video)
-        self.mini_player_tbutton.setEnabled(is_video)
+        self.is_video_or_playlist = ("watch" in self.current_url or "playlist" in self.current_url)
+
+        if not self.is_downloading:
+            self.download_action.setEnabled(self.is_video_or_playlist)
+            self.download_tbutton.setEnabled(self.is_video_or_playlist)
+            self.download_shortcut.setEnabled(self.is_video_or_playlist)
+
+        self.mini_player_action.setEnabled(self.is_video_or_playlist)
+        self.mini_player_tbutton.setEnabled(self.is_video_or_playlist)
+        self.mini_player_shortcut.setEnabled(self.is_video_or_playlist)
 
     def setup_webchannel(self):
         self.webchannel = QWebChannel()
@@ -229,10 +245,10 @@ class MainWindow(QMainWindow):
                     large_image=self.thumbnail_url, 
                     small_image="https://music.youtube.com/img/favicon_32.png"
                 )
-            except pypresence.exceptions.ServerError:
-                print("Discord RPC server error")
-            except pypresence.exceptions.PipeClosed:
-                print("Discord RPC pipe closed")
+            except pypresence.exceptions.ServerError as e:
+                logging.error("Pypresence ServerError: " + str(e))
+            except pypresence.exceptions.PipeClosed as e:
+                logging.error("Pypresence PipeClosed: " + str(e))
                 self.discord_rpc = None
 
     def clear_discord_rpc(self):
@@ -423,11 +439,12 @@ class MainWindow(QMainWindow):
 
     def connect_discord_rpc(self):
         if self.discord_rpc_setting == 1:
-            self.discord_rpc = pypresence.Presence("1254202610781655050") if self.discord_rpc_setting == 1 else None
+            app_id = "1254202610781655050"
+            self.discord_rpc = pypresence.Presence(app_id) if self.discord_rpc_setting == 1 else None
             try:
                 self.discord_rpc.connect()
             except pypresence.exceptions.DiscordNotFound as e:
-                print(f"Discord not found: {e}")
+                logging.error("Pypresence DiscordNotFound: " + str(e))
                 self.discord_rpc = None
         else:
             self.discord_rpc = None
@@ -482,13 +499,6 @@ class MainWindow(QMainWindow):
         else:
             self.tray_icon = None
 
-    def read_script(self, filename):
-        with open(f"{self.current_dir}/core/js/{filename}", "r", encoding='utf-8') as f:
-            return f.read()    
-        
-    def run_js_script(self, script_name):
-        self.webview.page().runJavaScript(self.read_script(script_name))
-
     def skip_previous(self):
         self.run_js_script("skip_previous.js")
 
@@ -496,7 +506,14 @@ class MainWindow(QMainWindow):
         self.run_js_script("play_pause.js")
 
     def skip_next(self):
-        self.run_js_script("skip_next.js")
+        self.run_js_script("skip_next.js")    
+        
+    def run_js_script(self, script_name):
+        self.webview.page().runJavaScript(self.read_script(script_name))    
+        
+    def read_script(self, filename):
+        with open(f"{self.current_dir}/core/js/{filename}", "r", encoding='utf-8') as f:
+            return f.read()
 
     def back(self):
         self.webview.back()
@@ -514,84 +531,84 @@ class MainWindow(QMainWindow):
         folder = QFileDialog.getExistingDirectory(self, "Select Download Folder", self.last_download_folder_setting)
         return folder if folder else None
 
-    def download(self):
-        if not any(keyword in self.current_url for keyword in ["watch", "playlist"]):
+    def download(self, custom_url=None, download_folder=None, info_bar=None):
+        if self.is_downloading:
             return
-    
-        download_folder = self.select_download_folder()
+
+        if info_bar:
+            info_bar.close()
+
+        if not download_folder:
+            download_folder = self.select_download_folder()
         if download_folder is None:
             return
 
         self.last_download_folder_setting = download_folder
         self.settings_.setValue("last_download_folder", download_folder)
 
-        bin_folder = os.path.join(self.current_dir, "bin")
-        yt_dlp_path = os.path.join(self.current_dir, "bin/yt-dlp.exe")
-        yt_dlp_url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
-        ffmpeg_path = os.path.join(self.current_dir, "bin/ffmpeg.exe")
-        ffmpeg_url = "https://github.com/imageio/imageio-binaries/raw/master/ffmpeg/ffmpeg-win64-v4.1.exe"
+        self.is_downloading = True
+        self.download_action.setText("Wait...")
+        self.download_action.setEnabled(False)
+        self.download_tbutton.setToolTip("Wait...")
+        self.download_tbutton.setEnabled(False)
+
+        if custom_url:
+            self.download_thread = DownloadThread(custom_url, download_folder)
+        else:
+            self.download_thread = DownloadThread(self.current_url, download_folder)
+        self.download_thread.download_finished.connect(self.on_download_finished)
+        self.download_thread.download_failed.connect(self.on_download_failed)
+        self.download_thread.start()
+
+    def on_download_finished(self, download_folder, title):
+        self.is_downloading = False
+        self.download_action.setText("Download")
+        self.download_action.setEnabled(self.is_video_or_playlist)
+        self.download_tbutton.setToolTip("Download")
+        self.download_tbutton.setEnabled(self.is_video_or_playlist)
+
+        info_bar = InfoBar.success(
+            title=title,
+            content="successfully downloaded!",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self
+        )
+        open_download_folder_btn = PushButton("Open Folder", icon=f"{self.icon_folder}/open_folder.png")
+        open_download_folder_btn.clicked.connect(lambda: self.open_download_folder(download_folder, info_bar))
+        info_bar.addWidget(open_download_folder_btn)
+        info_bar.show()
+
+    def open_download_folder(self, download_folder, info_bar):
+        info_bar.close()
+        os.startfile(download_folder)
         
-        os.makedirs(bin_folder, exist_ok=True)
+    def on_download_failed(self, url, download_folder, title):
+        self.is_downloading = False
+        self.download_action.setText("Download")
+        self.download_action.setEnabled(self.is_video_or_playlist)
+        self.download_tbutton.setToolTip("Download")
+        self.download_tbutton.setEnabled(self.is_video_or_playlist)
 
-        if "playlist" in self.current_url:
-            playlist_id = self.current_url.split('list=')[-1]
-            download_folder = os.path.join(download_folder, f"Playlist_{playlist_id}")
-            os.makedirs(download_folder, exist_ok=True)
-            download_url = self.current_url
-        else:
-            clean_url = self.current_url.split('&list')[0]
-            download_url = clean_url
+        info_bar = InfoBar.error(
+            title=title,
+            content="download failed!",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self
+        )
+        retry_download_btn = PushButton("Re-download", icon=f"{self.icon_folder}/retry.png")
+        retry_download_btn.clicked.connect(lambda: self.download(url, download_folder, info_bar))
+        info_bar.addWidget(retry_download_btn)
 
-        if self.close_cmd_after_downloading_setting == 1:
-            cmd_behavior = "/c"
-        else:
-            cmd_behavior = "/k"
-
-        if not os.path.exists(yt_dlp_path) and not os.path.exists(ffmpeg_path):
-            download_command = [
-                "cmd", f"{cmd_behavior}",
-                'curl', '-L', f"{yt_dlp_url}", '-o', f"{yt_dlp_path}", "&&",
-                'curl', '-L', f"{ffmpeg_url}", '-o', f"{ffmpeg_path}", "&&",
-                yt_dlp_path, "-U", "-x",
-                "--audio-format", "mp3",
-                "--audio-quality", "0",
-                "-o", f"{download_folder}/%(title)s.%(ext)s",
-                download_url
-            ]
-        elif not os.path.exists(yt_dlp_path):
-            download_command = [
-                "cmd", f"{cmd_behavior}",
-                'curl', '-L', f"{yt_dlp_url}", '-o', f"{yt_dlp_path}", "&&",
-                yt_dlp_path, "-U", "-x",
-                "--audio-format", "mp3",
-                "--audio-quality", "0",
-                "-o", f"{download_folder}/%(title)s.%(ext)s",
-                download_url
-            ]
-        elif not os.path.exists(ffmpeg_path):
-            download_command = [
-                "cmd", f"{cmd_behavior}",
-                'curl', '-L', f"{ffmpeg_url}", '-o', f"{ffmpeg_path}", "&&",
-                yt_dlp_path, "-U", "-x",
-                "--audio-format", "mp3",
-                "--audio-quality", "0",
-                "-o", f"{download_folder}/%(title)s.%(ext)s",
-                download_url
-            ]
-        else:
-            download_command = [
-                "cmd", f"{cmd_behavior}",
-                yt_dlp_path, "-U", "-x",
-                "--audio-format", "mp3",
-                "--audio-quality", "0",
-                "-o", f"{download_folder}/%(title)s.%(ext)s",
-                download_url
-            ]
-
-        subprocess.Popen(download_command, creationflags=subprocess.CREATE_NEW_CONSOLE, cwd=bin_folder)
+        info_bar.show()
 
     def mini_player(self):
-        if "watch" in self.current_url:
+        if self.video_state == "VideoPlaying" or "VideoPaused":
             self.show_mini_player()
             self.hide()
             self.hide_tray_icon()
@@ -628,25 +645,31 @@ class MainWindow(QMainWindow):
         self.webpage.triggerAction(QWebEnginePage.Paste)
 
     def save_settings(self):
-        self.last_win_size_setting = self.size()
-        self.settings_.setValue("last_win_size", self.last_win_size_setting)
-        
         self.last_zoom_factor_setting = self.webview.zoomFactor()
         self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
+
+        self.last_win_size_setting = self.size()
+        self.settings_.setValue("last_win_size", self.last_win_size_setting)
 
         self.last_url_setting = self.current_url
         self.settings_.setValue("last_url", self.last_url_setting)
 
     def closeEvent(self, event):
+        self.save_settings()
+
         if self.tray_icon_setting == 1 and self.tray_icon is not None:
             if not self.force_exit:
                 event.ignore()
                 self.hide()
                 return
 
-        if "watch" in self.current_url:
+        if self.video_state == "VideoPlaying":
             if self.isMinimized() or self.isHidden():
-                self.showNormal()
+                if self.isMinimized():
+                    self.showNormal()
+                else:
+                    self.show()
+            self.activateWindow()
             w = MessageBox(
                 "Exit Confirmation",
                 (
@@ -658,11 +681,9 @@ class MainWindow(QMainWindow):
             w.yesButton.setText("Exit")
             w.cancelButton.setText("Cancel")
             if w.exec_():
-                self.save_settings()
                 event.accept()
             else:
                 self.force_exit = False
                 event.ignore()
         else:
-            self.save_settings()
             event.accept()

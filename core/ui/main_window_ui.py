@@ -115,7 +115,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.LineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"https://music.youtube.com/", None))
 #if QT_CONFIG(tooltip)
-        self.download_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Download Track/Playlist", None))
+        self.download_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Download", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.mini_player_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Mini-Player", None))

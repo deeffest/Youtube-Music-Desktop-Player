@@ -1,11 +1,9 @@
-import sys
 import pywinstyles
 
-from PyQt5.QtWidgets import QDialog, QApplication
+from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QProcess
+from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
-from qfluentwidgets import MessageBox
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -29,7 +27,6 @@ class SettingsDialog(QDialog):
         self.SwitchButton_7.setChecked(self.window.discord_rpc_setting)
         self.SwitchButton_11.setChecked(self.window.win_thumbmail_buttons_setting)
         self.SwitchButton_12.setChecked(self.window.tray_icon_setting)
-        self.SwitchButton_9.setChecked(self.window.close_cmd_after_downloading_setting)
 
     def set_icons(self):
         self.PillPushButton_4.setIcon(self.window.icon_folder+"/plugins.png")
@@ -39,7 +36,6 @@ class SettingsDialog(QDialog):
         self.PillPushButton_2.clicked.connect(self.configure_tabs)
         self.PillPushButton_3.clicked.connect(self.configure_tabs)
         self.PillPushButton_4.clicked.connect(self.configure_tabs)
-        self.PillPushButton_5.clicked.connect(self.configure_tabs)
         self.PrimaryPushButton.clicked.connect(self.save_and_close)
         self.PushButton.clicked.connect(self.close)
 
@@ -54,7 +50,6 @@ class SettingsDialog(QDialog):
         self.window.discord_rpc_setting = int(self.SwitchButton_7.isChecked())
         self.window.win_thumbmail_buttons_setting = int(self.SwitchButton_11.isChecked())
         self.window.tray_icon_setting = int(self.SwitchButton_12.isChecked())
-        self.window.close_cmd_after_downloading_setting = int(self.SwitchButton_9.isChecked())
 
         self.window.settings_.setValue("save_last_win_size", self.window.save_last_win_size_setting)
         self.window.settings_.setValue("open_last_url_at_startup", self.window.open_last_url_at_startup_setting)
@@ -66,24 +61,8 @@ class SettingsDialog(QDialog):
         self.window.settings_.setValue("discord_rpc", self.window.discord_rpc_setting)
         self.window.settings_.setValue("win_thumbmail_buttons", self.window.win_thumbmail_buttons_setting)
         self.window.settings_.setValue("tray_icon", self.window.tray_icon_setting)
-        self.window.settings_.setValue("close_cmd_after_downloading", self.window.close_cmd_after_downloading_setting)
 
         self.close()
-
-        w = MessageBox(
-            "Restart Confirmation",
-            (
-                "Restarting will close the current session and re-open the application with the new settings.\n"
-                "Would you like to restart now or later?"
-            ),
-            self.window
-        )
-        w.yesButton.setText("Restart Now")
-        w.cancelButton.setText("Restart Later")
-        if w.exec_() == True:
-            self.window.save_settings()
-            QApplication.quit()
-            QProcess.startDetached(sys.executable, sys.argv)
 
     def configure_tabs(self):
         self.frame.hide()
@@ -96,16 +75,10 @@ class SettingsDialog(QDialog):
 
         if self.PillPushButton.isChecked():
             self.frame.show()
-
         elif self.PillPushButton_2.isChecked():
             self.frame_2.show()
-
         elif self.PillPushButton_3.isChecked():
             self.frame_3.show()        
-            
-        elif self.PillPushButton_5.isChecked():
-            self.frame_5.show()
-
         else:
             self.frame_4.show()
             icon_path = self.window.icon_folder + "/plugins-black.png"

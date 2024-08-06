@@ -1,5 +1,14 @@
 var script = document.createElement('script');
-script.src = 'qrc:///qtwebchannel/qwebchannel.js';
+
+if (window.trustedTypes && window.trustedTypes.createPolicy) {
+    const policy = window.trustedTypes.createPolicy('default', {
+        createScriptURL: (url) => url
+    });
+    script.src = policy.createScriptURL('qrc:///qtwebchannel/qwebchannel.js');
+} else {
+    script.src = 'qrc:///qtwebchannel/qwebchannel.js';
+}
+
 script.onload = function() {
     new QWebChannel(qt.webChannelTransport, function(channel) {
         window.backend = channel.objects.backend;

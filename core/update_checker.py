@@ -1,4 +1,6 @@
 import requests
+import logging
+
 from PyQt5.QtCore import QThread, pyqtSignal
 
 class UpdateChecker(QThread):
@@ -17,9 +19,11 @@ class UpdateChecker(QThread):
             item_version = data["name"]
             item_download = data.get("html_url")
             item_notes = data.get("body")
-
+        except requests.exceptions.RequestException as e:
+            logging.error("UpdateChecker RequestException: " + str(e))
+            return
         except Exception as e:
-            print(f"Error while checking updates: {e}")
+            logging.error("UpdateChecker UnexpectedError: " + str(e))
             return
         
         if response.status_code == 200:

@@ -58,12 +58,15 @@ class SystemTrayIcon(QSystemTrayIcon):
             self.hide_show_window()
 
     def hide_show_window(self):
-        if self.window.isMinimized() or not self.window.isVisible():
-            self.window.showNormal()
+        if self.window.isMinimized() or self.window.isHidden():
+            if self.window.isMinimized():
+                self.window.showNormal()
+            else:
+                self.window.show()
+            self.window.activateWindow()
         else:
             self.window.hide()
 
     def close_window(self):
         self.window.force_exit = True
         self.window.close()
-        

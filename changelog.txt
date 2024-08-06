@@ -1,3 +1,17 @@
+Update 1.8-rc4 🎉 (August 6, 2024)
+
+- Download Method Changed: Due to some issues, we have replaced yt-dlp with pytubefix — 
+a fork of pytube with current fixes. It handles music downloads from YouTube perfectly, 
+and now the downloads occur without unnecessary console windows! 🎶
+- Error Logger Added: A logger has been implemented to track and improve error handling. 🐞
+- UI Changes: Minor interface improvements for a better user experience. 🎨
+- Optimization: Further optimizations have been made to enhance application performance. ⚙️
+- Other Fixes: Various minor bug fixes and enhancements. ✨
+
+YOU WILL NEED TO LOG IN TO YOUR GOOGLE ACCOUNT AGAIN, AS THE APPLICATION COOKIES ARE NOW LOCATED 
+IN A DIFFERENT PLACE. To delete the previous cookie folder, go to C:\Users\Your Username\AppData\Local 
+and delete the Youtube-Music-Desktop-Player folder. 🗂️
+
 Update 1.8-rc3 🎉 (August 2, 2024)
 
 - Performance Refactoring: Boosted application performance with a series of optimizations! 🚀

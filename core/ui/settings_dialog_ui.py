@@ -26,8 +26,8 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(550, 315)
-        Dialog.setMinimumSize(QSize(550, 315))
+        Dialog.resize(530, 300)
+        Dialog.setMinimumSize(QSize(530, 300))
         self.verticalLayout_6 = QVBoxLayout(Dialog)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
@@ -59,12 +59,6 @@ class Ui_Dialog(object):
 
         self.verticalLayout.addWidget(self.PillPushButton_3)
 
-        self.PillPushButton_5 = PillPushButton(self.SideBar)
-        self.PillPushButton_5.setObjectName(u"PillPushButton_5")
-        self.PillPushButton_5.setAutoExclusive(True)
-
-        self.verticalLayout.addWidget(self.PillPushButton_5)
-
         self.HorizontalSeparator = HorizontalSeparator(self.SideBar)
         self.HorizontalSeparator.setObjectName(u"HorizontalSeparator")
 
@@ -93,7 +87,7 @@ class Ui_Dialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 408, 849))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 706))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.frame = QFrame(self.scrollAreaWidgetContents)
@@ -334,41 +328,6 @@ class Ui_Dialog(object):
         self.verticalLayout_18 = QVBoxLayout(self.frame_5)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
         self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
-        self.SettingBox11 = QFrame(self.frame_5)
-        self.SettingBox11.setObjectName(u"SettingBox11")
-        self.SettingBox11.setFrameShape(QFrame.NoFrame)
-        self.SettingBox11.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_8 = QVBoxLayout(self.SettingBox11)
-        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.horizontalLayout_11 = QHBoxLayout()
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.BodyLabel_5 = BodyLabel(self.SettingBox11)
-        self.BodyLabel_5.setObjectName(u"BodyLabel_5")
-
-        self.horizontalLayout_11.addWidget(self.BodyLabel_5)
-
-        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_11.addItem(self.horizontalSpacer_10)
-
-        self.SwitchButton_9 = SwitchButton(self.SettingBox11)
-        self.SwitchButton_9.setObjectName(u"SwitchButton_9")
-        self.SwitchButton_9.setLayoutDirection(Qt.RightToLeft)
-
-        self.horizontalLayout_11.addWidget(self.SwitchButton_9)
-
-
-        self.verticalLayout_8.addLayout(self.horizontalLayout_11)
-
-        self.BodyLabel_10 = BodyLabel(self.SettingBox11)
-        self.BodyLabel_10.setObjectName(u"BodyLabel_10")
-        self.BodyLabel_10.setWordWrap(True)
-
-        self.verticalLayout_8.addWidget(self.BodyLabel_10)
-
-
-        self.verticalLayout_18.addWidget(self.SettingBox11)
-
 
         self.verticalLayout_21.addWidget(self.frame_5)
 
@@ -602,20 +561,17 @@ class Ui_Dialog(object):
         self.PillPushButton.setText(QCoreApplication.translate("Dialog", u"Main", None))
         self.PillPushButton_2.setText(QCoreApplication.translate("Dialog", u"Web Engine", None))
         self.PillPushButton_3.setText(QCoreApplication.translate("Dialog", u"Mini-Player", None))
-        self.PillPushButton_5.setText(QCoreApplication.translate("Dialog", u"Downloader", None))
         self.PillPushButton_4.setText(QCoreApplication.translate("Dialog", u"Plugins", None))
-        self.BodyLabel.setText(QCoreApplication.translate("Dialog", u"Save last window size", None))
-        self.BodyLabel_4.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled: After exiting the application, the last size of the main window will be saved and restored the next time you open the application.</span></p></body></html>", None))
-        self.BodyLabel_7.setText(QCoreApplication.translate("Dialog", u"Open last URL on startup", None))
-        self.BodyLabel_8.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled: After quitting the application, the last URL will be saved and restored the next time you open the application.</span></p></body></html>", None))
+        self.BodyLabel.setText(QCoreApplication.translate("Dialog", u"Save and restore window size", None))
+        self.BodyLabel_4.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the application remembers the window size for your next session.</span></p></body></html>", None))
+        self.BodyLabel_7.setText(QCoreApplication.translate("Dialog", u"Save and restore last URL", None))
+        self.BodyLabel_8.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the application remembers the last URL for your next session.</span></p></body></html>", None))
         self.BodyLabel_9.setText(QCoreApplication.translate("Dialog", u"Full screen mode support", None))
         self.BodyLabel_11.setText(QCoreApplication.translate("Dialog", u"Animated scrolling support", None))
-        self.BodyLabel_13.setText(QCoreApplication.translate("Dialog", u"Save last zoom factor", None))
-        self.BodyLabel_22.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled: When you exit the application, the last zoom factor will be saved and restored when you open the application again.</span></p></body></html>", None))
-        self.BodyLabel_2.setText(QCoreApplication.translate("Dialog", u"Save last position of mini player", None))
-        self.BodyLabel_3.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled: The last location where the mini-player was moved will be saved and restored when you open it again.</span></p></body></html>", None))
-        self.BodyLabel_5.setText(QCoreApplication.translate("Dialog", u"Close console after downloading", None))
-        self.BodyLabel_10.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled: After downloading a track/playlist, the console will automatically close.</span></p></body></html>", None))
+        self.BodyLabel_13.setText(QCoreApplication.translate("Dialog", u"Save and restore zoom factor", None))
+        self.BodyLabel_22.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the application remembers the last zoom factor for your next session.</span></p></body></html>", None))
+        self.BodyLabel_2.setText(QCoreApplication.translate("Dialog", u"Save and restore mini-player position", None))
+        self.BodyLabel_3.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the mini-player will open at the last position it was moved to.</span></p></body></html>", None))
         self.label.setText("")
         self.BodyLabel_6.setText(QCoreApplication.translate("Dialog", u"Ad Blocker (Skipper)", None))
         self.label_2.setText("")
@@ -623,7 +579,7 @@ class Ui_Dialog(object):
         self.label_3.setText("")
         self.BodyLabel_18.setText(QCoreApplication.translate("Dialog", u"Windows Thumbnail Buttons", None))
         self.label_4.setText("")
-        self.BodyLabel_20.setText(QCoreApplication.translate("Dialog", u"System Tray Icon", None))
+        self.BodyLabel_20.setText(QCoreApplication.translate("Dialog", u"System Tray App Icon", None))
         self.PrimaryPushButton.setText(QCoreApplication.translate("Dialog", u"Save", None))
         self.PushButton.setText(QCoreApplication.translate("Dialog", u"Cancel", None))
     # retranslateUi
