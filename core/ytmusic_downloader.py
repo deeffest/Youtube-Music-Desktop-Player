@@ -35,10 +35,7 @@ class DownloadThread(QThread):
     def download_playlist(self):
         pl = Playlist(self.url)
         self.title = pl.title
-        
-        safe_title = "".join([c for c in self.title if c.isalnum() or c in ' -_']).rstrip()
-        
-        playlist_folder = os.path.join(self.download_folder, safe_title)
+        playlist_folder = os.path.join(self.download_folder, self.title)
         os.makedirs(playlist_folder, exist_ok=True)
             
         for video in pl.videos:
