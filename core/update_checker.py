@@ -4,7 +4,7 @@ import logging
 from PyQt5.QtCore import QThread, pyqtSignal
 
 class UpdateChecker(QThread):
-    update_checked = pyqtSignal(str, str, str)
+    update_checked = pyqtSignal(str, str)
 
     def __init__(self):
         super().__init__()
@@ -18,7 +18,6 @@ class UpdateChecker(QThread):
             data = response.json()
             item_version = data["name"]
             item_download = data.get("html_url")
-            item_notes = data.get("body")
         except requests.exceptions.RequestException as e:
             logging.error("UpdateChecker RequestException: " + str(e))
             return
@@ -27,4 +26,4 @@ class UpdateChecker(QThread):
             return
         
         if response.status_code == 200:
-            self.update_checked.emit(item_version, item_download, item_notes)
+            self.update_checked.emit(item_version, item_download)

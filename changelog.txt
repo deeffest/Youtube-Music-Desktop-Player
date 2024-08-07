@@ -1,50 +1,48 @@
-Update 1.8-rc4 🎉 (August 6, 2024)
+### Update 1.8-rc5 🎉 (August 7, 2024)
 
-- Download Method Changed: Due to some issues, we have replaced yt-dlp with pytubefix — 
-a fork of pytube with current fixes. It handles music downloads from YouTube perfectly, 
-and now the downloads occur without unnecessary console windows! 🎶
-- Error Logger Added: A logger has been implemented to track and improve error handling. 🐞
-- UI Changes: Minor interface improvements for a better user experience. 🎨
-- Optimization: Further optimizations have been made to enhance application performance. ⚙️
-- Other Fixes: Various minor bug fixes and enhancements. ✨
+- Added a 30-second timeout for track/playlist downloads to address infinite download issues.
+- The message box for new updates no longer displays release notes.
+- Updated pytubefix to version 6.9.2.
+- File names for downloaded tracks/playlists are now filtered for invalid characters to avoid conflicts.
+- Tracks/playlists are now downloaded with audio only, no video.
+- Minor code optimization.
 
-YOU WILL NEED TO LOG IN TO YOUR GOOGLE ACCOUNT AGAIN, AS THE APPLICATION COOKIES ARE NOW LOCATED 
-IN A DIFFERENT PLACE. To delete the previous cookie folder, go to C:\Users\Your Username\AppData\Local 
-and delete the Youtube-Music-Desktop-Player folder. 🗂️
+### Update 1.8-rc4 🎉 (August 6, 2024)
 
-Update 1.8-rc3 🎉 (August 2, 2024)
+- Replaced yt-dlp with pytubefix — a fork of pytube with current fixes. This handles music downloads from YouTube perfectly and now the downloads occur without unnecessary console windows.
+- Implemented a logger to track and improve error handling.
+- Minor interface improvements for a better user experience.
+- Further optimizations to enhance application performance.
+- Various minor bug fixes and enhancements.
 
-- Performance Refactoring: Boosted application performance with a series of optimizations! 🚀
-- UI Enhancements: The pop-up menu and toolbar interface have been revamped 
-for a more user-friendly experience. 🎨
-- Download Format Change: The option to download tracks/playlists in mp4 format or open 
-yt-dlp in CMD for custom downloads has been removed. Only mp3 download option remains! 🎵
-- Automatic Dependency Management: All dependencies (yt-dlp and ffmpeg builds) will now be 
-automatically downloaded, reducing the installer size and speeding up the setup process 
-when using the application from the source code. ⚙️
-- Minor Improvements: A variety of small enhancements and bug fixes for an even smoother experience. 🔧
+**Note:** You will need to log in to your Google account again as the application cookies are now located in a different place. To delete the previous cookie folder, go to `C:\Users\Your Username\AppData\Local` and delete the `Youtube-Music-Desktop-Player` folder.
 
-Update 1.8-rc2 🎉 (July 27, 2024)
+### Update 1.8-rc3 🎉 (August 2, 2024)
 
-- Enhanced Update Check Process: Say goodbye to uncertainty! 
-Our new update verification system is more accurate and reliable than ever. 🔍
-- Mini Player Fix: No more mini player mishaps! The player now correctly 
-maintains its position, ensuring a seamless experience every time you open it. 🙌
-- Refined Shortcut Names: Updated installation shortcuts for a cleaner and 
-more intuitive setup. ✨
+- Boosted application performance with a series of optimizations.
+- The pop-up menu and toolbar interface have been revamped for a more user-friendly experience.
+- Removed the option to download tracks/playlists in mp4 format or open yt-dlp in CMD for custom downloads. Only mp3 download option remains.
+- All dependencies (yt-dlp and ffmpeg builds) will now be automatically downloaded, reducing the installer size and speeding up the setup process when using the application from the source code.
+- A variety of small enhancements and bug fixes for an even smoother experience.
 
-Update 1.8-rc1 🎉 (July 26, 2024)
+### Update 1.8-rc2 🎉 (July 27, 2024)
 
-- Revamped "About" Window: Enjoy a fresh new look!
-- Stylish Tooltips: Updated styles and new additions for better clarity.
-- New Download Engine: Switched to yt-dlp for tracks/playlists (CLI only for now, GUI coming soon!).
-- Enhanced Track Info Retrieval: Faster and simpler way to get details about the currently playing track. 🚀
-- Introducing "Plugins" Section:
-    Ad Blocker 🛑
-    Rich Discord Integration 💬
-    Playback controls on taskbar thumbnail 🎵
-    Taskbar tray icon 🌟
-- Updated Settings Interface: Sleeker design for easier navigation.
-- Icon Improvements: Fresh look with more refined icons.
-- Code Refactor: Optimized for better performance and maintainability.
-- Additional Changes: Various enhancements throughout! ✨
+- Improved update verification system for more accuracy and reliability.
+- The mini player now correctly maintains its position, ensuring a seamless experience every time you open it.
+- Updated installation shortcuts for a cleaner and more intuitive setup.
+
+### Update 1.8-rc1 🎉 (July 26, 2024)
+
+- Fresh new look for the "About" window.
+- Updated tooltips with new styles and additions for better clarity.
+- Switched to yt-dlp for tracks/playlists (CLI only for now, GUI coming soon).
+- Faster and simpler way to get details about the currently playing track.
+- New "Plugins" section:
+  - Ad blocker
+  - Rich Discord integration
+  - Playback controls on taskbar thumbnail
+  - Taskbar tray icon
+- Sleeker design for the settings interface for easier navigation.
+- Fresh look with more refined icons.
+- Optimized code for better performance and maintainability.
+- Various enhancements throughout.

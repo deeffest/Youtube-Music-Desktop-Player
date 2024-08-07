@@ -11,7 +11,7 @@ from core.main_window import MainWindow
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "https://deeffest.pythonanywhere.com"
-version = "1.8-rc4"
+version = "1.8-rc5"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def setup_logging():

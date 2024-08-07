@@ -1,75 +1,81 @@
 ![icon](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/7ab71884-0aed-4032-86ea-a9f85a979395)
 # YouTube Music Desktop Player 🎶
 
-Experience your music like never before with the **YouTube Music Desktop Player**! This application brings the power of YouTube Music to your desktop, designed with a sleek **Fluent UI** and packed with features to elevate your listening experience! 
+Experience your music like never before with **YouTube Music Desktop Player**! This application brings YouTube Music to your desktop with a sleek **Fluent UI** and a host of features to enhance your listening experience.
 
 ## 🎨 Features
-1. **Download Tracks & Playlists**: Easily download individual tracks or entire playlists in any format using **pytube**. Enjoy your favorite music offline without any hassle! 🎧
-  
-2. **Minimalistic Mini Player**: For those who love simplicity, our compact mini player allows you to control playback effortlessly, without cluttering your workspace. ✨
 
-3. **Intuitive Interface**: Easily navigate through the application with a clean and friendly interface based on Fluent UI design principles. 💻
+- **Download Tracks & Playlists**  
+  Effortlessly download your favorite tracks and playlists in MP3 format using **pytube**, ensuring you can enjoy music offline at any time.
 
-4. **Handy Plugins**: Enhance your experience with various plugins available:
-   - **Ad Blocker**: Enjoy uninterrupted music without annoying ads! 🚫
-   - **Discord Rich Presence**: Show off what you're listening to directly on your Discord profile! 🎮
-   - **Windows Thumbnail Buttons**: Control playback directly from the thumbnail in your taskbar. 🖱️
-   - **System Tray Icon**: Manage playback with ease using the system tray icon—hide or reveal the main window as you like! ⏯️
+- **Compact Mini Player**  
+  A minimalist mini player that provides essential playback controls without taking up too much space on your screen.
 
-5. **Background Playback**: Minimize the app to the system tray, allowing you to work or browse while enjoying your tunes. 🎵
+- **User-Friendly Interface**  
+  A clean and intuitive design that makes navigation simple, leveraging Fluent UI design principles for a modern look.
 
-6. **Frequent Updates**: Stay tuned with regular updates that enhance functionality and provide new features! 🔄
+- **Plugin Support**  
+  Enhance your experience with various plugins:
+  - **Ad Blocker (Skipper)**: Remove ads for an uninterrupted listening experience.  
+  - **Discord Rich Presence**: Share what you're listening to on your Discord profile.  
+  - **Windows Thumbnail Buttons**: Manage playback directly from the taskbar thumbnail buttons.  
+  - **System Tray App Icon**: Control playback and toggle the main window from the system tray icon.
 
-7. **Open Source**: The source code is available for anyone who wants to contribute or modify the application. 💻
+- **Seamless Background Playback**  
+  Keep the music playing even when the app is minimized to the system tray, allowing you to multitask with ease.
 
-8. **Completely Free**: Enjoy the full features at no cost! 🆓
+- **Regular Updates**  
+  Benefit from continuous improvements and new features with frequent updates.
+
+- **Open Source and Free**  
+  The application is open source, allowing you to customize it to your needs, and is available for free without any hidden costs.
 
 ## 📸 Screenshots
 ![Screenshot_1](https://github.com/user-attachments/assets/8705d46c-83c0-4a4c-a2c9-0fecb089e392)
 ![Screenshot_2](https://github.com/user-attachments/assets/ceaec55b-8706-413c-a09d-46ce66067a01)
 
-## 🚀 Get Started
-### Using the Installer:
-1. Download the **YTMDPlayer-Setup.exe** installer: [Latest Release](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/latest)
+## 🚀 Getting Started
+### Using the Installer
+1. Download the installer: [Latest Release](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/latest).
 2. Complete the installation process.
-3. Navigate to the installation directory and run **YTMDPlayer.exe**.
+3. Run **YTMDPlayer.exe** from the installation directory.
 
-### Using the Source Code:
+### Using the Source Code
 1. **Install Python**  
-   Ensure Python is installed on your system. This project has been tested on the following configurations:
+   Make sure Python is installed. Tested on:
    - Windows 10 (22H2) with Python 3.11.3 (64-bit)
    - Windows 11 (23H2) with Python 3.12.4 (64-bit)  
    [Download Python](https://www.python.org/downloads/).
 
 2. **Clone the Repository**  
-   Download or clone the repository to your local machine.
+   Clone the repository to your local machine.
 
 3. **Install Dependencies**  
-   Navigate to the project directory and install the required dependencies using:
+   In the project directory, install dependencies with:
    ```
    pip install -r requirements.txt
    ```
-   
+
 4. **Run the Application**  
-   Execute the following command to start the application:
+   Start the application with:
    ```
    python main.py
    ```
-   
-## 🔗 References:
+
+## 🔗 References
 - **Qt:** [Learn More](https://www.qt.io/)
 - **PyQt:** [Learn More](https://riverbankcomputing.com/software/pyqt)
 - **PyQt Fluent Widgets:** [Explore](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)
 - **Bug Reports:** [Report Issues](https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose)
 
-## 📚 See Also:
+## 📚 See Also
 - **DEEF Lite Media Player:** [Explore](https://github.com/deeffest/DEEF-Lite-Media-Player)
 - **DEEF Lite Image Viewer:** [Explore](https://github.com/deeffest/DEEF-Lite-Image-Viewer)
 
-## 📜 License:
+## 📜 License
 The YouTube Music Desktop Player is distributed under the **GPLv3 license**.
 
-## ⚠️ Disclaimer:
+## ⚠️ Disclaimer
 This application is unofficial and not affiliated with YouTube or Google Inc. "YouTube," "YouTube Music," and the "YouTube Logo" are registered trademarks of Google Inc.
 
 **We’d love to hear your questions or suggestions!** 💬

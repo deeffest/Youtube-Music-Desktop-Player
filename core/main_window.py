@@ -140,12 +140,19 @@ class MainWindow(QMainWindow):
         self.update_checker.update_checked.connect(self.handle_update_checked)
         self.update_checker.start()
         
-    def handle_update_checked(self, version, download, notes):
+    def handle_update_checked(self, version, download):
         if pkg_version.parse(self.version) < pkg_version.parse(version):
-            w = MessageBox(f"A new update {version} is available!", notes, self)
-            w.yesButton.setText("Update now!")
-            w.cancelButton.setText("Later")
-            if w.exec_():
+            msg_box = MessageBox(
+                f"A new update {version} is available",
+                (
+                    "New features, bug fixes and application optimization are waiting for you!\n"
+                    "Do you want to update now?"
+                ),
+                self
+            )
+            msg_box.yesButton.setText("Update now!")
+            msg_box.cancelButton.setText("Later")
+            if msg_box.exec_():
                 webbrowser.open_new_tab(download)
                 self.force_exit = True
                 self.close()
@@ -538,34 +545,26 @@ class MainWindow(QMainWindow):
         if info_bar:
             info_bar.close()
 
+        download_folder = download_folder or self.select_download_folder()
         if not download_folder:
-            download_folder = self.select_download_folder()
-        if download_folder is None:
             return
 
         self.last_download_folder_setting = download_folder
         self.settings_.setValue("last_download_folder", download_folder)
 
         self.is_downloading = True
-        self.download_action.setText("Wait...")
-        self.download_action.setEnabled(False)
-        self.download_tbutton.setToolTip("Wait...")
-        self.download_tbutton.setEnabled(False)
+        self.update_download_buttons("Wait...")
 
-        if custom_url:
-            self.download_thread = DownloadThread(custom_url, download_folder)
-        else:
-            self.download_thread = DownloadThread(self.current_url, download_folder)
+        url = custom_url or self.current_url
+
+        self.download_thread = DownloadThread(url, download_folder)
         self.download_thread.download_finished.connect(self.on_download_finished)
         self.download_thread.download_failed.connect(self.on_download_failed)
         self.download_thread.start()
 
     def on_download_finished(self, download_folder, title):
         self.is_downloading = False
-        self.download_action.setText("Download")
-        self.download_action.setEnabled(self.is_video_or_playlist)
-        self.download_tbutton.setToolTip("Download")
-        self.download_tbutton.setEnabled(self.is_video_or_playlist)
+        self.update_download_buttons("Download")
 
         info_bar = InfoBar.success(
             title=title,
@@ -581,16 +580,9 @@ class MainWindow(QMainWindow):
         info_bar.addWidget(open_download_folder_btn)
         info_bar.show()
 
-    def open_download_folder(self, download_folder, info_bar):
-        info_bar.close()
-        os.startfile(download_folder)
-        
     def on_download_failed(self, url, download_folder, title):
         self.is_downloading = False
-        self.download_action.setText("Download")
-        self.download_action.setEnabled(self.is_video_or_playlist)
-        self.download_tbutton.setToolTip("Download")
-        self.download_tbutton.setEnabled(self.is_video_or_playlist)
+        self.update_download_buttons("Download")
 
         info_bar = InfoBar.error(
             title=title,
@@ -604,8 +596,17 @@ class MainWindow(QMainWindow):
         retry_download_btn = PushButton("Re-download", icon=f"{self.icon_folder}/retry.png")
         retry_download_btn.clicked.connect(lambda: self.download(url, download_folder, info_bar))
         info_bar.addWidget(retry_download_btn)
-
         info_bar.show()
+
+    def update_download_buttons(self, text):
+        self.download_action.setText(text)
+        self.download_action.setEnabled(not self.is_downloading)
+        self.download_tbutton.setToolTip(text)
+        self.download_tbutton.setEnabled(not self.is_downloading)
+
+    def open_download_folder(self, download_folder, info_bar):
+        info_bar.close()
+        os.startfile(download_folder)
 
     def mini_player(self):
         if self.video_state == "VideoPlaying" or "VideoPaused":
@@ -670,7 +671,7 @@ class MainWindow(QMainWindow):
                 else:
                     self.show()
             self.activateWindow()
-            w = MessageBox(
+            msg_box = MessageBox(
                 "Exit Confirmation",
                 (
                     "Exiting now will stop the current playback and close the application.\n"
@@ -678,9 +679,9 @@ class MainWindow(QMainWindow):
                 ),
                 self
             )
-            w.yesButton.setText("Exit")
-            w.cancelButton.setText("Cancel")
-            if w.exec_():
+            msg_box.yesButton.setText("Exit")
+            msg_box.cancelButton.setText("Cancel")
+            if msg_box.exec_():
                 event.accept()
             else:
                 self.force_exit = False

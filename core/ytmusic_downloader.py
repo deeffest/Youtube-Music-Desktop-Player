@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 from PyQt5.QtCore import QThread, pyqtSignal
 from pytubefix import YouTube, Playlist
@@ -29,18 +30,23 @@ class DownloadThread(QThread):
     def download_youtube(self):
         yt = YouTube(self.url)
         self.title = yt.title
-        stream = yt.streams.get_highest_resolution()
-        stream.download(output_path=self.download_folder, mp3=True)
+        sanitized_title = self.sanitize_filename(yt.title)
+        stream = yt.streams.get_audio_only()
+        stream.download(output_path=self.download_folder, filename=f"{sanitized_title}.mp3", timeout=30)
 
     def download_playlist(self):
         pl = Playlist(self.url)
-        self.title = pl.title
+        self.title = self.sanitize_filename(pl.title)
         playlist_folder = os.path.join(self.download_folder, self.title)
         os.makedirs(playlist_folder, exist_ok=True)
-            
+
         for video in pl.videos:
             try:
-                stream = video.streams.get_highest_resolution()
-                stream.download(output_path=playlist_folder, mp3=True)
+                sanitized_title = self.sanitize_filename(video.title)
+                stream = video.streams.get_audio_only()
+                stream.download(output_path=playlist_folder, filename=f"{sanitized_title}.mp3", timeout=30)
             except Exception as e:
-                logging.error(f"DownloadThread UnexpectedError: " + str(e))
+                logging.error(f"DownloadThread UnexpectedError: {str(e)}")
+
+    def sanitize_filename(self, filename):
+        return re.sub(r'[<>:"/\\|?*]', '_', filename)
