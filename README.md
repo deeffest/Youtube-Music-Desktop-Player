@@ -44,7 +44,7 @@ Experience your music like never before with **YouTube Music Desktop Player**! T
 1. **Install Python**  
    Make sure Python is installed. Tested on:
    - Windows 10 (22H2) with Python 3.11.3 (64-bit)
-   - Windows 11 (23H2) with Python 3.12.4 (64-bit)  
+   - Windows 11 (23H2) with Python 3.12.5 (64-bit)  
    [Download Python](https://www.python.org/downloads/).
 
 2. **Clone the Repository**  
