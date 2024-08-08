@@ -12,6 +12,7 @@ from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtCore import QSettings, QUrl, Qt, QSize, pyqtSlot, QRect
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
+from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.uic import loadUi
 from qfluentwidgets import setTheme, setThemeColor, Theme, \
     RoundMenu, Action, SplashScreen, MessageBox, InfoBar, InfoBarPosition, \
@@ -41,6 +42,7 @@ class MainWindow(QMainWindow):
         self.force_exit = False
         self.is_downloading = False
         self.is_video_or_playlist = False
+        self.current_url = None
     
         self.load_settings()
         self.load_ui()
@@ -71,6 +73,9 @@ class MainWindow(QMainWindow):
         self.geometry_of_mp_setting = self.settings_.value("geometry_of_mp", QRect(30, 60, 360, 150))
         self.win_thumbmail_buttons_setting = int(self.settings_.value("win_thumbmail_buttons", 1))
         self.tray_icon_setting = int(self.settings_.value("tray_icon", 0))
+        self.application_proxy_support_setting = int(self.settings_.value("application_proxy_support", 0))
+        self.proxy_host_name_setting = self.settings_.value("proxy_host_name", "192.168.1.100")
+        self.proxy_port_setting = int(self.settings_.value("proxy_port", 8080))
 
     def load_ui(self):
         pywinstyles.apply_style(self, "dark")
@@ -106,6 +111,9 @@ class MainWindow(QMainWindow):
         self.webpage = WebEnginePage(self)
         self.websettings = QWebEngineSettings.globalSettings()
         self.webview.setPage(self.webpage)
+
+        if self.application_proxy_support_setting == 1:
+            self.set_application_proxy()
         
         if self.open_last_url_at_startup_setting == 1:
             self.webview.load(QUrl(self.last_url_setting))
@@ -123,6 +131,13 @@ class MainWindow(QMainWindow):
             self.webview.setZoomFactor(self.last_zoom_factor_setting)
             
         self.main_layout.addWidget(self.webview)
+
+    def set_application_proxy(self):
+        proxy = QNetworkProxy()
+        proxy.setType(QNetworkProxy.HttpProxy)
+        proxy.setHostName(self.proxy_host_name_setting)
+        proxy.setPort(self.proxy_port_setting)
+        QNetworkProxy.setApplicationProxy(proxy)
 
     def load_progress(self, progress):
         if progress > 80 and self.splash_screen:
@@ -652,8 +667,9 @@ class MainWindow(QMainWindow):
         self.last_win_size_setting = self.size()
         self.settings_.setValue("last_win_size", self.last_win_size_setting)
 
-        self.last_url_setting = self.current_url
-        self.settings_.setValue("last_url", self.last_url_setting)
+        if self.current_url is not None:
+            self.last_url_setting = self.current_url
+            self.settings_.setValue("last_url", self.last_url_setting)
 
     def closeEvent(self, event):
         self.save_settings()

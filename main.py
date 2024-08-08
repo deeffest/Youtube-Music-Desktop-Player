@@ -10,8 +10,8 @@ from core.main_window import MainWindow
 
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
-website = "https://deeffest.pythonanywhere.com"
-version = "1.8-rc5"
+website = "deeffest.pythonanywhere.com"
+version = "1.8"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def setup_logging():
@@ -19,9 +19,9 @@ def setup_logging():
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    log_file = os.path.join(log_dir, "errors.log")
+    log_file = os.path.join(log_dir, "app.log")
     logging.basicConfig(
-        level=logging.ERROR,
+        level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
             logging.FileHandler(log_file),

@@ -1,3 +1,21 @@
+### Update 1.8 🎉 (August 9, 2024)
+
+- Logging level is now Info instead of Error.
+- Changed log file name from `errors.log` to `app.log`.
+- Added support for custom proxy. You can enable and change it in the settings in the "Web Engine" tab.
+
+**Note:** You will need to log in to your Google account again as the application cookies are now located in a different place. To delete the previous cookie folder, go to `C:\Users\Your Username\AppData\Local` and delete the `Youtube-Music-Desktop-Player` folder.
+
+---
+
+**Previous Release Candidates:**
+
+- [Update 1.8-rc5](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/tag/1.8-rc5) (August 7, 2024)
+- [Update 1.8-rc4](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/tag/1.8-rc4) (August 6, 2024)
+- [Update 1.8-rc3](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/tag/1.8-rc3) (August 2, 2024)
+- [Update 1.8-rc2](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/tag/1.8-rc2) (July 27, 2024)
+- [Update 1.8-rc1](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/tag/1.8-rc1) (July 26, 2024)
+
 ### Update 1.8-rc5 🎉 (August 7, 2024)
 
 - Added a 30-second timeout for track/playlist downloads to address infinite download issues.

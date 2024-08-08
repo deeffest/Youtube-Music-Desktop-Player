@@ -19,8 +19,9 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
-from qfluentwidgets import (BodyLabel, HorizontalSeparator, PillPushButton, PrimaryPushButton,
-    PushButton, ScrollArea, SwitchButton, ToggleButton)
+from qfluentwidgets import (BodyLabel, HorizontalSeparator, LineEdit, PillPushButton,
+    PrimaryPushButton, PushButton, ScrollArea, StrongBodyLabel,
+    SwitchButton, ToggleButton)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -87,7 +88,7 @@ class Ui_Dialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 706))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 860))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.frame = QFrame(self.scrollAreaWidgetContents)
@@ -178,7 +179,7 @@ class Ui_Dialog(object):
         self.frame_2.setFrameShadow(QFrame.Raised)
         self.verticalLayout_12 = QVBoxLayout(self.frame_2)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_12.setContentsMargins(0, 0, 16, 0)
         self.SettingBox3 = QFrame(self.frame_2)
         self.SettingBox3.setObjectName(u"SettingBox3")
         self.SettingBox3.setFrameShape(QFrame.StyledPanel)
@@ -272,6 +273,73 @@ class Ui_Dialog(object):
 
 
         self.verticalLayout_12.addWidget(self.SettingBox8)
+
+        self.SettingBox11 = QFrame(self.frame_2)
+        self.SettingBox11.setObjectName(u"SettingBox11")
+        self.SettingBox11.setFrameShape(QFrame.StyledPanel)
+        self.SettingBox11.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_8 = QVBoxLayout(self.SettingBox11)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.horizontalLayout_11 = QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
+        self.BodyLabel_5 = BodyLabel(self.SettingBox11)
+        self.BodyLabel_5.setObjectName(u"BodyLabel_5")
+
+        self.horizontalLayout_11.addWidget(self.BodyLabel_5)
+
+        self.StrongBodyLabel = StrongBodyLabel(self.SettingBox11)
+        self.StrongBodyLabel.setObjectName(u"StrongBodyLabel")
+
+        self.horizontalLayout_11.addWidget(self.StrongBodyLabel)
+
+        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_11.addItem(self.horizontalSpacer_10)
+
+        self.SwitchButton_9 = SwitchButton(self.SettingBox11)
+        self.SwitchButton_9.setObjectName(u"SwitchButton_9")
+        self.SwitchButton_9.setLayoutDirection(Qt.RightToLeft)
+
+        self.horizontalLayout_11.addWidget(self.SwitchButton_9)
+
+
+        self.verticalLayout_8.addLayout(self.horizontalLayout_11)
+
+        self.horizontalLayout_12 = QHBoxLayout()
+        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.BodyLabel_10 = BodyLabel(self.SettingBox11)
+        self.BodyLabel_10.setObjectName(u"BodyLabel_10")
+
+        self.horizontalLayout_12.addWidget(self.BodyLabel_10)
+
+        self.LineEdit = LineEdit(self.SettingBox11)
+        self.LineEdit.setObjectName(u"LineEdit")
+        self.LineEdit.setClearButtonEnabled(False)
+
+        self.horizontalLayout_12.addWidget(self.LineEdit)
+
+        self.BodyLabel_14 = BodyLabel(self.SettingBox11)
+        self.BodyLabel_14.setObjectName(u"BodyLabel_14")
+
+        self.horizontalLayout_12.addWidget(self.BodyLabel_14)
+
+        self.LineEdit_2 = LineEdit(self.SettingBox11)
+        self.LineEdit_2.setObjectName(u"LineEdit_2")
+        self.LineEdit_2.setClearButtonEnabled(False)
+
+        self.horizontalLayout_12.addWidget(self.LineEdit_2)
+
+
+        self.verticalLayout_8.addLayout(self.horizontalLayout_12)
+
+        self.BodyLabel_15 = BodyLabel(self.SettingBox11)
+        self.BodyLabel_15.setObjectName(u"BodyLabel_15")
+        self.BodyLabel_15.setWordWrap(True)
+
+        self.verticalLayout_8.addWidget(self.BodyLabel_15)
+
+
+        self.verticalLayout_12.addWidget(self.SettingBox11)
 
 
         self.verticalLayout_21.addWidget(self.frame_2)
@@ -570,6 +638,13 @@ class Ui_Dialog(object):
         self.BodyLabel_11.setText(QCoreApplication.translate("Dialog", u"Animated scrolling support", None))
         self.BodyLabel_13.setText(QCoreApplication.translate("Dialog", u"Save and restore zoom factor", None))
         self.BodyLabel_22.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the application remembers the last zoom factor for your next session.</span></p></body></html>", None))
+        self.BodyLabel_5.setText(QCoreApplication.translate("Dialog", u"Application Proxy Support", None))
+        self.StrongBodyLabel.setText(QCoreApplication.translate("Dialog", u"(BETA)", None))
+        self.BodyLabel_10.setText(QCoreApplication.translate("Dialog", u"Host:", None))
+        self.LineEdit.setPlaceholderText(QCoreApplication.translate("Dialog", u"192.168.1.100", None))
+        self.BodyLabel_14.setText(QCoreApplication.translate("Dialog", u"Port:", None))
+        self.LineEdit_2.setPlaceholderText(QCoreApplication.translate("Dialog", u"8080", None))
+        self.BodyLabel_15.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, this setting allows you to specify a custom proxy server for accessing the YouTube Music website. </span></p></body></html>", None))
         self.BodyLabel_2.setText(QCoreApplication.translate("Dialog", u"Save and restore mini-player position", None))
         self.BodyLabel_3.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the mini-player will open at the last position it was moved to.</span></p></body></html>", None))
         self.label.setText("")

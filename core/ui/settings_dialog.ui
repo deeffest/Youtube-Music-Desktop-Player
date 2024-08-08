@@ -160,7 +160,7 @@
             <x>0</x>
             <y>0</y>
             <width>390</width>
-            <height>706</height>
+            <height>860</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -316,7 +316,7 @@
                <number>0</number>
               </property>
               <property name="rightMargin">
-               <number>0</number>
+               <number>16</number>
               </property>
               <property name="bottomMargin">
                <number>0</number>
@@ -454,6 +454,104 @@
                   <widget class="BodyLabel" name="BodyLabel_22">
                    <property name="text">
                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the application remembers the last zoom factor for your next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="SettingBox11">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_11">
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_5">
+                     <property name="text">
+                      <string>Application Proxy Support</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="StrongBodyLabel" name="StrongBodyLabel">
+                     <property name="text">
+                      <string>(BETA)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_10">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="SwitchButton" name="SwitchButton_9">
+                     <property name="layoutDirection">
+                      <enum>Qt::RightToLeft</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_12">
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_10">
+                     <property name="text">
+                      <string>Host:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="LineEdit" name="LineEdit">
+                     <property name="placeholderText">
+                      <string>192.168.1.100</string>
+                     </property>
+                     <property name="clearButtonEnabled">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_14">
+                     <property name="text">
+                      <string>Port:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="LineEdit" name="LineEdit_2">
+                     <property name="placeholderText">
+                      <string>8080</string>
+                     </property>
+                     <property name="clearButtonEnabled">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_15">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, this setting allows you to specify a custom proxy server for accessing the YouTube Music website. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1017,6 +1115,16 @@
   <customwidget>
    <class>BodyLabel</class>
    <extends>QLabel</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>StrongBodyLabel</class>
+   <extends>QLabel</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>

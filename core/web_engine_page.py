@@ -39,4 +39,4 @@ class WebEnginePage(QWebEnginePage):
             return (False, "")
         
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
-        logging.error(f"JavaScript Console Message: {message} (Level: {level}, Line: {lineNumber}, Source: {sourceID})")
+        logging.info(f"JavaScript Console Message: {message} (Level: {level}, Line: {lineNumber}, Source: {sourceID})")
