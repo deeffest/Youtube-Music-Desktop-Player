@@ -73,9 +73,11 @@ class MainWindow(QMainWindow):
         self.geometry_of_mp_setting = self.settings_.value("geometry_of_mp", QRect(30, 60, 360, 150))
         self.win_thumbmail_buttons_setting = int(self.settings_.value("win_thumbmail_buttons", 1))
         self.tray_icon_setting = int(self.settings_.value("tray_icon", 0))
-        self.application_proxy_support_setting = int(self.settings_.value("application_proxy_support", 0))
-        self.proxy_host_name_setting = self.settings_.value("proxy_host_name", "192.168.1.100")
-        self.proxy_port_setting = int(self.settings_.value("proxy_port", 8080))
+        self.proxy_type_setting = self.settings_.value("proxy_type", "NoProxy")
+        self.proxy_host_name_setting = self.settings_.value("proxy_host_name")
+        self.proxy_port_setting = self.settings_.value("proxy_port")
+        self.proxy_login_setting = self.settings_.value("proxy_login")
+        self.proxy_password_setting = self.settings_.value("proxy_password")
 
     def load_ui(self):
         pywinstyles.apply_style(self, "dark")
@@ -112,8 +114,7 @@ class MainWindow(QMainWindow):
         self.websettings = QWebEngineSettings.globalSettings()
         self.webview.setPage(self.webpage)
 
-        if self.application_proxy_support_setting == 1:
-            self.set_application_proxy()
+        self.set_application_proxy()
         
         if self.open_last_url_at_startup_setting == 1:
             self.webview.load(QUrl(self.last_url_setting))
@@ -133,11 +134,45 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(self.webview)
 
     def set_application_proxy(self):
-        proxy = QNetworkProxy()
-        proxy.setType(QNetworkProxy.HttpProxy)
-        proxy.setHostName(self.proxy_host_name_setting)
-        proxy.setPort(self.proxy_port_setting)
-        QNetworkProxy.setApplicationProxy(proxy)
+        try:
+            proxy = QNetworkProxy()
+        
+            if self.proxy_type_setting == "HttpProxy":
+                proxy.setType(QNetworkProxy.HttpProxy)
+            elif self.proxy_type_setting == "Socks5Proxy":
+                proxy.setType(QNetworkProxy.Socks5Proxy)
+            elif self.proxy_type_setting == "DefaultProxy":
+                proxy.setType(QNetworkProxy.DefaultProxy)
+            else:
+                proxy.setType(QNetworkProxy.NoProxy)
+                return
+            
+            if self.proxy_host_name_setting:
+                proxy.setHostName(self.proxy_host_name_setting)
+            else:
+                raise ValueError("Proxy host name is not set.")
+            
+            if self.proxy_port_setting:
+                if not (1 <= self.proxy_port_setting <= 65535):
+                    raise ValueError("Proxy port is out of range (1-65535).")
+                proxy.setPort(self.proxy_port_setting)
+            else:
+                raise ValueError("Proxy port is not set.")
+            
+            if self.proxy_login_setting:
+                proxy.setUser(self.proxy_login_setting)
+                logging.info("Proxy login set successfully.")
+            if self.proxy_password_setting:
+                proxy.setPassword(self.proxy_password_setting)
+                logging.info("Proxy password set successfully.")
+            
+            QNetworkProxy.setApplicationProxy(proxy)
+            logging.info(f"Application proxy set successfully. Type: {self.proxy_type_setting}")
+        
+        except ValueError as ve:
+            logging.error(f"QNetworkProxy ValueError: {ve}")
+        except Exception as e:
+            logging.error(f"QNetworkProxy An error occurred: {e}")
 
     def load_progress(self, progress):
         if progress > 80 and self.splash_screen:

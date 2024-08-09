@@ -160,7 +160,7 @@
             <x>0</x>
             <y>0</y>
             <width>390</width>
-            <height>860</height>
+            <height>911</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -477,7 +477,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_5">
                      <property name="text">
-                      <string>Application Proxy Support</string>
+                      <string>Application Proxy</string>
                      </property>
                     </widget>
                    </item>
@@ -502,9 +502,19 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_9">
-                     <property name="layoutDirection">
-                      <enum>Qt::RightToLeft</enum>
+                    <widget class="BodyLabel" name="BodyLabel_19">
+                     <property name="text">
+                      <string>Type</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="ComboBox" name="ComboBox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
                      </property>
                     </widget>
                    </item>
@@ -515,14 +525,32 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_10">
                      <property name="text">
-                      <string>Host:</string>
+                      <string>Host</string>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="LineEdit" name="LineEdit">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>33</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>33</height>
+                      </size>
+                     </property>
                      <property name="placeholderText">
-                      <string>192.168.1.100</string>
+                      <string/>
                      </property>
                      <property name="clearButtonEnabled">
                       <bool>false</bool>
@@ -532,17 +560,85 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_14">
                      <property name="text">
-                      <string>Port:</string>
+                      <string>Port</string>
                      </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="LineEdit" name="LineEdit_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>33</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>33</height>
+                      </size>
+                     </property>
                      <property name="placeholderText">
-                      <string>8080</string>
+                      <string/>
                      </property>
                      <property name="clearButtonEnabled">
                       <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_16">
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_16">
+                     <property name="text">
+                      <string>Login</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="LineEdit" name="LineEdit_3">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>33</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>33</height>
+                      </size>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_17">
+                     <property name="text">
+                      <string>Password</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="PasswordLineEdit" name="PasswordLineEdit">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>33</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>33</height>
+                      </size>
                      </property>
                     </widget>
                    </item>
@@ -1077,6 +1173,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ComboBox</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
    <class>PushButton</class>
    <extends>QPushButton</extends>
    <header>qfluentwidgets</header>
@@ -1125,6 +1226,11 @@
   <customwidget>
    <class>LineEdit</class>
    <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PasswordLineEdit</class>
+   <extends>LineEdit</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>

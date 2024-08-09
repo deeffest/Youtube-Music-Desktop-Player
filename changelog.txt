@@ -1,3 +1,13 @@
+### Update 1.9 🎉 (August 9, 2024)
+
+- Added the ability to change the type of the application's custom proxy server. Available types and their description:
+  - HttpProxy - Used to transmit HTTP requests through a proxy.
+  - Socks5Proxy - Supports transmission of all data types, including TCP and UDP.
+  - Default - Sets the default proxy as specified in the system settings.
+  - NoProxy - Disables the use of a proxy server.
+- Added ability to specify login and password for custom proxy server.
+- Fixed application crash when saving empty port of custom proxy server in settings.
+
 ### Update 1.8 🎉 (August 9, 2024)
 
 - Logging level is now Info instead of Error.

@@ -19,9 +19,9 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
-from qfluentwidgets import (BodyLabel, HorizontalSeparator, LineEdit, PillPushButton,
-    PrimaryPushButton, PushButton, ScrollArea, StrongBodyLabel,
-    SwitchButton, ToggleButton)
+from qfluentwidgets import (BodyLabel, ComboBox, HorizontalSeparator, LineEdit,
+    PasswordLineEdit, PillPushButton, PrimaryPushButton, PushButton,
+    ScrollArea, StrongBodyLabel, SwitchButton, ToggleButton)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -88,7 +88,7 @@ class Ui_Dialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 860))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 911))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.frame = QFrame(self.scrollAreaWidgetContents)
@@ -296,11 +296,20 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_11.addItem(self.horizontalSpacer_10)
 
-        self.SwitchButton_9 = SwitchButton(self.SettingBox11)
-        self.SwitchButton_9.setObjectName(u"SwitchButton_9")
-        self.SwitchButton_9.setLayoutDirection(Qt.RightToLeft)
+        self.BodyLabel_19 = BodyLabel(self.SettingBox11)
+        self.BodyLabel_19.setObjectName(u"BodyLabel_19")
 
-        self.horizontalLayout_11.addWidget(self.SwitchButton_9)
+        self.horizontalLayout_11.addWidget(self.BodyLabel_19)
+
+        self.ComboBox = ComboBox(self.SettingBox11)
+        self.ComboBox.setObjectName(u"ComboBox")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.ComboBox.sizePolicy().hasHeightForWidth())
+        self.ComboBox.setSizePolicy(sizePolicy)
+
+        self.horizontalLayout_11.addWidget(self.ComboBox)
 
 
         self.verticalLayout_8.addLayout(self.horizontalLayout_11)
@@ -314,6 +323,13 @@ class Ui_Dialog(object):
 
         self.LineEdit = LineEdit(self.SettingBox11)
         self.LineEdit.setObjectName(u"LineEdit")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.LineEdit.sizePolicy().hasHeightForWidth())
+        self.LineEdit.setSizePolicy(sizePolicy1)
+        self.LineEdit.setMinimumSize(QSize(0, 33))
+        self.LineEdit.setMaximumSize(QSize(16777215, 33))
         self.LineEdit.setClearButtonEnabled(False)
 
         self.horizontalLayout_12.addWidget(self.LineEdit)
@@ -325,12 +341,45 @@ class Ui_Dialog(object):
 
         self.LineEdit_2 = LineEdit(self.SettingBox11)
         self.LineEdit_2.setObjectName(u"LineEdit_2")
+        self.LineEdit_2.setMinimumSize(QSize(0, 33))
+        self.LineEdit_2.setMaximumSize(QSize(16777215, 33))
         self.LineEdit_2.setClearButtonEnabled(False)
 
         self.horizontalLayout_12.addWidget(self.LineEdit_2)
 
 
         self.verticalLayout_8.addLayout(self.horizontalLayout_12)
+
+        self.horizontalLayout_16 = QHBoxLayout()
+        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
+        self.BodyLabel_16 = BodyLabel(self.SettingBox11)
+        self.BodyLabel_16.setObjectName(u"BodyLabel_16")
+
+        self.horizontalLayout_16.addWidget(self.BodyLabel_16)
+
+        self.LineEdit_3 = LineEdit(self.SettingBox11)
+        self.LineEdit_3.setObjectName(u"LineEdit_3")
+        sizePolicy1.setHeightForWidth(self.LineEdit_3.sizePolicy().hasHeightForWidth())
+        self.LineEdit_3.setSizePolicy(sizePolicy1)
+        self.LineEdit_3.setMinimumSize(QSize(0, 33))
+        self.LineEdit_3.setMaximumSize(QSize(16777215, 33))
+
+        self.horizontalLayout_16.addWidget(self.LineEdit_3)
+
+        self.BodyLabel_17 = BodyLabel(self.SettingBox11)
+        self.BodyLabel_17.setObjectName(u"BodyLabel_17")
+
+        self.horizontalLayout_16.addWidget(self.BodyLabel_17)
+
+        self.PasswordLineEdit = PasswordLineEdit(self.SettingBox11)
+        self.PasswordLineEdit.setObjectName(u"PasswordLineEdit")
+        self.PasswordLineEdit.setMinimumSize(QSize(0, 33))
+        self.PasswordLineEdit.setMaximumSize(QSize(16777215, 33))
+
+        self.horizontalLayout_16.addWidget(self.PasswordLineEdit)
+
+
+        self.verticalLayout_8.addLayout(self.horizontalLayout_16)
 
         self.BodyLabel_15 = BodyLabel(self.SettingBox11)
         self.BodyLabel_15.setObjectName(u"BodyLabel_15")
@@ -590,11 +639,11 @@ class Ui_Dialog(object):
 
         self.PrimaryPushButton = PrimaryPushButton(self.ButtonBox)
         self.PrimaryPushButton.setObjectName(u"PrimaryPushButton")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.PrimaryPushButton.sizePolicy().hasHeightForWidth())
-        self.PrimaryPushButton.setSizePolicy(sizePolicy)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.PrimaryPushButton.sizePolicy().hasHeightForWidth())
+        self.PrimaryPushButton.setSizePolicy(sizePolicy2)
         self.PrimaryPushButton.setMinimumSize(QSize(160, 0))
         self.PrimaryPushButton.setMaximumSize(QSize(16777215, 16777215))
 
@@ -602,8 +651,8 @@ class Ui_Dialog(object):
 
         self.PushButton = PushButton(self.ButtonBox)
         self.PushButton.setObjectName(u"PushButton")
-        sizePolicy.setHeightForWidth(self.PushButton.sizePolicy().hasHeightForWidth())
-        self.PushButton.setSizePolicy(sizePolicy)
+        sizePolicy2.setHeightForWidth(self.PushButton.sizePolicy().hasHeightForWidth())
+        self.PushButton.setSizePolicy(sizePolicy2)
         self.PushButton.setMinimumSize(QSize(160, 0))
         self.PushButton.setMaximumSize(QSize(16777215, 16777215))
 
@@ -638,12 +687,15 @@ class Ui_Dialog(object):
         self.BodyLabel_11.setText(QCoreApplication.translate("Dialog", u"Animated scrolling support", None))
         self.BodyLabel_13.setText(QCoreApplication.translate("Dialog", u"Save and restore zoom factor", None))
         self.BodyLabel_22.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the application remembers the last zoom factor for your next session.</span></p></body></html>", None))
-        self.BodyLabel_5.setText(QCoreApplication.translate("Dialog", u"Application Proxy Support", None))
+        self.BodyLabel_5.setText(QCoreApplication.translate("Dialog", u"Application Proxy", None))
         self.StrongBodyLabel.setText(QCoreApplication.translate("Dialog", u"(BETA)", None))
-        self.BodyLabel_10.setText(QCoreApplication.translate("Dialog", u"Host:", None))
-        self.LineEdit.setPlaceholderText(QCoreApplication.translate("Dialog", u"192.168.1.100", None))
-        self.BodyLabel_14.setText(QCoreApplication.translate("Dialog", u"Port:", None))
-        self.LineEdit_2.setPlaceholderText(QCoreApplication.translate("Dialog", u"8080", None))
+        self.BodyLabel_19.setText(QCoreApplication.translate("Dialog", u"Type", None))
+        self.BodyLabel_10.setText(QCoreApplication.translate("Dialog", u"Host", None))
+        self.LineEdit.setPlaceholderText("")
+        self.BodyLabel_14.setText(QCoreApplication.translate("Dialog", u"Port", None))
+        self.LineEdit_2.setPlaceholderText("")
+        self.BodyLabel_16.setText(QCoreApplication.translate("Dialog", u"Login", None))
+        self.BodyLabel_17.setText(QCoreApplication.translate("Dialog", u"Password", None))
         self.BodyLabel_15.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, this setting allows you to specify a custom proxy server for accessing the YouTube Music website. </span></p></body></html>", None))
         self.BodyLabel_2.setText(QCoreApplication.translate("Dialog", u"Save and restore mini-player position", None))
         self.BodyLabel_3.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the mini-player will open at the last position it was moved to.</span></p></body></html>", None))

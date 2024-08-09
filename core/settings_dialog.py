@@ -21,6 +21,9 @@ class SettingsDialog(QDialog):
     def setup_content(self):
         int_validator = QIntValidator()
         self.LineEdit_2.setValidator(int_validator)
+        self.proxy_types = ["HttpProxy", "Socks5Proxy", 
+                            "DefaultProxy", "NoProxy"]
+        self.ComboBox.addItems(self.proxy_types)
 
     def setup_settings(self):
         self.SwitchButton.setChecked(self.window.save_last_win_size_setting)
@@ -33,10 +36,15 @@ class SettingsDialog(QDialog):
         self.SwitchButton_7.setChecked(self.window.discord_rpc_setting)
         self.SwitchButton_11.setChecked(self.window.win_thumbmail_buttons_setting)
         self.SwitchButton_12.setChecked(self.window.tray_icon_setting)
-        self.SwitchButton_9.setChecked(self.window.application_proxy_support_setting)
-        if self.window.proxy_host_name_setting and self.window.proxy_port_setting is not None:
+        self.ComboBox.setCurrentIndex(self.proxy_types.index(self.window.proxy_type_setting))
+        if self.window.proxy_host_name_setting is not None:
             self.LineEdit.setText(self.window.proxy_host_name_setting)
+        if self.window.proxy_port_setting is not None:
             self.LineEdit_2.setText(str(self.window.proxy_port_setting))
+        if self.window.proxy_login_setting is not None:
+            self.LineEdit_3.setText(self.window.proxy_login_setting)
+        if self.window.proxy_password_setting is not None:
+            self.PasswordLineEdit.setText(self.window.proxy_password_setting)
 
     def set_icons(self):
         self.PillPushButton_4.setIcon(self.window.icon_folder+"/plugins.png")
@@ -60,9 +68,12 @@ class SettingsDialog(QDialog):
         self.window.discord_rpc_setting = int(self.SwitchButton_7.isChecked())
         self.window.win_thumbmail_buttons_setting = int(self.SwitchButton_11.isChecked())
         self.window.tray_icon_setting = int(self.SwitchButton_12.isChecked())
-        self.window.application_proxy_support_setting = int(self.SwitchButton_9.isChecked())
+        self.window.proxy_type_setting = self.ComboBox.currentText()
         self.window.proxy_host_name_setting = self.LineEdit.text()
-        self.window.proxy_port_setting = int(self.LineEdit_2.text())
+        port_text = self.LineEdit_2.text()
+        self.window.proxy_port_setting = int(port_text) if port_text else None
+        self.window.proxy_login_setting = self.LineEdit_3.text()
+        self.window.proxy_password_setting = self.PasswordLineEdit.text()
 
         self.window.settings_.setValue("save_last_win_size", self.window.save_last_win_size_setting)
         self.window.settings_.setValue("open_last_url_at_startup", self.window.open_last_url_at_startup_setting)
@@ -74,9 +85,11 @@ class SettingsDialog(QDialog):
         self.window.settings_.setValue("discord_rpc", self.window.discord_rpc_setting)
         self.window.settings_.setValue("win_thumbmail_buttons", self.window.win_thumbmail_buttons_setting)
         self.window.settings_.setValue("tray_icon", self.window.tray_icon_setting)
-        self.window.settings_.setValue("application_proxy_support", self.window.application_proxy_support_setting)
+        self.window.settings_.setValue("proxy_type", self.window.proxy_type_setting)
         self.window.settings_.setValue("proxy_host_name", self.window.proxy_host_name_setting)
         self.window.settings_.setValue("proxy_port", self.window.proxy_port_setting)
+        self.window.settings_.setValue("proxy_login", self.window.proxy_login_setting)
+        self.window.settings_.setValue("proxy_password", self.window.proxy_password_setting)
 
         self.close()
 
@@ -109,7 +122,7 @@ class SettingsDialog(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings-red.png"))
         
-        self.setFixedSize(self.size())
+        self.resize(self.size())
 
     def closeEvent(self, event):
         self.window.show()
