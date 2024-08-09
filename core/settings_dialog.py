@@ -45,6 +45,7 @@ class SettingsDialog(QDialog):
             self.LineEdit_3.setText(self.window.proxy_login_setting)
         if self.window.proxy_password_setting is not None:
             self.PasswordLineEdit.setText(self.window.proxy_password_setting)
+        self.CheckBox.setChecked(self.window.allow_pytube_acces_to_proxy_setting)
 
     def set_icons(self):
         self.PillPushButton_4.setIcon(self.window.icon_folder+"/plugins.png")
@@ -74,6 +75,7 @@ class SettingsDialog(QDialog):
         self.window.proxy_port_setting = int(port_text) if port_text else None
         self.window.proxy_login_setting = self.LineEdit_3.text()
         self.window.proxy_password_setting = self.PasswordLineEdit.text()
+        self.window.allow_pytube_acces_to_proxy_setting = int(self.CheckBox.isChecked())
 
         self.window.settings_.setValue("save_last_win_size", self.window.save_last_win_size_setting)
         self.window.settings_.setValue("open_last_url_at_startup", self.window.open_last_url_at_startup_setting)
@@ -90,6 +92,7 @@ class SettingsDialog(QDialog):
         self.window.settings_.setValue("proxy_port", self.window.proxy_port_setting)
         self.window.settings_.setValue("proxy_login", self.window.proxy_login_setting)
         self.window.settings_.setValue("proxy_password", self.window.proxy_password_setting)
+        self.window.settings_.setValue("allow_pytube_acces_to_proxy", self.window.allow_pytube_acces_to_proxy_setting)
 
         self.close()
 

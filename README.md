@@ -32,7 +32,6 @@ Experience your music like never before with **YouTube Music Desktop Player**! T
 
 ## 📸 Screenshots
 ![Screenshot_1](https://github.com/user-attachments/assets/8705d46c-83c0-4a4c-a2c9-0fecb089e392)
-![Screenshot_2](https://github.com/user-attachments/assets/ceaec55b-8706-413c-a09d-46ce66067a01)
 
 ## 🚀 Getting Started
 ### Using the Installer

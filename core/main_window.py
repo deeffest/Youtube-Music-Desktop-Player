@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
         self.proxy_port_setting = self.settings_.value("proxy_port")
         self.proxy_login_setting = self.settings_.value("proxy_login")
         self.proxy_password_setting = self.settings_.value("proxy_password")
+        self.allow_pytube_acces_to_proxy_setting = int(self.settings_.value("allow_pytube_acces_to_proxy", 1))
 
     def load_ui(self):
         pywinstyles.apply_style(self, "dark")
@@ -143,6 +144,7 @@ class MainWindow(QMainWindow):
                 proxy.setType(QNetworkProxy.Socks5Proxy)
             elif self.proxy_type_setting == "DefaultProxy":
                 proxy.setType(QNetworkProxy.DefaultProxy)
+                return
             else:
                 proxy.setType(QNetworkProxy.NoProxy)
                 return
@@ -607,7 +609,7 @@ class MainWindow(QMainWindow):
 
         url = custom_url or self.current_url
 
-        self.download_thread = DownloadThread(url, download_folder)
+        self.download_thread = DownloadThread(url, download_folder, self)
         self.download_thread.download_finished.connect(self.on_download_finished)
         self.download_thread.download_failed.connect(self.on_download_failed)
         self.download_thread.start()

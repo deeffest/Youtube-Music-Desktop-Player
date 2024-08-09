@@ -160,7 +160,7 @@
             <x>0</x>
             <y>0</y>
             <width>390</width>
-            <height>911</height>
+            <height>939</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -651,6 +651,13 @@
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="CheckBox" name="CheckBox">
+                   <property name="text">
+                    <string>Allow pytube (downloader) access to proxy</string>
                    </property>
                   </widget>
                  </item>
@@ -1172,6 +1179,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>CheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
   <customwidget>
    <class>ComboBox</class>
    <extends>QPushButton</extends>

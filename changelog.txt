@@ -1,3 +1,8 @@
+### Update 1.10 🎉 (August 10, 2024)
+
+- Added ability to download tracks/playlists with custom proxy (Enabled by default). To disable it, go to settings > Web Engine > Allow pytube (downloader) access to proxy > uncheck the checkbox.
+- Removed 30-second timeout for track/playlist downloader.
+
 ### Update 1.9 🎉 (August 9, 2024)
 
 - Added the ability to change the type of the application's custom proxy server. Available types and their description:
