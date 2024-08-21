@@ -1,5 +1,4 @@
 import pywinstyles
-import logging
 
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon, QIntValidator
@@ -125,7 +124,7 @@ class SettingsDialog(QDialog):
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings-red.png"))
         
-        self.resize(self.size())
+        self.setFixedSize(self.size())
 
     def closeEvent(self, event):
         self.window.show()

@@ -83,7 +83,7 @@ class Ui_MiniPlayerDialog(object):
         self.thumbnail_label.setObjectName(u"thumbnail_label")
         self.thumbnail_label.setMinimumSize(QSize(60, 60))
         self.thumbnail_label.setMaximumSize(QSize(60, 60))
-        self.thumbnail_label.setScaledContents(True)
+        self.thumbnail_label.setScaledContents(False)
         self.thumbnail_label.setAlignment(Qt.AlignCenter)
 
         self.horizontalLayout_2.addWidget(self.thumbnail_label)

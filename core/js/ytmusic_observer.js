@@ -36,18 +36,35 @@ script.onload = function() {
             updateTrackInfo();
         }
 
+        function getThumbnailUrl() {
+            var thumbnailElement = document.querySelector('#song-image #img');
+            if (thumbnailElement) {
+                if (thumbnailElement.src && !thumbnailElement.src.startsWith('data:image/gif')) {
+                    return thumbnailElement.src;
+                }
+            }
+        
+            var fallbackElement = document.querySelector('.thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar');
+            if (fallbackElement) {
+                return fallbackElement.src;
+            }
+
+            return '';
+        }
+        
         function updateTrackInfo() {
-            var titleElement = document.querySelector('.title.ytmusic-player-bar');
-            var authorElement = document.querySelector('.byline.ytmusic-player-bar');
-            var thumbnailElement = document.querySelector('.image.ytmusic-player-bar');
-
+            var titleElement = document.querySelector('.title.style-scope.ytmusic-player-bar');
+            var authorElement = document.querySelector('.byline.style-scope.ytmusic-player-bar');
+            var thumbnailUrl = getThumbnailUrl();
+        
             var trackInfo = {
-                title: titleElement ? titleElement.textContent : '',
-                author: authorElement ? authorElement.textContent : '',
-                thumbnailUrl: thumbnailElement ? thumbnailElement.src : ''
+                title: titleElement ? titleElement.textContent.trim() : '',
+                author: authorElement ? authorElement.textContent.trim() : '',
+                thumbnailUrl: thumbnailUrl || ''
             };
-
+        
             if (trackInfo.title !== lastTrackInfo.title || trackInfo.author !== lastTrackInfo.author || trackInfo.thumbnailUrl !== lastTrackInfo.thumbnailUrl) {
+                console.log('Track Info:', JSON.stringify(trackInfo, null, 2));
                 backend.track_info_changed(trackInfo.title, trackInfo.author, trackInfo.thumbnailUrl);
                 lastTrackInfo = trackInfo;
             }

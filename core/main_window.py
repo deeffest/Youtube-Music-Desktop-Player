@@ -253,15 +253,16 @@ class MainWindow(QMainWindow):
         self.forward_tbutton.setEnabled(can_go_forward)
 
         self.is_video_or_playlist = ("watch" in self.current_url or "playlist" in self.current_url)
+        self.is_video = "watch" in self.current_url
 
         if not self.is_downloading:
             self.download_action.setEnabled(self.is_video_or_playlist)
             self.download_tbutton.setEnabled(self.is_video_or_playlist)
             self.download_shortcut.setEnabled(self.is_video_or_playlist)
 
-        self.mini_player_action.setEnabled(self.is_video_or_playlist)
-        self.mini_player_tbutton.setEnabled(self.is_video_or_playlist)
-        self.mini_player_shortcut.setEnabled(self.is_video_or_playlist)
+        self.mini_player_action.setEnabled(self.is_video)
+        self.mini_player_tbutton.setEnabled(self.is_video)
+        self.mini_player_shortcut.setEnabled(self.is_video)
 
     def setup_webchannel(self):
         self.webchannel = QWebChannel()
@@ -302,7 +303,7 @@ class MainWindow(QMainWindow):
                     details=self.title,
                     state=self.author,
                     large_image=self.thumbnail_url, 
-                    small_image="https://music.youtube.com/img/favicon_32.png"
+                    small_image="https://music.youtube.com/img/favicon_48.png"
                 )
             except pypresence.exceptions.ServerError as e:
                 logging.error("Pypresence ServerError: " + str(e))

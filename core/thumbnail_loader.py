@@ -1,7 +1,7 @@
 import requests
 import logging
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap
 
 class ThumbnailLoader(QThread):
@@ -20,7 +20,9 @@ class ThumbnailLoader(QThread):
 
             pixmap = QPixmap()
             pixmap.loadFromData(response.content)
-            self.thumbnail_loaded.emit(pixmap)
+            resized_pixmap = pixmap.scaled(60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+            self.thumbnail_loaded.emit(resized_pixmap)
         except requests.exceptions.RequestException as e:
             logging.error("ThumbnailLoader RequestException: " + str(e))
             self.thumbnail_loaded.emit(QPixmap())

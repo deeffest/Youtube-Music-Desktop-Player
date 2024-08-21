@@ -550,7 +550,7 @@
                       </size>
                      </property>
                      <property name="placeholderText">
-                      <string/>
+                      <string>192.168.1.1</string>
                      </property>
                      <property name="clearButtonEnabled">
                       <bool>false</bool>
@@ -579,7 +579,7 @@
                       </size>
                      </property>
                      <property name="placeholderText">
-                      <string/>
+                      <string>8080</string>
                      </property>
                      <property name="clearButtonEnabled">
                       <bool>false</bool>
@@ -617,6 +617,9 @@
                        <height>33</height>
                       </size>
                      </property>
+                     <property name="placeholderText">
+                      <string>user123</string>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -639,6 +642,9 @@
                        <width>16777215</width>
                        <height>33</height>
                       </size>
+                     </property>
+                     <property name="placeholderText">
+                      <string>password123</string>
                      </property>
                     </widget>
                    </item>

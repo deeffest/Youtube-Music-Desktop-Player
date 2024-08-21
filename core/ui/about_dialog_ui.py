@@ -19,7 +19,8 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
-from qfluentwidgets import (BodyLabel, PrimaryPushButton, PushButton, SubtitleLabel)
+from qfluentwidgets import (BodyLabel, HyperlinkLabel, PrimaryPushButton, PushButton,
+    SubtitleLabel)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -92,6 +93,17 @@ class Ui_Dialog(object):
         self.verticalLayout.setContentsMargins(12, 16, 12, 16)
         self.horizontalLayout_5 = QHBoxLayout()
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.BodyLabel_4 = BodyLabel(self.ButtonBox)
+        self.BodyLabel_4.setObjectName(u"BodyLabel_4")
+
+        self.horizontalLayout_5.addWidget(self.BodyLabel_4)
+
+        self.HyperlinkLabel = HyperlinkLabel(self.ButtonBox)
+        self.HyperlinkLabel.setObjectName(u"HyperlinkLabel")
+        self.HyperlinkLabel.setUrl(QUrl(u"https://icons8.com"))
+
+        self.horizontalLayout_5.addWidget(self.HyperlinkLabel)
+
         self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_7)
@@ -113,9 +125,12 @@ class Ui_Dialog(object):
 
         self.PrimaryPushButton = PrimaryPushButton(self.ButtonBox)
         self.PrimaryPushButton.setObjectName(u"PrimaryPushButton")
-        sizePolicy.setHeightForWidth(self.PrimaryPushButton.sizePolicy().hasHeightForWidth())
-        self.PrimaryPushButton.setSizePolicy(sizePolicy)
-        self.PrimaryPushButton.setMinimumSize(QSize(0, 0))
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.PrimaryPushButton.sizePolicy().hasHeightForWidth())
+        self.PrimaryPushButton.setSizePolicy(sizePolicy1)
+        self.PrimaryPushButton.setMinimumSize(QSize(115, 0))
         self.PrimaryPushButton.setMaximumSize(QSize(16777215, 16777215))
 
         self.horizontalLayout_5.addWidget(self.PrimaryPushButton)
@@ -136,9 +151,11 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.label.setText("")
         self.SubtitleLabel.setText(QCoreApplication.translate("Dialog", u"Youtube Music Desktop Player", None))
-        self.BodyLabel_2.setText(QCoreApplication.translate("Dialog", u"Version: 1.8-beta", None))
+        self.BodyLabel_2.setText(QCoreApplication.translate("Dialog", u"Version: Unknown", None))
         self.BodyLabel.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#d3d3d3;\">Displays Youtube Music site using QWebEngine to make your music listening experience even more convenient. </span></p><p><span style=\" color:#d3d3d3;\">This App is licensed under GNU GPLv3 and the source code is available on Github.</span></p><p><span style=\" color:#d3d3d3;\">Enjoy listening:)</span></p></body></html>", None))
         self.BodyLabel_3.setText(QCoreApplication.translate("Dialog", u"Created with \u2764\ufe0f by deeffest, 2024", None))
+        self.BodyLabel_4.setText(QCoreApplication.translate("Dialog", u"Icons by", None))
+        self.HyperlinkLabel.setText(QCoreApplication.translate("Dialog", u"Icons8", None))
         self.PushButton.setText(QCoreApplication.translate("Dialog", u"Visit Github", None))
         self.PrimaryPushButton.setText(QCoreApplication.translate("Dialog", u"Close", None))
     # retranslateUi

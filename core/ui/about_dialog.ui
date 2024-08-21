@@ -115,7 +115,7 @@
         <item>
          <widget class="BodyLabel" name="BodyLabel_2">
           <property name="text">
-           <string>Version: 1.8-beta</string>
+           <string>Version: Unknown</string>
           </property>
          </widget>
         </item>
@@ -165,6 +165,25 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
+         <widget class="BodyLabel" name="BodyLabel_4">
+          <property name="text">
+           <string>Icons by</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="HyperlinkLabel" name="HyperlinkLabel">
+          <property name="text">
+           <string>Icons8</string>
+          </property>
+          <property name="url">
+           <url>
+            <string>https://icons8.com</string>
+           </url>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer_7">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -206,14 +225,14 @@
         <item>
          <widget class="PrimaryPushButton" name="PrimaryPushButton">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>115</width>
             <height>0</height>
            </size>
           </property>
@@ -254,6 +273,11 @@
   <customwidget>
    <class>SubtitleLabel</class>
    <extends>QLabel</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>HyperlinkLabel</class>
+   <extends>QPushButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>
