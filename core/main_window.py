@@ -307,13 +307,19 @@ class MainWindow(QMainWindow):
                 )
             except pypresence.exceptions.ServerError as e:
                 logging.error("Pypresence ServerError: " + str(e))
-            except pypresence.exceptions.PipeClosed as e:
-                logging.error("Pypresence PipeClosed: " + str(e))
+            except Exception as e:
+                logging.error("An error occurred while updating Discord RPC: " + str(e))
                 self.discord_rpc = None
 
     def clear_discord_rpc(self):
         if self.discord_rpc:
-            self.discord_rpc.clear()
+            try:
+                self.discord_rpc.clear()
+            except pypresence.exceptions.ServerError as e:
+                logging.error("Pypresence ServerError: " + str(e))
+            except Exception as e:
+                logging.error("An error occurred while clearing Discord RPC: " + str(e))
+                self.discord_rpc = None
 
     @pyqtSlot(str)
     def video_state_changed(self, state):

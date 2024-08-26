@@ -1,3 +1,8 @@
+### Update 1.10.2 🎉 (August 26, 2024)
+
+- Fixed application crash related to clearing Discord RPC when Discord is already closed.
+- Other minor fixes and improvements.
+
 ### Update 1.10.1 🎉 (August 21, 2024)
 
 - Fixed display of some previews in the mini player.

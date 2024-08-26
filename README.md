@@ -31,9 +31,9 @@ Experience your music like never before with **YouTube Music Desktop Player**! T
   The application is open source, allowing you to customize it to your needs, and is available for free without any hidden costs.
 
 ## 📸 Screenshots
-![Screenshot_17](https://github.com/user-attachments/assets/9f932a7e-f5ba-49a4-aaff-c17986cb8f87)
+![Screenshot_1](https://github.com/user-attachments/assets/9f932a7e-f5ba-49a4-aaff-c17986cb8f87)
 ![Screenshot_2](https://github.com/user-attachments/assets/233aea8a-e41e-488a-9279-af138976af69)
-![Screenshot_16](https://github.com/user-attachments/assets/d1fb3be7-dfe7-43ad-b98e-ea96c6b47ddb)
+![Screenshot_3](https://github.com/user-attachments/assets/d1fb3be7-dfe7-43ad-b98e-ea96c6b47ddb)
 
 ## 🚀 Getting Started
 ### Using the Installer
@@ -64,17 +64,17 @@ Experience your music like never before with **YouTube Music Desktop Player**! T
    ```
 
 ## 🔗 References
-- **Qt:** [https://www.qt.io/](https://www.qt.io/)
-- **PyQt:** [https://riverbankcomputing.com/software/pyqt](https://riverbankcomputing.com/software/pyqt)
-- **PyQt Fluent Widgets:** [https://github.com/zhiyiYo/PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)
-- **Pytubefix:** [https://github.com/JuanBindez/pytubefix](https://github.com/JuanBindez/pytubefix)
-- **Icons8:** [https://icons8.com](https://icons8.com)
-- **Youtube Music:** [https://music.youtube.com](https://music.youtube.com)
-- **Bug Reports:** [https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose](https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose)
+- **Qt:** [qt.io](https://www.qt.io/)
+- **PyQt:** [PyQt - Riverbank Computing](https://riverbankcomputing.com/software/pyqt)
+- **PyQt Fluent Widgets:** [GitHub - PyQt Fluent Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)
+- **Pytubefix:** [GitHub - Pytubefix](https://github.com/JuanBindez/pytubefix)
+- **Icons8:** [icons8.com](https://icons8.com)
+- **Youtube Music:** [music.youtube.com](https://music.youtube.com)
+- **Bug Reports:** [Report Bugs](https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose)
 
 ## 📚 See Also
-- **DEEF Lite Media Player:** [https://github.com/deeffest/DEEF-Lite-Media-Player](https://github.com/deeffest/DEEF-Lite-Media-Player)
-- **DEEF Lite Image Viewer:** [https://github.com/deeffest/DEEF-Lite-Image-Viewer](https://github.com/deeffest/DEEF-Lite-Image-Viewer)
+- **DEEF Lite Media Player:** [GitHub - DEEF Lite Media Player](https://github.com/deeffest/DEEF-Lite-Media-Player)
+- **DEEF Lite Image Viewer:** [GitHub - DEEF Lite Image Viewer](https://github.com/deeffest/DEEF-Lite-Image-Viewer)
 
 ## 📜 License
 The YouTube Music Desktop Player is distributed under the **GPLv3 license**.

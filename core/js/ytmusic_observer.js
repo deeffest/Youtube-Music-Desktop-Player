@@ -64,7 +64,6 @@ script.onload = function() {
             };
         
             if (trackInfo.title !== lastTrackInfo.title || trackInfo.author !== lastTrackInfo.author || trackInfo.thumbnailUrl !== lastTrackInfo.thumbnailUrl) {
-                console.log('Track Info:', JSON.stringify(trackInfo, null, 2));
                 backend.track_info_changed(trackInfo.title, trackInfo.author, trackInfo.thumbnailUrl);
                 lastTrackInfo = trackInfo;
             }
