@@ -160,7 +160,7 @@
             <x>0</x>
             <y>0</y>
             <width>390</width>
-            <height>939</height>
+            <height>911</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -653,17 +653,10 @@
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_15">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, this setting allows you to specify a custom proxy server for accessing the YouTube Music website. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, this option allows you to specify a custom proxy server to connect to the Youtube Music website and download songs from it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="CheckBox" name="CheckBox">
-                   <property name="text">
-                    <string>Allow pytube (downloader) access to proxy</string>
                    </property>
                   </widget>
                  </item>
@@ -1185,11 +1178,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>CheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
   <customwidget>
    <class>ComboBox</class>
    <extends>QPushButton</extends>

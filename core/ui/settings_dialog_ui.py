@@ -19,10 +19,9 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
-from qfluentwidgets import (BodyLabel, CheckBox, ComboBox, HorizontalSeparator,
-    LineEdit, PasswordLineEdit, PillPushButton, PrimaryPushButton,
-    PushButton, ScrollArea, StrongBodyLabel, SwitchButton,
-    ToggleButton)
+from qfluentwidgets import (BodyLabel, ComboBox, HorizontalSeparator, LineEdit,
+    PasswordLineEdit, PillPushButton, PrimaryPushButton, PushButton,
+    ScrollArea, StrongBodyLabel, SwitchButton, ToggleButton)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -89,7 +88,7 @@ class Ui_Dialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 939))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 390, 911))
         self.verticalLayout_21 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.frame = QFrame(self.scrollAreaWidgetContents)
@@ -387,11 +386,6 @@ class Ui_Dialog(object):
         self.BodyLabel_15.setWordWrap(True)
 
         self.verticalLayout_8.addWidget(self.BodyLabel_15)
-
-        self.CheckBox = CheckBox(self.SettingBox11)
-        self.CheckBox.setObjectName(u"CheckBox")
-
-        self.verticalLayout_8.addWidget(self.CheckBox)
 
 
         self.verticalLayout_12.addWidget(self.SettingBox11)
@@ -704,8 +698,7 @@ class Ui_Dialog(object):
         self.LineEdit_3.setPlaceholderText(QCoreApplication.translate("Dialog", u"user123", None))
         self.BodyLabel_17.setText(QCoreApplication.translate("Dialog", u"Password", None))
         self.PasswordLineEdit.setPlaceholderText(QCoreApplication.translate("Dialog", u"password123", None))
-        self.BodyLabel_15.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, this setting allows you to specify a custom proxy server for accessing the YouTube Music website. </span></p></body></html>", None))
-        self.CheckBox.setText(QCoreApplication.translate("Dialog", u"Allow pytube (downloader) access to proxy", None))
+        self.BodyLabel_15.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, this option allows you to specify a custom proxy server to connect to the Youtube Music website and download songs from it.</span></p></body></html>", None))
         self.BodyLabel_2.setText(QCoreApplication.translate("Dialog", u"Save and restore mini-player position", None))
         self.BodyLabel_3.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the mini-player will open at the last position it was moved to.</span></p></body></html>", None))
         self.label.setText("")

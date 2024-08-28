@@ -28,35 +28,24 @@ class DownloadThread(QThread):
             self.download_finished.emit(self.download_folder, self.title)
 
     def download_youtube(self):
-        if self.window.allow_pytube_acces_to_proxy_setting == 1:
-            proxies = self.get_proxies()
-        else:
-            proxies = None
-
-        yt = YouTube(self.url, proxies=proxies)
+        yt = YouTube(self.url, proxies=self.get_proxies())
         self.title = yt.title
         sanitized_title = self.sanitize_filename(yt.title)
         stream = yt.streams.get_audio_only()
-        stream.download(output_path=self.download_folder, filename=f"{sanitized_title}.mp3")
+        stream.download(output_path=self.download_folder, filename=f"{sanitized_title}.mp3", 
+                        timeout=5, skip_existing=False, max_retries=2)
 
     def download_playlist(self):
-        if self.window.allow_pytube_acces_to_proxy_setting == 1:
-            proxies = self.get_proxies()
-        else:
-            proxies = None
-
-        pl = Playlist(self.url, proxies=proxies)
+        pl = Playlist(self.url, proxies=self.get_proxies())
         self.title = self.sanitize_filename(pl.title)
         playlist_folder = os.path.join(self.download_folder, self.title)
         os.makedirs(playlist_folder, exist_ok=True)
 
         for video in pl.videos:
-            try:
-                sanitized_title = self.sanitize_filename(video.title)
-                stream = video.streams.get_audio_only()
-                stream.download(output_path=playlist_folder, filename=f"{sanitized_title}.mp3")
-            except Exception as e:
-                logging.error(f"DownloadThread UnexpectedError: {str(e)}")
+            sanitized_title = self.sanitize_filename(video.title)
+            stream = video.streams.get_audio_only()
+            stream.download(output_path=playlist_folder, filename=f"{sanitized_title}.mp3", 
+                            timeout=5, skip_existing=False, max_retries=2)
 
     def sanitize_filename(self, filename):
         return re.sub(r'[<>:"/\\|?*]', '_', filename)

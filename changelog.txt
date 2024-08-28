@@ -1,3 +1,9 @@
+### Update 1.10.3 🎉 (August 28, 2024)
+
+- Fixed some bugs in track/playlist downloader.
+- Now with any problematic video in the playlist there will be an error downloading the whole playlist.
+- Removed checkbox to allow pytube (downloader) access to user proxy server.
+
 ### Update 1.10.2 🎉 (August 26, 2024)
 
 - Fixed application crash related to clearing Discord RPC when Discord is already closed.

@@ -78,8 +78,7 @@ class MainWindow(QMainWindow):
         self.proxy_port_setting = self.settings_.value("proxy_port")
         self.proxy_login_setting = self.settings_.value("proxy_login")
         self.proxy_password_setting = self.settings_.value("proxy_password")
-        self.allow_pytube_acces_to_proxy_setting = int(self.settings_.value("allow_pytube_acces_to_proxy", 1))
-
+        
     def load_ui(self):
         pywinstyles.apply_style(self, "dark")
         setTheme(Theme.DARK)
