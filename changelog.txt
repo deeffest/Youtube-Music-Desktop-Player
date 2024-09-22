@@ -1,4 +1,4 @@
-### Update 1.11-rc1 🎉 (September 21, 2024)
+### Update 1.11-rc1 🎉 (September 22, 2024)
 
 - Added support for likes and dislikes in window thumbnail, mini player and tray icon.
 - Added ability to specify custom URL in 1 command line argument. Example: `C:\Program Files\YTMDPlayer>YTMDPlayer.exe https://music.youtube.com/watch?v=lYBUbBu4W08`.
