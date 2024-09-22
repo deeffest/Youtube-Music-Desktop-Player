@@ -28,7 +28,7 @@ from packaging import version as pkg_version
 from core.ytmusic_downloader import DownloadThread
 
 class MainWindow(QMainWindow):
-    def __init__(self, app_info, parent=None):
+    def __init__(self, custom_url, app_info, parent=None):
         super().__init__(parent)
         self.name = app_info[0]
         self.version = app_info[1]
@@ -43,6 +43,8 @@ class MainWindow(QMainWindow):
         self.is_downloading = False
         self.is_video_or_playlist = False
         self.current_url = None
+        self.like_status = None
+        self.custom_url = custom_url
     
         self.load_settings()
         self.load_ui()
@@ -116,7 +118,9 @@ class MainWindow(QMainWindow):
 
         self.set_application_proxy()
         
-        if self.open_last_url_at_startup_setting == 1:
+        if self.custom_url is not None:
+            self.webview.load(QUrl(self.custom_url))
+        elif self.open_last_url_at_startup_setting == 1:
             self.webview.load(QUrl(self.last_url_setting))
         else:
             self.home()
@@ -268,6 +272,86 @@ class MainWindow(QMainWindow):
         self.webview.page().setWebChannel(self.webchannel)
         self.webchannel.registerObject("backend", self)
 
+    @pyqtSlot(str)
+    def like_status_changed(self, status):
+        if status != "":
+            self.like_status = status
+        else:
+            self.like_status = "NoVideo"
+
+        self.update_mini_player_like_dislike_controls()
+        self.update_win_thumbnail_buttons_like_dislike_controls()
+        self.update_tray_icon_like_dislike_controls()
+
+    def update_tray_icon_like_dislike_controls(self):
+        if self.tray_icon_setting == 1 and self.tray_icon:
+            if self.like_status == "LIKE":
+                self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like-checked.png"))
+                self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+                self.tray_icon.like_action.setEnabled(True)
+                self.tray_icon.dislike_action.setEnabled(True)
+            elif self.like_status == "DISLIKE":
+                self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike-checked.png"))
+                self.tray_icon.like_action.setEnabled(True)
+                self.tray_icon.dislike_action.setEnabled(True)
+            elif self.like_status == "INDIFFERENT":
+                self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+                self.tray_icon.like_action.setEnabled(True)
+                self.tray_icon.dislike_action.setEnabled(True)
+            else:
+                self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+                self.tray_icon.like_action.setEnabled(False)
+                self.tray_icon.dislike_action.setEnabled(False)
+
+    def update_win_thumbnail_buttons_like_dislike_controls(self):
+        if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
+            if self.like_status == "LIKE":
+                self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border-checked.png"))
+                self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
+                self.tool_btn_like.setEnabled(True)
+                self.tool_btn_dislike.setEnabled(True)
+            elif self.like_status == "DISLIKE":
+                self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
+                self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border-checked.png"))
+                self.tool_btn_like.setEnabled(True)
+                self.tool_btn_dislike.setEnabled(True)
+            elif self.like_status == "INDIFFERENT":
+                self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
+                self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
+                self.tool_btn_like.setEnabled(True)
+                self.tool_btn_dislike.setEnabled(True)
+            else:
+                self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border-disabled.png"))
+                self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border-disabled.png"))
+                self.tool_btn_like.setEnabled(False)
+                self.tool_btn_dislike.setEnabled(False)
+    
+    def update_mini_player_like_dislike_controls(self):
+        if self.mini_player_dialog:
+            if self.like_status == "LIKE":
+                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like-filled-checked.png"))
+                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+                self.mini_player_dialog.like_button.setEnabled(True)
+                self.mini_player_dialog.dislike_button.setEnabled(True)
+            elif self.like_status == "DISLIKE":
+                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike-filled-checked.png"))
+                self.mini_player_dialog.like_button.setEnabled(True)
+                self.mini_player_dialog.dislike_button.setEnabled(True)
+            elif self.like_status == "INDIFFERENT":
+                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+                self.mini_player_dialog.like_button.setEnabled(True)
+                self.mini_player_dialog.dislike_button.setEnabled(True)
+            else:
+                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+                self.mini_player_dialog.like_button.setEnabled(False)
+                self.mini_player_dialog.dislike_button.setEnabled(False)
+
     @pyqtSlot(str, str, str)
     def track_info_changed(self, title, author, thumbnail_url):
         self.title = title
@@ -284,10 +368,10 @@ class MainWindow(QMainWindow):
         if is_empty:
             self.clear_discord_rpc()
         else:
-            self.update_mini_player_info()
+            self.update_mini_player_track_info()
             self.update_discord_rpc()
 
-    def update_mini_player_info(self):
+    def update_mini_player_track_info(self):
         if self.mini_player_dialog:
             self.mini_player_dialog.title_label.setText(self.title)
             self.mini_player_dialog.title_label.setToolTip(self.title)
@@ -324,11 +408,11 @@ class MainWindow(QMainWindow):
     def video_state_changed(self, state):
         self.video_state = state
 
-        self.update_mini_player_ui()
-        self.update_win_thumbnail_buttons_ui()
-        self.update_tray_icon_ui()
+        self.update_mini_player_track_controls()
+        self.update_win_thumbnail_buttons_track_controls()
+        self.update_tray_icon_track_controls()
 
-    def update_tray_icon_ui(self):
+    def update_tray_icon_track_controls(self):
         if self.tray_icon_setting == 1 and self.tray_icon:
             if self.video_state == "VideoPlaying":
                 self.tray_icon.previous_action.setEnabled(True)
@@ -346,7 +430,7 @@ class MainWindow(QMainWindow):
                 self.tray_icon.play_pause_action.setEnabled(False)
                 self.tray_icon.next_action.setEnabled(False)
     
-    def update_win_thumbnail_buttons_ui(self):
+    def update_win_thumbnail_buttons_track_controls(self):
         if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
             if self.video_state == "VideoPlaying":
                 self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-border.png"))
@@ -370,7 +454,7 @@ class MainWindow(QMainWindow):
                 self.tool_btn_play_pause.setEnabled(False)
                 self.tool_btn_next.setEnabled(False)
 
-    def update_mini_player_ui(self):
+    def update_mini_player_track_controls(self):
         if self.mini_player_dialog:
             if self.video_state == "VideoPlaying":
                 self.mini_player_dialog.previous_button.setEnabled(True)
@@ -478,7 +562,7 @@ class MainWindow(QMainWindow):
     def activate_plugins(self):
         self.activate_ad_blocker()
         self.activate_scrollbar_styles()
-        self.connect_discord_rpc()
+        self.activate_discord_rpc()
         self.activate_ytmusic_observer()
         self.activate_win_thumbnail_toolbar()
         self.activate_tray_icon()
@@ -502,7 +586,7 @@ class MainWindow(QMainWindow):
         scrollbar_styles_plugin.setRunsOnSubFrames(True)
         self.webpage.profile().scripts().insert(scrollbar_styles_plugin)
 
-    def connect_discord_rpc(self):
+    def activate_discord_rpc(self):
         if self.discord_rpc_setting == 1:
             app_id = "1254202610781655050"
             self.discord_rpc = pypresence.Presence(app_id) if self.discord_rpc_setting == 1 else None
@@ -526,12 +610,22 @@ class MainWindow(QMainWindow):
     def activate_win_thumbnail_toolbar(self):
         if self.win_thumbmail_buttons_setting == 1:
             self.win_thumbnail_toolbar = QWinThumbnailToolBar(self)
+            self.create_dislike_button()
             self.create_previous_button()
             self.create_play_pause_button()
             self.create_next_button()
+            self.create_like_button()
             self.win_thumbnail_toolbar.setWindow(self.windowHandle())
         else:
             self.win_thumbnail_toolbar = None
+
+    def create_dislike_button(self):
+        self.tool_btn_dislike = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
+        self.tool_btn_dislike.setToolTip('Dislike')
+        self.tool_btn_dislike.setEnabled(False)
+        self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border-disabled.png"))
+        self.tool_btn_dislike.clicked.connect(self.dislike)
+        self.win_thumbnail_toolbar.addButton(self.tool_btn_dislike)
 
     def create_previous_button(self):
         self.tool_btn_previous = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
@@ -557,6 +651,14 @@ class MainWindow(QMainWindow):
         self.tool_btn_next.clicked.connect(self.skip_next)
         self.win_thumbnail_toolbar.addButton(self.tool_btn_next)
 
+    def create_like_button(self):
+        self.tool_btn_like = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
+        self.tool_btn_like.setToolTip('Like')
+        self.tool_btn_like.setEnabled(False)
+        self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border-disabled.png"))
+        self.tool_btn_like.clicked.connect(self.like)
+        self.win_thumbnail_toolbar.addButton(self.tool_btn_like)
+
     def activate_tray_icon(self):
         if self.tray_icon_setting == 1:
             self.tray_icon = SystemTrayIcon(self.windowIcon(), self)
@@ -571,7 +673,13 @@ class MainWindow(QMainWindow):
         self.run_js_script("play_pause.js")
 
     def skip_next(self):
-        self.run_js_script("skip_next.js")    
+        self.run_js_script("skip_next.js")
+
+    def like(self):
+        self.run_js_script("like.js")
+    
+    def dislike(self):
+        self.run_js_script("dislike.js")
         
     def run_js_script(self, script_name):
         self.webview.page().runJavaScript(self.read_script(script_name))    
@@ -673,9 +781,10 @@ class MainWindow(QMainWindow):
             self.hide_tray_icon()
 
     def show_mini_player(self):
-        self.mini_player_dialog = MiniPlayerDialog(self)        
-        self.update_mini_player_ui()
-        self.update_mini_player_info()
+        self.mini_player_dialog = MiniPlayerDialog(self)
+        self.update_mini_player_track_controls()
+        self.update_mini_player_like_dislike_controls()
+        self.update_mini_player_track_info()
         self.mini_player_dialog.show()
 
     def show_tray_icon(self):

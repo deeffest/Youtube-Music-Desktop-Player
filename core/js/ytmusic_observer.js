@@ -19,6 +19,7 @@ script.onload = function() {
             author: '',
             thumbnailUrl: ''
         };
+        var lastLikeStatus = '';
 
         function updateVideoState() {
             var player = document.getElementById('player');
@@ -43,7 +44,7 @@ script.onload = function() {
                     return thumbnailElement.src;
                 }
             }
-        
+
             var fallbackElement = document.querySelector('.thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar');
             if (fallbackElement) {
                 return fallbackElement.src;
@@ -51,22 +52,41 @@ script.onload = function() {
 
             return '';
         }
-        
+
         function updateTrackInfo() {
             var titleElement = document.querySelector('.title.style-scope.ytmusic-player-bar');
             var authorElement = document.querySelector('.byline.style-scope.ytmusic-player-bar');
             var thumbnailUrl = getThumbnailUrl();
-        
+
             var trackInfo = {
                 title: titleElement ? titleElement.textContent.trim() : '',
                 author: authorElement ? authorElement.textContent.trim() : '',
                 thumbnailUrl: thumbnailUrl || ''
             };
-        
+
             if (trackInfo.title !== lastTrackInfo.title || trackInfo.author !== lastTrackInfo.author || trackInfo.thumbnailUrl !== lastTrackInfo.thumbnailUrl) {
                 backend.track_info_changed(trackInfo.title, trackInfo.author, trackInfo.thumbnailUrl);
                 lastTrackInfo = trackInfo;
             }
+
+            updateLikeStatus();
+        }
+
+        function updateLikeStatus() {
+            var likeButton = document.querySelector('ytmusic-like-button-renderer#like-button-renderer');
+            if (likeButton) {
+                var likeStatus = likeButton.getAttribute('like-status');
+                if (likeStatus !== lastLikeStatus) {
+                    backend.like_status_changed(likeStatus);
+                    lastLikeStatus = likeStatus;
+                }
+            }
+        }        
+
+        var likeObserver = new MutationObserver(updateLikeStatus);
+        var likeButton = document.querySelector('ytmusic-like-button-renderer#like-button-renderer');
+        if (likeButton) {
+            likeObserver.observe(likeButton, { attributes: true, attributeFilter: ['like-status'] });
         }
 
         var observer = new MutationObserver(updateVideoState);

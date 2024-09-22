@@ -477,14 +477,14 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_5">
                      <property name="text">
-                      <string>Application Proxy</string>
+                      <string>Application Proxy Server</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="StrongBodyLabel" name="StrongBodyLabel">
+                    <widget class="CaptionLabel" name="CaptionLabel">
                      <property name="text">
-                      <string>(BETA)</string>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;(BETA)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                     </widget>
                    </item>
@@ -1021,7 +1021,7 @@
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>../../resources/icons/icon.ico</pixmap>
+                      <pixmap>../../resources/icons/logo.png</pixmap>
                      </property>
                      <property name="scaledContents">
                       <bool>true</bool>
@@ -1220,12 +1220,12 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>BodyLabel</class>
+   <class>CaptionLabel</class>
    <extends>QLabel</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>StrongBodyLabel</class>
+   <class>BodyLabel</class>
    <extends>QLabel</extends>
    <header>qfluentwidgets</header>
   </customwidget>

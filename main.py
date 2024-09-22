@@ -11,7 +11,7 @@ from core.main_window import MainWindow
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "deeffest.pythonanywhere.com"
-version = "1.10.3"
+version = "1.11-rc1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def setup_logging():
@@ -32,7 +32,9 @@ def setup_logging():
 if __name__ == '__main__':
     setup_logging()
 
-    app = QApplication(sys.argv)
+    sys_argv = sys.argv
+
+    app = QApplication(sys_argv)
     app.setApplicationName(name)
     app.setOrganizationName(author)
     app.setOrganizationDomain(website)  
@@ -48,6 +50,10 @@ if __name__ == '__main__':
     except Exception as e:
         logging.error("Failed to remove Service Worker directory: " + str(e))
 
-    main_window = MainWindow(app_info=[name, version, current_dir])
+    custom_url = None
+    if len(sys_argv) > 1:
+        custom_url = sys_argv[1]
+
+    main_window = MainWindow(custom_url, app_info=[name, version, current_dir])
     
     sys.exit(app.exec_())

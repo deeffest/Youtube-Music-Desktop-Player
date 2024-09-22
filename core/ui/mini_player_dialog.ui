@@ -169,17 +169,34 @@
       <number>30</number>
      </property>
      <property name="leftMargin">
-      <number>4</number>
+      <number>16</number>
      </property>
      <property name="topMargin">
       <number>3</number>
      </property>
      <property name="rightMargin">
-      <number>4</number>
+      <number>16</number>
      </property>
      <property name="bottomMargin">
       <number>18</number>
      </property>
+     <item>
+      <widget class="TransparentToolButton" name="dislike_button">
+       <property name="icon">
+        <iconset>
+         <normaloff>../../resources/icons/dislike.png</normaloff>../../resources/icons/dislike.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>D</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer name="horizontalSpacer_3">
        <property name="orientation">
@@ -292,6 +309,23 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="TransparentToolButton" name="like_button">
+       <property name="icon">
+        <iconset>
+         <normaloff>../../resources/icons/like.png</normaloff>../../resources/icons/like.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="shortcut">
+        <string>L</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

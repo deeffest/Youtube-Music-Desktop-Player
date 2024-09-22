@@ -94,7 +94,16 @@ class Ui_MiniPlayerDialog(object):
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setSpacing(30)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalLayout_3.setContentsMargins(4, 3, 4, 18)
+        self.horizontalLayout_3.setContentsMargins(16, 3, 16, 18)
+        self.dislike_button = TransparentToolButton(MiniPlayerDialog)
+        self.dislike_button.setObjectName(u"dislike_button")
+        icon = QIcon()
+        icon.addFile(u"../../resources/icons/dislike.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.dislike_button.setIcon(icon)
+        self.dislike_button.setIconSize(QSize(16, 16))
+
+        self.horizontalLayout_3.addWidget(self.dislike_button)
+
         self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer_3)
@@ -103,9 +112,9 @@ class Ui_MiniPlayerDialog(object):
         self.previous_button.setObjectName(u"previous_button")
         self.previous_button.setMinimumSize(QSize(40, 40))
         self.previous_button.setMaximumSize(QSize(40, 40))
-        icon = QIcon()
-        icon.addFile(u"../../resources/icons/previous-filled.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.previous_button.setIcon(icon)
+        icon1 = QIcon()
+        icon1.addFile(u"../../resources/icons/previous-filled.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.previous_button.setIcon(icon1)
         self.previous_button.setIconSize(QSize(20, 20))
 
         self.horizontalLayout_3.addWidget(self.previous_button)
@@ -114,9 +123,9 @@ class Ui_MiniPlayerDialog(object):
         self.play_pause_button.setObjectName(u"play_pause_button")
         self.play_pause_button.setMinimumSize(QSize(40, 40))
         self.play_pause_button.setMaximumSize(QSize(40, 40))
-        icon1 = QIcon()
-        icon1.addFile(u"../../resources/icons/play-filled.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.play_pause_button.setIcon(icon1)
+        icon2 = QIcon()
+        icon2.addFile(u"../../resources/icons/play-filled.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.play_pause_button.setIcon(icon2)
         self.play_pause_button.setIconSize(QSize(22, 22))
 
         self.horizontalLayout_3.addWidget(self.play_pause_button)
@@ -125,9 +134,9 @@ class Ui_MiniPlayerDialog(object):
         self.next_button.setObjectName(u"next_button")
         self.next_button.setMinimumSize(QSize(40, 40))
         self.next_button.setMaximumSize(QSize(40, 40))
-        icon2 = QIcon()
-        icon2.addFile(u"../../resources/icons/next-filled.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.next_button.setIcon(icon2)
+        icon3 = QIcon()
+        icon3.addFile(u"../../resources/icons/next-filled.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.next_button.setIcon(icon3)
         self.next_button.setIconSize(QSize(20, 20))
 
         self.horizontalLayout_3.addWidget(self.next_button)
@@ -135,6 +144,15 @@ class Ui_MiniPlayerDialog(object):
         self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer_4)
+
+        self.like_button = TransparentToolButton(MiniPlayerDialog)
+        self.like_button.setObjectName(u"like_button")
+        icon4 = QIcon()
+        icon4.addFile(u"../../resources/icons/like.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.like_button.setIcon(icon4)
+        self.like_button.setIconSize(QSize(16, 16))
+
+        self.horizontalLayout_3.addWidget(self.like_button)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_3)
@@ -151,6 +169,9 @@ class Ui_MiniPlayerDialog(object):
         self.author_label.setText("")
         self.thumbnail_label.setText("")
 #if QT_CONFIG(shortcut)
+        self.dislike_button.setShortcut(QCoreApplication.translate("MiniPlayerDialog", u"D", None))
+#endif // QT_CONFIG(shortcut)
+#if QT_CONFIG(shortcut)
         self.previous_button.setShortcut(QCoreApplication.translate("MiniPlayerDialog", u"Left", None))
 #endif // QT_CONFIG(shortcut)
 #if QT_CONFIG(shortcut)
@@ -158,6 +179,9 @@ class Ui_MiniPlayerDialog(object):
 #endif // QT_CONFIG(shortcut)
 #if QT_CONFIG(shortcut)
         self.next_button.setShortcut(QCoreApplication.translate("MiniPlayerDialog", u"Right", None))
+#endif // QT_CONFIG(shortcut)
+#if QT_CONFIG(shortcut)
+        self.like_button.setShortcut(QCoreApplication.translate("MiniPlayerDialog", u"L", None))
 #endif // QT_CONFIG(shortcut)
     # retranslateUi
 

@@ -27,7 +27,14 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.play_pause_action.setIcon(
             QIcon(f"{self.window.icon_folder}/play.png"))
         self.play_pause_action.setEnabled(False)
-        self.tray_menu.addAction(self.play_pause_action)
+        self.tray_menu.addAction(self.play_pause_action)        
+        
+        self.like_action = Action('Like', self)
+        self.like_action.triggered.connect(self.window.like)
+        self.like_action.setIcon(
+            QIcon(f"{self.window.icon_folder}/like.png"))
+        self.like_action.setEnabled(False)
+        self.tray_menu.addAction(self.like_action)
         
         self.previous_action = Action('Previous', self)
         self.previous_action.triggered.connect(self.window.skip_previous)
@@ -42,6 +49,13 @@ class SystemTrayIcon(QSystemTrayIcon):
             QIcon(f"{self.window.icon_folder}/next.png"))
         self.next_action.setEnabled(False)
         self.tray_menu.addAction(self.next_action)
+
+        self.dislike_action = Action('Dislike', self)
+        self.dislike_action.triggered.connect(self.window.dislike)
+        self.dislike_action.setIcon(
+            QIcon(f"{self.window.icon_folder}/dislike.png"))
+        self.dislike_action.setEnabled(False)
+        self.tray_menu.addAction(self.dislike_action)
 
         self.tray_menu.addSeparator()
 

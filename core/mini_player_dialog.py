@@ -23,6 +23,8 @@ class MiniPlayerDialog(QDialog):
         self.previous_button.clicked.connect(self.window.skip_previous)
         self.play_pause_button.clicked.connect(self.window.play_pause)
         self.next_button.clicked.connect(self.window.skip_next)
+        self.like_button.clicked.connect(self.window.like)
+        self.dislike_button.clicked.connect(self.window.dislike)
 
     def load_thumbnail(self, url):
         if hasattr(self, 'thumbnail_loader') and self.thumbnail_loader.is_running():

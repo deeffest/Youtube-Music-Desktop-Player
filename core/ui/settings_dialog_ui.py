@@ -19,9 +19,9 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QLabel, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
-from qfluentwidgets import (BodyLabel, ComboBox, HorizontalSeparator, LineEdit,
-    PasswordLineEdit, PillPushButton, PrimaryPushButton, PushButton,
-    ScrollArea, StrongBodyLabel, SwitchButton, ToggleButton)
+from qfluentwidgets import (BodyLabel, CaptionLabel, ComboBox, HorizontalSeparator,
+    LineEdit, PasswordLineEdit, PillPushButton, PrimaryPushButton,
+    PushButton, ScrollArea, SwitchButton, ToggleButton)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -287,10 +287,10 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_11.addWidget(self.BodyLabel_5)
 
-        self.StrongBodyLabel = StrongBodyLabel(self.SettingBox11)
-        self.StrongBodyLabel.setObjectName(u"StrongBodyLabel")
+        self.CaptionLabel = CaptionLabel(self.SettingBox11)
+        self.CaptionLabel.setObjectName(u"CaptionLabel")
 
-        self.horizontalLayout_11.addWidget(self.StrongBodyLabel)
+        self.horizontalLayout_11.addWidget(self.CaptionLabel)
 
         self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
@@ -581,7 +581,7 @@ class Ui_Dialog(object):
         self.label_4.setObjectName(u"label_4")
         self.label_4.setMinimumSize(QSize(24, 24))
         self.label_4.setMaximumSize(QSize(24, 24))
-        self.label_4.setPixmap(QPixmap(u"../../resources/icons/icon.ico"))
+        self.label_4.setPixmap(QPixmap(u"../../resources/icons/logo.png"))
         self.label_4.setScaledContents(True)
 
         self.horizontalLayout_14.addWidget(self.label_4)
@@ -687,8 +687,8 @@ class Ui_Dialog(object):
         self.BodyLabel_11.setText(QCoreApplication.translate("Dialog", u"Animated scrolling support", None))
         self.BodyLabel_13.setText(QCoreApplication.translate("Dialog", u"Save and restore zoom factor", None))
         self.BodyLabel_22.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" color:#808080;\">When enabled, the application remembers the last zoom factor for your next session.</span></p></body></html>", None))
-        self.BodyLabel_5.setText(QCoreApplication.translate("Dialog", u"Application Proxy", None))
-        self.StrongBodyLabel.setText(QCoreApplication.translate("Dialog", u"(BETA)", None))
+        self.BodyLabel_5.setText(QCoreApplication.translate("Dialog", u"Application Proxy Server", None))
+        self.CaptionLabel.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p><span style=\" font-size:9pt; font-weight:600;\">(BETA)</span></p></body></html>", None))
         self.BodyLabel_19.setText(QCoreApplication.translate("Dialog", u"Type", None))
         self.BodyLabel_10.setText(QCoreApplication.translate("Dialog", u"Host", None))
         self.LineEdit.setPlaceholderText(QCoreApplication.translate("Dialog", u"192.168.1.1", None))
