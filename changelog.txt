@@ -1,3 +1,7 @@
+### Update 1.11 🎉 (September 24, 2024)
+
+- Increased the size of buttons and icons for likes and dislikes in the mini player window.
+
 ### Update 1.11-rc1 🎉 (September 22, 2024)
 
 - Added support for likes and dislikes in window thumbnail, mini player and tray icon.

@@ -97,10 +97,12 @@ class Ui_MiniPlayerDialog(object):
         self.horizontalLayout_3.setContentsMargins(16, 3, 16, 18)
         self.dislike_button = TransparentToolButton(MiniPlayerDialog)
         self.dislike_button.setObjectName(u"dislike_button")
+        self.dislike_button.setMinimumSize(QSize(40, 40))
+        self.dislike_button.setMaximumSize(QSize(40, 40))
         icon = QIcon()
         icon.addFile(u"../../resources/icons/dislike.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.dislike_button.setIcon(icon)
-        self.dislike_button.setIconSize(QSize(16, 16))
+        self.dislike_button.setIconSize(QSize(20, 20))
 
         self.horizontalLayout_3.addWidget(self.dislike_button)
 
@@ -147,10 +149,12 @@ class Ui_MiniPlayerDialog(object):
 
         self.like_button = TransparentToolButton(MiniPlayerDialog)
         self.like_button.setObjectName(u"like_button")
+        self.like_button.setMinimumSize(QSize(40, 40))
+        self.like_button.setMaximumSize(QSize(40, 40))
         icon4 = QIcon()
         icon4.addFile(u"../../resources/icons/like.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.like_button.setIcon(icon4)
-        self.like_button.setIconSize(QSize(16, 16))
+        self.like_button.setIconSize(QSize(20, 20))
 
         self.horizontalLayout_3.addWidget(self.like_button)
 
