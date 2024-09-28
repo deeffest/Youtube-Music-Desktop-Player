@@ -1,3 +1,7 @@
+### Update 1.11.1 🎉 (September 28, 2024)
+
+- Updated pytubefix to version 7, thus fixing a persistent bug when loading tracks/playlists.
+
 ### Update 1.11 🎉 (September 24, 2024)
 
 - Increased the size of buttons and icons for likes and dislikes in the mini player window.
