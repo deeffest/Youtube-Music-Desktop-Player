@@ -381,28 +381,36 @@ class MainWindow(QMainWindow):
 
     def update_discord_rpc(self):
         if self.discord_rpc:
+            url = self.current_url
+            btn_list = [
+                {"label": "▶ Play in Browser", "url": url},
+                {"label": "🌐 YTMDPlayer on GitHub", "url": "https://github.com/deeffest/Youtube-Music-Desktop-Player"}
+            ]
             try:
                 self.discord_rpc.update(
                     details=self.title,
                     state=self.author,
                     large_image=self.thumbnail_url, 
-                    small_image="https://music.youtube.com/img/favicon_48.png"
+                    small_image="https://music.youtube.com/img/favicon_48.png",
+                    buttons=btn_list
                 )
-            except pypresence.exceptions.ServerError as e:
-                logging.error("Pypresence ServerError: " + str(e))
             except Exception as e:
                 logging.error("An error occurred while updating Discord RPC: " + str(e))
-                self.discord_rpc = None
+                self.reconnect_discord_rpc()
+
+    def reconnect_discord_rpc(self):
+        if self.discord_rpc:
+            try:
+                self.discord_rpc.connect()
+            except Exception as e:
+                logging.error("An error occurred while reconnecting Discord RPC: " + str(e))
 
     def clear_discord_rpc(self):
         if self.discord_rpc:
             try:
                 self.discord_rpc.clear()
-            except pypresence.exceptions.ServerError as e:
-                logging.error("Pypresence ServerError: " + str(e))
             except Exception as e:
                 logging.error("An error occurred while clearing Discord RPC: " + str(e))
-                self.discord_rpc = None
 
     @pyqtSlot(str)
     def video_state_changed(self, state):
@@ -589,12 +597,11 @@ class MainWindow(QMainWindow):
     def activate_discord_rpc(self):
         if self.discord_rpc_setting == 1:
             app_id = "1254202610781655050"
-            self.discord_rpc = pypresence.Presence(app_id) if self.discord_rpc_setting == 1 else None
+            self.discord_rpc = pypresence.Presence(app_id)
             try:
                 self.discord_rpc.connect()
-            except pypresence.exceptions.DiscordNotFound as e:
-                logging.error("Pypresence DiscordNotFound: " + str(e))
-                self.discord_rpc = None
+            except Exception as e:
+                logging.error("An error occurred while connecting to Discord RPC: " + str(e))
         else:
             self.discord_rpc = None
 

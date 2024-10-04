@@ -18,15 +18,17 @@ if (typeof videoPlayerObserver === 'undefined') {
 function findAndSkipAds(mutations) {
     for (let mutation of mutations) {
         if (mutation.target.classList.contains("ad-showing") && mutation.target.classList.contains("playing-mode")) {
-            mutation.target.querySelector("video").load();
-            if (mutation.target.querySelector("video").currentTime < mutation.target.querySelector("video").duration) {
-                mutation.target.querySelector("video").currentTime = mutation.target.querySelector("video").duration;
-                mutation.target.querySelector("video").load();
+            videoElement = mutation.target.querySelector("video");
+            videoElement.play();
+            if (videoElement.currentTime < videoElement.duration) {
+                mutation.target.querySelector("video").currentTime = videoElement.duration;
+                videoElement.play();
             }
         }
         if (mutation.target.classList.contains("ended-mode")) {
-            if (document.querySelector(".ytp-ad-skip-button") != null) {
-                document.querySelector(".ytp-ad-skip-button").click();
+            skipButton = document.querySelector(".ytp-ad-skip-button");
+            if (skipButton != null) {
+                skipButton.click();
             }
         }
     }
@@ -51,17 +53,10 @@ function findVideo() {
             }
         }
         if (!video) video = videoElements[0];
-        if (skipAdsEnabled) {
-            videoPlayerObserver.observe(video.parentNode.parentNode, options);
-            clearInterval(adSkipperIntervalID);
-        }
+        videoPlayerObserver.observe(video.parentNode.parentNode, options);
+        clearInterval(adSkipperIntervalID);
     }
     if (adSkipperIterations >= 500) clearInterval(adSkipperIntervalID);
-}
-
-function skipAdsEnabled() {
-    if (document.getElementById("ads_mmfytb_thunderarea")) return true;
-    else return false;
 }
 
 (function () {

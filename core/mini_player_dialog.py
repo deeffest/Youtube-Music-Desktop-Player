@@ -31,7 +31,7 @@ class MiniPlayerDialog(QDialog):
             self.thumbnail_loader.quit()
             self.thumbnail_loader.wait()
 
-        self.thumbnail_loader = ThumbnailLoader(url)
+        self.thumbnail_loader = ThumbnailLoader(url, self.window)
         self.thumbnail_loader.thumbnail_loaded.connect(self.on_thumbnail_loaded)
         self.thumbnail_loader.start()
 
