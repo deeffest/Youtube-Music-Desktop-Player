@@ -5,12 +5,12 @@ Experience your music like never before with **YouTube Music Desktop Player**! T
 
 ## 🎨 Features
 
-1. **Track and Playlist Downloader**
-2. **Mini-Player**
-3. **System Tray App Icon**
-4. **Windows Thumbnail Buttons**
-5. **Ad Blocker (Skipper)**
-6. **Discord Rich Presence**
+1. Track and Playlist Downloader
+2. Mini-Player
+3. System Tray App Icon
+4. Windows Thumbnail Buttons
+5. Ad Blocker (Skipper)
+6. Discord Rich Presence
 
 ## 📸 Screenshots
 ![Screenshot_1](https://github.com/user-attachments/assets/9f932a7e-f5ba-49a4-aaff-c17986cb8f87)
