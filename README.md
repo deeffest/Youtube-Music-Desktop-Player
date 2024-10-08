@@ -48,7 +48,6 @@ Experience your music like never before with **YouTube Music Desktop Player**! T
 ## 🔗 References
 - **[PyQt](https://riverbankcomputing.com/software/pyqt)**
 - **[PyQt Fluent Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)**
-- **[Icons8](https://icons8.com)**
 - **[Bug Reports](https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new?assignees=&labels=&projects=&template=bug_report.yml)**
 
 ## 📚 See Also
