@@ -396,12 +396,16 @@ class MainWindow(QMainWindow):
                 )
             except Exception as e:
                 logging.error("An error occurred while updating Discord RPC: " + str(e))
-                self.reconnect_discord_rpc()
+                self.reconnect_discord_rpc(retry_update=True)
 
-    def reconnect_discord_rpc(self):
+    def reconnect_discord_rpc(self, retry_update=False):
         if self.discord_rpc:
             try:
                 self.discord_rpc.connect()
+                logging.info("Reconnected to Discord RPC successfully.")
+                
+                if retry_update:
+                    self.update_discord_rpc()
             except Exception as e:
                 logging.error("An error occurred while reconnecting Discord RPC: " + str(e))
 

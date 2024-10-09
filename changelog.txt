@@ -1,3 +1,7 @@
+### Update 1.11.3 🎉 (October 9, 2024)
+
+- A small fix for the Discord Rich Presence plugin.
+
 ### Update 1.11.2 🎉 (October 4, 2024)
 
 - Small fix for Ad Blocker (Skipper) plugin - now ads are skipped noticeably faster.
