@@ -76,12 +76,13 @@ script.onload = function() {
             var likeButton = document.querySelector('ytmusic-like-button-renderer#like-button-renderer');
             if (likeButton) {
                 var likeStatus = likeButton.getAttribute('like-status');
-                if (likeStatus !== lastLikeStatus) {
+                if (likeStatus && likeStatus !== lastLikeStatus) {
+                    likeStatus = likeStatus.toLowerCase().charAt(0).toUpperCase() + likeStatus.slice(1).toLowerCase();
                     backend.like_status_changed(likeStatus);
                     lastLikeStatus = likeStatus;
                 }
             }
-        }        
+        }     
 
         var likeObserver = new MutationObserver(updateLikeStatus);
         var likeButton = document.querySelector('ytmusic-like-button-renderer#like-button-renderer');

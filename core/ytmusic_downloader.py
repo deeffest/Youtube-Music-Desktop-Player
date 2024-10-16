@@ -28,7 +28,7 @@ class DownloadThread(QThread):
             self.download_finished.emit(self.download_folder, self.title)
 
     def download_youtube(self):
-        yt = YouTube(self.url, proxies=self.get_proxies())
+        yt = YouTube(self.url, client="MWEB", proxies=self.get_proxies())
         self.title = yt.title
         sanitized_title = self.sanitize_filename(yt.title)
         stream = yt.streams.get_audio_only()
@@ -36,7 +36,7 @@ class DownloadThread(QThread):
                         timeout=5, skip_existing=False, max_retries=2)
 
     def download_playlist(self):
-        pl = Playlist(self.url, proxies=self.get_proxies())
+        pl = Playlist(self.url, client="MWEB", proxies=self.get_proxies())
         self.title = self.sanitize_filename(pl.title)
         playlist_folder = os.path.join(self.download_folder, self.title)
         os.makedirs(playlist_folder, exist_ok=True)

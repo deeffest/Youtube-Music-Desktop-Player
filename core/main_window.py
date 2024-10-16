@@ -166,16 +166,10 @@ class MainWindow(QMainWindow):
             
             if self.proxy_login_setting:
                 proxy.setUser(self.proxy_login_setting)
-                logging.info("Proxy login set successfully.")
             if self.proxy_password_setting:
                 proxy.setPassword(self.proxy_password_setting)
-                logging.info("Proxy password set successfully.")
-            
+
             QNetworkProxy.setApplicationProxy(proxy)
-            logging.info(f"Application proxy set successfully. Type: {self.proxy_type_setting}")
-        
-        except ValueError as ve:
-            logging.error(f"QNetworkProxy ValueError: {ve}")
         except Exception as e:
             logging.error(f"QNetworkProxy An error occurred: {e}")
 
@@ -285,17 +279,17 @@ class MainWindow(QMainWindow):
 
     def update_tray_icon_like_dislike_controls(self):
         if self.tray_icon_setting == 1 and self.tray_icon:
-            if self.like_status == "LIKE":
+            if self.like_status == "Like":
                 self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like-checked.png"))
                 self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
                 self.tray_icon.like_action.setEnabled(True)
                 self.tray_icon.dislike_action.setEnabled(True)
-            elif self.like_status == "DISLIKE":
+            elif self.like_status == "Dislike":
                 self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike-checked.png"))
                 self.tray_icon.like_action.setEnabled(True)
                 self.tray_icon.dislike_action.setEnabled(True)
-            elif self.like_status == "INDIFFERENT":
+            elif self.like_status == "Indifferent":
                 self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
                 self.tray_icon.like_action.setEnabled(True)
@@ -308,17 +302,17 @@ class MainWindow(QMainWindow):
 
     def update_win_thumbnail_buttons_like_dislike_controls(self):
         if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
-            if self.like_status == "LIKE":
+            if self.like_status == "Like":
                 self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border-checked.png"))
                 self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
                 self.tool_btn_like.setEnabled(True)
                 self.tool_btn_dislike.setEnabled(True)
-            elif self.like_status == "DISLIKE":
+            elif self.like_status == "Dislike":
                 self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
                 self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border-checked.png"))
                 self.tool_btn_like.setEnabled(True)
                 self.tool_btn_dislike.setEnabled(True)
-            elif self.like_status == "INDIFFERENT":
+            elif self.like_status == "Indifferent":
                 self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
                 self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
                 self.tool_btn_like.setEnabled(True)
@@ -331,17 +325,17 @@ class MainWindow(QMainWindow):
     
     def update_mini_player_like_dislike_controls(self):
         if self.mini_player_dialog:
-            if self.like_status == "LIKE":
+            if self.like_status == "Like":
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like-filled-checked.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
                 self.mini_player_dialog.like_button.setEnabled(True)
                 self.mini_player_dialog.dislike_button.setEnabled(True)
-            elif self.like_status == "DISLIKE":
+            elif self.like_status == "Dislike":
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike-filled-checked.png"))
                 self.mini_player_dialog.like_button.setEnabled(True)
                 self.mini_player_dialog.dislike_button.setEnabled(True)
-            elif self.like_status == "INDIFFERENT":
+            elif self.like_status == "Indifferent":
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
                 self.mini_player_dialog.like_button.setEnabled(True)
@@ -386,10 +380,12 @@ class MainWindow(QMainWindow):
                 {"label": "▶ Play in Browser", "url": url},
                 {"label": "🌐 YTMDPlayer on GitHub", "url": "https://github.com/deeffest/Youtube-Music-Desktop-Player"}
             ]
+            details = self.title[:128] if self.title else ""
+            state = self.author[:128] if self.author else ""
             try:
                 self.discord_rpc.update(
-                    details=self.title,
-                    state=self.author,
+                    details=details,
+                    state=state,
                     large_image=self.thumbnail_url, 
                     small_image="https://music.youtube.com/img/favicon_48.png",
                     buttons=btn_list
@@ -402,7 +398,6 @@ class MainWindow(QMainWindow):
         if self.discord_rpc:
             try:
                 self.discord_rpc.connect()
-                logging.info("Reconnected to Discord RPC successfully.")
                 
                 if retry_update:
                     self.update_discord_rpc()
