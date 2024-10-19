@@ -31,16 +31,23 @@ English | <a href="docs/README_ru.md">Русский</a>
 
 ## ✨ Key Features
 
-* Mini-Player
-  ![Mini-Player](docs/source/images/Screenshot_2.png)
-* Windows Thumbnail Buttons
-  ![Windows Thumbnail Buttons](docs/source/images/Screenshot_3.png)
-* System App Tray Icon
-  ![System App Tray Icon](docs/source/images/Screenshot_4.png)
-* Discord Rich Presence
-  ![Discord Rich Presence](docs/source/images/Screenshot_5.png)
-* Ad Blocker (Skipper)
-* Track/Playlist Downloader
+<div style="text-align: left;">
+  <p><strong>• Mini-Player</strong></p>
+  <img src="docs/source/images/Screenshot_2.png" style="max-width: 100%; height: auto;">
+  
+  <p><strong>• Discord Rich Presence</strong></p>
+  <img src="docs/source/images/Screenshot_3.png" style="max-width: 100%; height: auto;">
+  
+  <p><strong>• Windows Thumbnail Buttons</strong></p>
+  <img src="docs/source/images/Screenshot_4.png" style="max-width: 100%; height: auto;">
+  
+  <p><strong>• System App Tray Icon</strong></p>
+  <img src="docs/source/images/Screenshot_5.png" style="max-width: 100%; height: auto;">
+
+  <p><strong>• Ad Blocker (Skipper)</strong></p>
+  
+  <p><strong>• Track/Playlist Downloader</strong></p>
+</div>
 
 ## 🚀 Quick start
 <ol>

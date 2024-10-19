@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="15%" align="center" src="resources/icons/logo.png" alt="logo">
+  <img width="15%" align="center" src="https://raw.githubusercontent.com/deeffest/Youtube-Music-Desktop-Player/refs/heads/main/resources/icons/logo.png">
 </p>
 <h1 align="center">
   YouTube Music Desktop Player
@@ -31,16 +31,23 @@ English | <a href="docs/README_ru.md">Русский</a>
 
 ## ✨ Ключевые функции
 
-* Мини-плеер
-  ![Mini-Player](docs/source/images/Screenshot_2.png)
-* Windows Thumbnail Buttons
-  ![Windows Thumbnail Buttons](docs/source/images/Screenshot_3.png)
-* Значок приложения в системном трее
-  ![System App Tray Icon](docs/source/images/Screenshot_4.png)
-* Discord Rich Presence
-  ![Discord Rich Presence](docs/source/images/Screenshot_5.png)
-* Блокировщик рекламы (Пропускальщик)
-* Загрузчик треков/плейлистов
+<div style="text-align: left;">
+  <p><strong>• Мини-плеер</strong></p>
+  <img src="docs/source/images/Screenshot_2.png" style="max-width: 100%; height: auto;">
+  
+  <p><strong>• Discord Rich Presence</strong></p>
+  <img src="docs/source/images/Screenshot_3.png" style="max-width: 100%; height: auto;">
+  
+  <p><strong>• Windows Thumbnail Buttons</strong></p>
+  <img src="docs/source/images/Screenshot_4.png" style="max-width: 100%; height: auto;">
+  
+  <p><strong>• Значок в системном трее</strong></p>
+  <img src="docs/source/images/Screenshot_5.png" style="max-width: 100%; height: auto;">
+
+  <p><strong>• Блокировщик рекламы (Пропускальщик)</strong></p>
+  
+  <p><strong>• Загрузчик треков/плейлистов</strong></p>
+</div>
 
 ## 🚀 Быстрый старт
 <ol>
