@@ -24,7 +24,7 @@
 </p>
 
 <p align="center">
-English
+<a href="https://github.com/deeffest/Youtube-Music-Desktop-Player/blob/main/README.md">English</a>
 </p>
 
 ![Main Window](https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_1.png)
