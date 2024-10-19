@@ -5,3 +5,9 @@ __pycache__/
 output
 deploy_config.json
 setup.smm
+
+# ui
+about_dialog_ui.py
+main_window_ui.py
+mini_player_dialog_ui.py
+settings_dialog_ui.py
