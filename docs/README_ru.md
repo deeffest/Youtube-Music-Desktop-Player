@@ -27,22 +27,22 @@
 English | <a href="docs/README_ru.md">Русский</a>
 </p>
 
-![Main Window](docs/source/images/Screenshot_1.png)
+![Main Window](https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/docs/source/images/Screenshot_1.png)
 
 ## ✨ Ключевые функции
 
 <div style="text-align: left;">
   <p><strong>• Мини-плеер</strong></p>
-  <img src="docs/source/images/Screenshot_2.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/docs/source/images/Screenshot_2.png" style="max-width: 100%; height: auto;">
   
   <p><strong>• Discord Rich Presence</strong></p>
-  <img src="docs/source/images/Screenshot_3.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/docs/source/images/Screenshot_3.png" style="max-width: 100%; height: auto;">
   
   <p><strong>• Windows Thumbnail Buttons</strong></p>
-  <img src="docs/source/images/Screenshot_4.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/docs/source/images/Screenshot_4.png" style="max-width: 100%; height: auto;">
   
   <p><strong>• Значок в системном трее</strong></p>
-  <img src="docs/source/images/Screenshot_5.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/docs/source/images/Screenshot_5.png" style="max-width: 100%; height: auto;">
 
   <p><strong>• Блокировщик рекламы (Пропускальщик)</strong></p>
   
