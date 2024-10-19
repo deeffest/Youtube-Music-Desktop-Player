@@ -1,58 +1,79 @@
-![icon](https://github.com/deeffest/Youtube-Music-Desktop-Player/assets/117280555/7ab71884-0aed-4032-86ea-a9f85a979395)
-# YouTube Music Desktop Player 🎶
+<p align="center">
+  <img width="15%" align="center" src="resources/icons/logo.png" alt="logo">
+</p>
+  <h1 align="center">
+  YouTube Music Desktop Player
+</h1>
+<p align="center">
+  Makes the Youtube Music site a desktop app
+</p>
 
-Experience your music like never before with **YouTube Music Desktop Player**! This application brings YouTube Music to your desktop with a sleek **Fluent UI** and a host of features to enhance your listening experience.
+<p align="center">
 
-## 🎨 Features
+  <a style="text-decoration:none">
+    <img src="https://img.shields.io/badge/Python-3.11.3-blue.svg?color=00B16A" alt="Python 3.11.3"/>
+  </a>
 
-1. Track and Playlist Downloader
-2. Mini-Player
-3. System Tray App Icon
-4. Windows Thumbnail Buttons
-5. Ad Blocker (Skipper)
-6. Discord Rich Presence
+  <a style="text-decoration:none">
+    <img src="https://img.shields.io/badge/PyQt-5.15.9-blue?color=00B16A" alt="PyQt 5.15.9"/>
+  </a>
 
-## 📸 Screenshots
-![Screenshot_1](https://github.com/user-attachments/assets/9f932a7e-f5ba-49a4-aaff-c17986cb8f87)
-![Screenshot_2](https://github.com/user-attachments/assets/233aea8a-e41e-488a-9279-af138976af69)
-![Screenshot_3](https://github.com/user-attachments/assets/d1fb3be7-dfe7-43ad-b98e-ea96c6b47ddb)
+  <a style="text-decoration:none">
+    <img src="https://img.shields.io/badge/Platform-Win32-blue?color=00B16A" alt="Platform Win32"/>
+  </a>
+</p>
 
-## 🚀 Getting Started
-### Using the Installer
-1. Download the installer: [Latest Release](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/latest).
-2. Complete the installation process.
-3. Run **YTMDPlayer.exe** from the installation directory.
+<p align="center">
+English | <a href="docs/README_ru.md">Русский</a>
+</p>
 
-### Using the Source Code
-1. **Install Python**  
-   Make sure Python is installed. Tested on:
-   - Windows 10 (22H2) with Python 3.11.3 (64-bit)
-   - Windows 11 (23H2) with Python 3.12.5 (64-bit)  
-   [Download Python](https://www.python.org/downloads/).
+![Main Window](docs/source/images/Screenshot_1.png)
 
-2. **Clone the Repository**  
-   Clone the repository to your local machine.
+## ✨ Key Features
 
-3. **Install Dependencies**  
-   In the project directory, install dependencies with:
-   ```
-   pip install -r requirements.txt
-   ```
+* Mini-Player
+  ![Mini-Player](docs/source/images/Screenshot_2.png)
+* Windows Thumbnail Buttons
+  ![Windows Thumbnail Buttons](docs/source/images/Screenshot_3.png)
+* System App Tray Icon
+  ![System App Tray Icon](docs/source/images/Screenshot_4.png)
+* Discord Rich Presence
+  ![Discord Rich Presence](docs/source/images/Screenshot_5.png)
+* Ad Blocker (Skipper)
+* Track/Playlist Downloader
 
-4. **Run the Application**  
-   Start the application with:
-   ```
-   python main.py
-   ```
+## 🚀 Quick start
+<ol>
+    <li>
+        Clone the repository:
+        <pre><code>git clone https://github.com/deeffest/Youtube-Music-Desktop-Player.git</code></pre>
+    </li>
+    <li>
+        Navigate to the project directory:
+        <pre><code>cd Youtube-Music-Desktop-Player</code></pre>
+    </li>
+    <li>
+        Install the necessary dependencies:
+        <pre><code>pip install -r requirements.txt</code></pre>
+    </li>
+    <li>
+        Start the application:
+        <pre><code>python main.py</code></pre>
+    </li>
+</ol>
 
-## 🔗 References
-- **[PyQt](https://riverbankcomputing.com/software/pyqt)**
-- **[PyQt Fluent Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)**
-- **[Bug Reports](https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new?assignees=&labels=&projects=&template=bug_report.yml)**
+## 🔧 Install
+### Win32
+#### Installer
+1. Download `YTMDPlayer.exe` from [release page](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases)
+2. Run `YTMDPlayer.exe` as administrator and follow the steps below
+3. Go to the directory with the installed application and enjoy listening:)
 
-## 📚 See Also
-- **[DEEF Lite Media Player](https://github.com/deeffest/DEEF-Lite-Media-Player)**
-- **[DEEF Lite Image Viewer](https://github.com/deeffest/DEEF-Lite-Image-Viewer)**
+## 📚 See also
+
+- [deeffest/DEEF-Lite-Media-Player](https://github.com/deeffest/DEEF-Lite-Media-Player)：A cross-platform media player designed for simplicity, lightweight performance, and broad compatibility across Windows and Linux. 
+- [deeffest/DEEF-Lite-Image-Viewer](https://github.com/deeffest/DEEF-Lite-Image-Viewer)：A cross-platform image viewer designed for simplicity, lightweight performance, and broad compatibility across Windows and Linux. 
+- [zhiyiYo/PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)：A fluent design widgets library based on PyQt5
 
 ## 📜 License
 The YouTube Music Desktop Player is distributed under the **GPLv3 license**.
