@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="15%" align="center" src="resources/icons/logo.png" alt="logo">
+  <img width="15%" align="center" src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/icons/logo.png" alt="logo">
 </p>
   <h1 align="center">
   YouTube Music Desktop Player
@@ -24,25 +24,25 @@
 </p>
 
 <p align="center">
-English | <a href="docs/README_ru.md">Русский</a>
+English
 </p>
 
-![Main Window](docs/source/images/Screenshot_1.png)
+![Main Window](https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_1.png)
 
 ## ✨ Key Features
 
 <div style="text-align: left;">
   <p><strong>• Mini-Player</strong></p>
-  <img src="docs/source/images/Screenshot_2.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_2.png" style="max-width: 100%; height: auto;">
   
   <p><strong>• Discord Rich Presence</strong></p>
-  <img src="docs/source/images/Screenshot_3.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_3.png" style="max-width: 100%; height: auto;">
   
   <p><strong>• Windows Thumbnail Buttons</strong></p>
-  <img src="docs/source/images/Screenshot_4.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_4.png" style="max-width: 100%; height: auto;">
   
   <p><strong>• System App Tray Icon</strong></p>
-  <img src="docs/source/images/Screenshot_5.png" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_5.png" style="max-width: 100%; height: auto;">
 
   <p><strong>• Ad Blocker (Skipper)</strong></p>
   
