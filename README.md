@@ -2,7 +2,7 @@
   <img width="15%" align="center" src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/icons/logo.png" alt="logo">
 </p>
   <h1 align="center">
-  YouTube Music Desktop Player
+  Youtube Music Desktop Player
 </h1>
 <p align="center">
   Makes the Youtube Music site a desktop app
@@ -15,7 +15,7 @@
   </a>
 
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/PyQt-5.15.9-blue?color=00B16A" alt="PyQt 5.15.9"/>
+    <img src="https://img.shields.io/badge/PyQt-5.15.9-blue?color=00B16A" alt="PyQt 5.15.11"/>
   </a>
 
   <a style="text-decoration:none">

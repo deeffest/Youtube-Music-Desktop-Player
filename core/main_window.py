@@ -34,10 +34,10 @@ class MainWindow(QMainWindow):
         self.version = app_info[1]
         self.current_dir = app_info[2]
         self.icon_folder = f"{self.current_dir}/resources/icons"
-        self.title = ""
-        self.author = ""
-        self.thumbnail_url = ""
-        self.video_state = "NoVideo"
+        self.title = "Unknown"
+        self.author = "Unknown"
+        self.thumbnail_url = None
+        self.video_state = None
         self.mini_player_dialog = None
         self.force_exit = False
         self.is_downloading = False
@@ -45,6 +45,8 @@ class MainWindow(QMainWindow):
         self.current_url = None
         self.like_status = None
         self.custom_url = custom_url
+        self.current_time = "NaN"
+        self.total_time = "NaN"
     
         self.load_settings()
         self.load_ui()
@@ -59,28 +61,71 @@ class MainWindow(QMainWindow):
     def load_settings(self):
         self.settings_ = QSettings()
 
-        self.ad_blocker_setting = int(self.settings_.value("ad_blocker", 1))
-        self.save_last_win_size_setting = int(self.settings_.value("save_last_win_size", 1))
-        self.open_last_url_at_startup_setting = int(self.settings_.value("open_last_url_at_startup", 1))
-        self.last_url_setting = self.settings_.value("last_url", "https://music.youtube.com/")
-        self.fullscreen_mode_support_setting = int(self.settings_.value("fullscreen_mode_support", 1))
-        self.support_animated_scrolling_setting = int(self.settings_.value("support_animated_scrolling", 0))
-        self.save_last_pos_of_mp_setting = int(self.settings_.value("save_last_pos_of_mp", 1))
-        self.last_win_size_setting = self.settings_.value("last_win_size", QSize(1080, 600))
-        self.save_last_zoom_factor_setting = int(self.settings_.value("save_last_zoom_factor", 1))
-        self.last_zoom_factor_setting = float(self.settings_.value("last_zoom_factor", 1.0))
-        self.last_download_folder_setting = self.settings_.value("last_download_folder", self.current_dir)
-        self.discord_rpc_setting = int(self.settings_.value("discord_rpc", 0))
-        self.save_geometry_of_mp_setting = int(self.settings_.value("save_geometry_of_mp", 1))
-        self.geometry_of_mp_setting = self.settings_.value("geometry_of_mp", QRect(30, 60, 360, 150))
-        self.win_thumbmail_buttons_setting = int(self.settings_.value("win_thumbmail_buttons", 1))
-        self.tray_icon_setting = int(self.settings_.value("tray_icon", 0))
-        self.proxy_type_setting = self.settings_.value("proxy_type", "NoProxy")
+        if self.settings_.value("ad_blocker") is None:
+            self.settings_.setValue("ad_blocker", 1)
+        if self.settings_.value("save_last_win_size") is None:
+            self.settings_.setValue("save_last_win_size", 1)
+        if self.settings_.value("open_last_url_at_startup") is None:
+            self.settings_.setValue("open_last_url_at_startup", 1)
+        if self.settings_.value("last_url") is None:
+            self.settings_.setValue("last_url", "https://music.youtube.com/")
+        if self.settings_.value("fullscreen_mode_support") is None:
+            self.settings_.setValue("fullscreen_mode_support", 1)
+        if self.settings_.value("support_animated_scrolling") is None:
+            self.settings_.setValue("support_animated_scrolling", 0)
+        if self.settings_.value("save_last_pos_of_mp") is None:
+            self.settings_.setValue("save_last_pos_of_mp", 1)
+        if self.settings_.value("last_win_size") is None:
+            self.settings_.setValue("last_win_size", QSize(1080, 600))
+        if self.settings_.value("save_last_zoom_factor") is None:
+            self.settings_.setValue("save_last_zoom_factor", 1)
+        if self.settings_.value("last_zoom_factor") is None:
+            self.settings_.setValue("last_zoom_factor", 1.0)
+        if self.settings_.value("last_download_folder") is None:
+            self.settings_.setValue("last_download_folder", self.current_dir)
+        if self.settings_.value("discord_rpc") is None:
+            self.settings_.setValue("discord_rpc", 0)
+        if self.settings_.value("save_geometry_of_mp") is None:
+            self.settings_.setValue("save_geometry_of_mp", 1)
+        if self.settings_.value("geometry_of_mp") is None:
+            self.settings_.setValue("geometry_of_mp", QRect(30, 60, 360, 150))
+        if self.settings_.value("win_thumbmail_buttons") is None:
+            self.settings_.setValue("win_thumbmail_buttons", 1)
+        if self.settings_.value("tray_icon") is None:
+            self.settings_.setValue("tray_icon", 1)
+        if self.settings_.value("proxy_type") is None:
+            self.settings_.setValue("proxy_type", "NoProxy")
+        if self.settings_.value("proxy_host_name") is None:
+            self.settings_.setValue("proxy_host_name", "")
+        if self.settings_.value("proxy_port") is None:
+            self.settings_.setValue("proxy_port", "")
+        if self.settings_.value("proxy_login") is None:
+            self.settings_.setValue("proxy_login", "")
+        if self.settings_.value("proxy_password") is None:
+            self.settings_.setValue("proxy_password", "")
+
+        self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
+        self.save_last_win_size_setting = int(self.settings_.value("save_last_win_size"))
+        self.open_last_url_at_startup_setting = int(self.settings_.value("open_last_url_at_startup"))
+        self.last_url_setting = self.settings_.value("last_url")
+        self.fullscreen_mode_support_setting = int(self.settings_.value("fullscreen_mode_support"))
+        self.support_animated_scrolling_setting = int(self.settings_.value("support_animated_scrolling"))
+        self.save_last_pos_of_mp_setting = int(self.settings_.value("save_last_pos_of_mp"))
+        self.last_win_size_setting = self.settings_.value("last_win_size")
+        self.save_last_zoom_factor_setting = int(self.settings_.value("save_last_zoom_factor"))
+        self.last_zoom_factor_setting = float(self.settings_.value("last_zoom_factor"))
+        self.last_download_folder_setting = self.settings_.value("last_download_folder")
+        self.discord_rpc_setting = int(self.settings_.value("discord_rpc"))
+        self.save_geometry_of_mp_setting = int(self.settings_.value("save_geometry_of_mp"))
+        self.geometry_of_mp_setting = self.settings_.value("geometry_of_mp")
+        self.win_thumbmail_buttons_setting = int(self.settings_.value("win_thumbmail_buttons"))
+        self.tray_icon_setting = int(self.settings_.value("tray_icon"))
+        self.proxy_type_setting = self.settings_.value("proxy_type")
         self.proxy_host_name_setting = self.settings_.value("proxy_host_name")
         self.proxy_port_setting = self.settings_.value("proxy_port")
         self.proxy_login_setting = self.settings_.value("proxy_login")
         self.proxy_password_setting = self.settings_.value("proxy_password")
-        
+
     def load_ui(self):
         pywinstyles.apply_style(self, "dark")
         setTheme(Theme.DARK)
@@ -135,7 +180,7 @@ class MainWindow(QMainWindow):
         if self.save_last_zoom_factor_setting == 1:
             self.webview.setZoomFactor(self.last_zoom_factor_setting)
             
-        self.main_layout.addWidget(self.webview)
+        self.MainLayout.addWidget(self.webview)
 
     def set_application_proxy(self):
         try:
@@ -230,10 +275,10 @@ class MainWindow(QMainWindow):
 
     def handle_fullscreen(self, request):
         if not self.isFullScreen():
-            self.toolbar_frame.hide()
+            self.ToolBar.hide()
             self.showFullScreen()
         else:
-            self.toolbar_frame.show()
+            self.ToolBar.show()
             self.showNormal()
             
         request.accept()
@@ -250,16 +295,15 @@ class MainWindow(QMainWindow):
         self.forward_tbutton.setEnabled(can_go_forward)
 
         self.is_video_or_playlist = ("watch" in self.current_url or "playlist" in self.current_url)
-        self.is_video = "watch" in self.current_url
 
         if not self.is_downloading:
             self.download_action.setEnabled(self.is_video_or_playlist)
             self.download_tbutton.setEnabled(self.is_video_or_playlist)
             self.download_shortcut.setEnabled(self.is_video_or_playlist)
 
-        self.mini_player_action.setEnabled(self.is_video)
-        self.mini_player_tbutton.setEnabled(self.is_video)
-        self.mini_player_shortcut.setEnabled(self.is_video)
+        if self.current_url is not None:
+            self.last_url_setting = self.current_url
+            self.settings_.setValue("last_url", self.last_url_setting)
 
     def setup_webchannel(self):
         self.webchannel = QWebChannel()
@@ -271,7 +315,7 @@ class MainWindow(QMainWindow):
         if status != "":
             self.like_status = status
         else:
-            self.like_status = "NoVideo"
+            self.like_status = None
 
         self.update_mini_player_like_dislike_controls()
         self.update_win_thumbnail_buttons_like_dislike_controls()
@@ -375,20 +419,18 @@ class MainWindow(QMainWindow):
 
     def update_discord_rpc(self):
         if self.discord_rpc:
-            url = self.current_url
-            btn_list = [
-                {"label": "▶ Play in Browser", "url": url},
-                {"label": "🌐 YTMDPlayer on GitHub", "url": "https://github.com/deeffest/Youtube-Music-Desktop-Player"}
-            ]
-            details = self.title[:128] if self.title else ""
-            state = self.author[:128] if self.author else ""
+            details = self.title[:128]
+            state = self.author[:128]
+            large_image = self.thumbnail_url
+            small_image = "https://music.youtube.com/img/favicon_48.png"
+
             try:
                 self.discord_rpc.update(
                     details=details,
                     state=state,
-                    large_image=self.thumbnail_url, 
-                    small_image="https://music.youtube.com/img/favicon_48.png",
-                    buttons=btn_list
+                    large_image=large_image,
+                    small_image=small_image,
+                    activity_type=pypresence.ActivityType.LISTENING
                 )
             except Exception as e:
                 logging.error("An error occurred while updating Discord RPC: " + str(e))
@@ -398,7 +440,6 @@ class MainWindow(QMainWindow):
         if self.discord_rpc:
             try:
                 self.discord_rpc.connect()
-                
                 if retry_update:
                     self.update_discord_rpc()
             except Exception as e:
@@ -411,9 +452,30 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 logging.error("An error occurred while clearing Discord RPC: " + str(e))
 
+    @pyqtSlot(str, str)
+    def track_progress_changed(self, current_time, total_time):
+        self.current_time = current_time
+        self.total_time = total_time
+
+        self.update_mini_player_track_progress()
+
+    def update_mini_player_track_progress(self):
+        if self.mini_player_dialog:
+            self.mini_player_dialog.BodyLabel.setText(self.current_time)
+            self.mini_player_dialog.BodyLabel_2.setText(self.total_time)
+
     @pyqtSlot(str)
     def video_state_changed(self, state):
         self.video_state = state
+
+        if self.video_state == "VideoPlaying" or self.video_state == "VideoPaused":
+            self.mini_player_action.setEnabled(True)
+            self.mini_player_tbutton.setEnabled(True)
+            self.mini_player_shortcut.setEnabled(True)
+        else:
+            self.mini_player_action.setEnabled(False)
+            self.mini_player_tbutton.setEnabled(False)
+            self.mini_player_shortcut.setEnabled(False)
 
         self.update_mini_player_track_controls()
         self.update_win_thumbnail_buttons_track_controls()
@@ -557,6 +619,8 @@ class MainWindow(QMainWindow):
         self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
         self.reload_tbutton.clicked.connect(self.webview.reload)
 
+        self.LineEdit.textChanged.connect(self.on_line_edit_text_changed)
+
         self.download_tbutton.setIcon(QIcon(f"{self.icon_folder}/download.png"))
         self.download_tbutton.clicked.connect(self.download)
 
@@ -645,7 +709,7 @@ class MainWindow(QMainWindow):
         self.tool_btn_play_pause = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
         self.tool_btn_play_pause.setToolTip('Play/Pause')
         self.tool_btn_play_pause.setEnabled(False)
-        self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/pause-border-disabled.png"))  
+        self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/play-border-disabled.png"))  
         self.tool_btn_play_pause.clicked.connect(self.play_pause)                   
         self.win_thumbnail_toolbar.addButton(self.tool_btn_play_pause)
 
@@ -765,7 +829,7 @@ class MainWindow(QMainWindow):
             duration=-1,
             parent=self
         )
-        retry_download_btn = PushButton("Re-download", icon=f"{self.icon_folder}/retry.png")
+        retry_download_btn = PushButton("Re-download", icon=f"{self.icon_folder}/restart.png")
         retry_download_btn.clicked.connect(lambda: self.download(url, download_folder, info_bar))
         info_bar.addWidget(retry_download_btn)
         info_bar.show()
@@ -791,6 +855,7 @@ class MainWindow(QMainWindow):
         self.update_mini_player_track_controls()
         self.update_mini_player_like_dislike_controls()
         self.update_mini_player_track_info()
+        self.update_mini_player_track_progress()
         self.mini_player_dialog.show()
 
     def show_tray_icon(self):
@@ -800,6 +865,9 @@ class MainWindow(QMainWindow):
     def hide_tray_icon(self):
         if self.tray_icon:
             self.tray_icon.hide()
+
+    def on_line_edit_text_changed(self):
+        self.LineEdit.setCursorPosition(0)
 
     def settings(self):
         settings_dialog = SettingsDialog(self)
@@ -822,15 +890,21 @@ class MainWindow(QMainWindow):
         self.last_zoom_factor_setting = self.webview.zoomFactor()
         self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
 
+    def show_window(self):
+        if self.isMinimized() or self.isHidden():
+            if self.isMinimized():
+                self.showNormal()
+            else:
+                self.show()
+        self.activateWindow()
+
+    def resizeEvent(self, event):
         self.last_win_size_setting = self.size()
         self.settings_.setValue("last_win_size", self.last_win_size_setting)
-
-        if self.current_url is not None:
-            self.last_url_setting = self.current_url
-            self.settings_.setValue("last_url", self.last_url_setting)
-
+        event.accept()
+        
     def closeEvent(self, event):
-        self.save_settings()
+        accept_event = True
 
         if self.tray_icon_setting == 1 and self.tray_icon is not None:
             if not self.force_exit:
@@ -839,12 +913,8 @@ class MainWindow(QMainWindow):
                 return
 
         if self.video_state == "VideoPlaying":
-            if self.isMinimized() or self.isHidden():
-                if self.isMinimized():
-                    self.showNormal()
-                else:
-                    self.show()
-            self.activateWindow()
+            self.show_window()
+            
             msg_box = MessageBox(
                 "Exit Confirmation",
                 (
@@ -855,10 +925,15 @@ class MainWindow(QMainWindow):
             )
             msg_box.yesButton.setText("Exit")
             msg_box.cancelButton.setText("Cancel")
+            
             if msg_box.exec_():
-                event.accept()
+                accept_event = True
             else:
                 self.force_exit = False
-                event.ignore()
-        else:
+                accept_event = False
+
+        if accept_event:
+            self.save_settings()
             event.accept()
+        else:
+            event.ignore()

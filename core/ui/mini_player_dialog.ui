@@ -166,7 +166,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <property name="spacing">
-      <number>30</number>
+      <number>6</number>
      </property>
      <property name="leftMargin">
       <number>16</number>
@@ -180,6 +180,57 @@
      <property name="bottomMargin">
       <number>18</number>
      </property>
+     <item>
+      <widget class="BodyLabel" name="BodyLabel">
+       <property name="styleSheet">
+        <string notr="true">FluentLabelBase {
+    color: black;
+}
+
+HyperlinkLabel {
+    color: #009faa;
+    border: none;
+    background-color: transparent;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+}
+
+HyperlinkLabel[underline=true] {
+    text-decoration: underline;
+}
+
+HyperlinkLabel[underline=false] {
+    text-decoration: none;
+}
+
+HyperlinkLabel:hover {
+    color: #007780;
+}
+
+HyperlinkLabel:pressed {
+    color: #00a7b3;
+}
+FluentLabelBase{color:lightgray}</string>
+       </property>
+       <property name="text">
+        <string>NaN:NaN</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
      <item>
       <widget class="TransparentToolButton" name="dislike_button">
        <property name="minimumSize">
@@ -208,19 +259,6 @@
         <string>D</string>
        </property>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item>
       <widget class="TransparentToolButton" name="previous_button">
@@ -310,19 +348,6 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <widget class="TransparentToolButton" name="like_button">
        <property name="minimumSize">
         <size>
@@ -348,6 +373,57 @@
        </property>
        <property name="shortcut">
         <string>L</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="BodyLabel" name="BodyLabel_2">
+       <property name="styleSheet">
+        <string notr="true">FluentLabelBase {
+    color: black;
+}
+
+HyperlinkLabel {
+    color: #009faa;
+    border: none;
+    background-color: transparent;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+}
+
+HyperlinkLabel[underline=true] {
+    text-decoration: underline;
+}
+
+HyperlinkLabel[underline=false] {
+    text-decoration: none;
+}
+
+HyperlinkLabel:hover {
+    color: #007780;
+}
+
+HyperlinkLabel:pressed {
+    color: #00a7b3;
+}
+FluentLabelBase{color:lightgray}</string>
+       </property>
+       <property name="text">
+        <string>NaN:NaN</string>
        </property>
       </widget>
      </item>

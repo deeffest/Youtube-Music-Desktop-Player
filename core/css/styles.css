@@ -8,6 +8,11 @@ QDialog {
     color: white;
 }
 
+QFrame#ToolBar {
+    background-color: rgb(33,33,33);
+    border-bottom: 1px solid rgb(41,41,41);
+}
+
 QFrame#ButtonBox {
     background-color: rgb(32,32,32);
     border-top: 1px solid rgb(29,29,29);

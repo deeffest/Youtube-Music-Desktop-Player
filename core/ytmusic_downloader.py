@@ -1,6 +1,6 @@
-import logging
-import os
 import re
+import os
+import logging
 from PyQt5.QtCore import QThread, pyqtSignal
 from pytubefix import YouTube, Playlist
 
@@ -12,7 +12,7 @@ class DownloadThread(QThread):
         super().__init__(parent)
         self.url = url
         self.download_folder = download_folder
-        self.title = "Unknown Title"
+        self.title = "Unknown"
         self.window = parent
 
     def run(self):

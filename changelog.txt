@@ -1,3 +1,18 @@
+### Update 1.12-rc1🎉 (October 27, 2024)
+
+- The color of the toolbar in the main window has become darker.
+- Mini player now tracks track progress in real time - in the left corner current track time, in the right total track time.
+- System Tray App Icon plugin is now enabled by default.
+- Mini player is now available to open at any URL.
+- Improved saving of settings.
+- Discord Rich Presence plugin buttons have been removed.
+- Clicking the System Tray App Icon now only shows the window when minimized.
+- Added Restart + Save button in the settings window.
+- The Save button in the settings window is now enabled only if there is actually something to save.
+- PyQt-Fluent-Widgets updated to 1.7.0.
+- The Discord Rich Presence plugin now displays your Discord activity as “Listening” instead of “Playing”.
+- Other minor fixes and improvements.
+
 ### Update 1.11.4 🎉 (October 16, 2024)
 
 - Fixed a download error for children's content.

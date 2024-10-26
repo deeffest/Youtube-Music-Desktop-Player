@@ -160,7 +160,7 @@
             <x>0</x>
             <y>0</y>
             <width>390</width>
-            <height>911</height>
+            <height>864</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -244,7 +244,7 @@
               <item>
                <widget class="QFrame" name="SettingBox2">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -324,7 +324,7 @@
               <item>
                <widget class="QFrame" name="SettingBox3">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -370,7 +370,7 @@
               <item>
                <widget class="QFrame" name="SettingBox4">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -413,7 +413,7 @@
               <item>
                <widget class="QFrame" name="SettingBox8">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -466,7 +466,7 @@
               <item>
                <widget class="QFrame" name="SettingBox11">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -477,14 +477,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_5">
                      <property name="text">
-                      <string>Application Proxy Server</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="CaptionLabel" name="CaptionLabel">
-                     <property name="text">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;(BETA)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string>Proxy Server Configuration</string>
                      </property>
                     </widget>
                    </item>
@@ -524,6 +517,9 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_12">
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_10">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>Host</string>
                      </property>
@@ -531,6 +527,9 @@
                    </item>
                    <item>
                     <widget class="LineEdit" name="LineEdit">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -559,6 +558,9 @@
                    </item>
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_14">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>Port</string>
                      </property>
@@ -566,6 +568,9 @@
                    </item>
                    <item>
                     <widget class="LineEdit" name="LineEdit_2">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -592,6 +597,9 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_16">
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_16">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>Login</string>
                      </property>
@@ -599,6 +607,9 @@
                    </item>
                    <item>
                     <widget class="LineEdit" name="LineEdit_3">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -624,6 +635,9 @@
                    </item>
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_17">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="text">
                       <string>Password</string>
                      </property>
@@ -631,6 +645,9 @@
                    </item>
                    <item>
                     <widget class="PasswordLineEdit" name="PasswordLineEdit">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -644,7 +661,7 @@
                       </size>
                      </property>
                      <property name="placeholderText">
-                      <string>password123</string>
+                      <string>pass123</string>
                      </property>
                     </widget>
                    </item>
@@ -653,7 +670,7 @@
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_15">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, this option allows you to specify a custom proxy server to connect to the Youtube Music website and download songs from it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;Using a proxy server helps when YouTube Music is unavailable in your country.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -690,7 +707,7 @@
               <item>
                <widget class="QFrame" name="SettingBox5">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -791,7 +808,7 @@
               <item>
                <widget class="QFrame" name="SettingBox6">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -803,14 +820,14 @@
                     <widget class="QLabel" name="label">
                      <property name="minimumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="text">
@@ -859,7 +876,7 @@
               <item>
                <widget class="QFrame" name="SettingBox7">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -871,14 +888,14 @@
                     <widget class="QLabel" name="label_2">
                      <property name="minimumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="text">
@@ -927,7 +944,7 @@
               <item>
                <widget class="QFrame" name="SettingBox9">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -939,14 +956,14 @@
                     <widget class="QLabel" name="label_3">
                      <property name="minimumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="text">
@@ -995,7 +1012,7 @@
               <item>
                <widget class="QFrame" name="SettingBox10">
                 <property name="frameShape">
-                 <enum>QFrame::StyledPanel</enum>
+                 <enum>QFrame::NoFrame</enum>
                 </property>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
@@ -1007,14 +1024,14 @@
                     <widget class="QLabel" name="label_4">
                      <property name="minimumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="maximumSize">
                       <size>
-                       <width>24</width>
-                       <height>24</height>
+                       <width>22</width>
+                       <height>22</height>
                       </size>
                      </property>
                      <property name="text">
@@ -1107,6 +1124,17 @@
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="PushButton" name="PushButton_2">
+          <property name="text">
+           <string>Restart + Save</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../resources/icons/restart.png</normaloff>../../resources/icons/restart.png</iconset>
+          </property>
+         </widget>
+        </item>
         <item>
          <spacer name="horizontalSpacer_7">
           <property name="orientation">
@@ -1218,11 +1246,6 @@
    <extends>QScrollArea</extends>
    <header>qfluentwidgets</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CaptionLabel</class>
-   <extends>QLabel</extends>
-   <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
    <class>BodyLabel</class>

@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QFrame" name="toolbar_frame">
+     <widget class="QFrame" name="ToolBar">
       <layout class="QHBoxLayout" name="toolbar_layout">
        <property name="spacing">
         <number>6</number>
@@ -117,7 +117,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="main_layout">
+     <layout class="QHBoxLayout" name="MainLayout">
       <item>
        <spacer name="verticalSpacer">
         <property name="orientation">

@@ -1,9 +1,12 @@
 import pywinstyles
+import sys
 
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QApplication
 from PyQt5.QtGui import QIcon, QIntValidator
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QProcess
 from PyQt5.uic import loadUi
+
+from qfluentwidgets import MessageBox
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -13,9 +16,10 @@ class SettingsDialog(QDialog):
         self.load_ui()
         self.setup_content()
         self.set_connect()
-        self.set_icons()
         self.configure_tabs()
         self.setup_settings()
+
+        self.PillPushButton_4.setIcon(self.window.icon_folder+"/plugins.png")
 
     def setup_content(self):
         int_validator = QIntValidator()
@@ -36,6 +40,7 @@ class SettingsDialog(QDialog):
         self.SwitchButton_11.setChecked(self.window.win_thumbmail_buttons_setting)
         self.SwitchButton_12.setChecked(self.window.tray_icon_setting)
         self.ComboBox.setCurrentIndex(self.proxy_types.index(self.window.proxy_type_setting))
+        self.toggle_proxy_config()
         if self.window.proxy_host_name_setting is not None:
             self.LineEdit.setText(self.window.proxy_host_name_setting)
         if self.window.proxy_port_setting is not None:
@@ -45,16 +50,50 @@ class SettingsDialog(QDialog):
         if self.window.proxy_password_setting is not None:
             self.PasswordLineEdit.setText(self.window.proxy_password_setting)
 
-    def set_icons(self):
-        self.PillPushButton_4.setIcon(self.window.icon_folder+"/plugins.png")
+        self.check_if_settings_changed()
 
     def set_connect(self):
         self.PillPushButton.clicked.connect(self.configure_tabs)
         self.PillPushButton_2.clicked.connect(self.configure_tabs)
         self.PillPushButton_3.clicked.connect(self.configure_tabs)
         self.PillPushButton_4.clicked.connect(self.configure_tabs)
+        self.PushButton_2.clicked.connect(self.restart_app)
         self.PrimaryPushButton.clicked.connect(self.save_and_close)
         self.PushButton.clicked.connect(self.close)
+        self.ComboBox.currentIndexChanged.connect(self.toggle_proxy_config)
+
+        self.SwitchButton.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_4.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_3.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_5.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_6.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_2.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_8.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_7.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_11.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_12.checkedChanged.connect(self.check_if_settings_changed)
+        self.ComboBox.currentIndexChanged.connect(self.check_if_settings_changed)
+        self.LineEdit.textChanged.connect(self.check_if_settings_changed)
+        self.LineEdit_2.textChanged.connect(self.check_if_settings_changed)
+        self.LineEdit_3.textChanged.connect(self.check_if_settings_changed)
+        self.PasswordLineEdit.textChanged.connect(self.check_if_settings_changed)
+
+    def restart_app(self):
+        msg_box = MessageBox(
+            "Restart Confirmation",
+            (
+                "Restarting now will stop the current playback and close the application.\n"
+                "Do you want to restart now?"
+            ),
+            self
+        )
+        msg_box.yesButton.setText("Restart")
+        msg_box.cancelButton.setText("Cancel")
+        
+        if msg_box.exec_():
+            self.save_and_close()
+            QApplication.quit()
+            QProcess.startDetached(sys.executable, sys.argv)
 
     def save_and_close(self):
         self.window.save_last_win_size_setting = int(self.SwitchButton.isChecked())
@@ -112,6 +151,41 @@ class SettingsDialog(QDialog):
             icon_path = self.window.icon_folder + "/plugins-black.png"
 
         self.PillPushButton_4.setIcon(icon_path)
+
+    def toggle_proxy_config(self):
+        proxy_type = self.ComboBox.currentText()
+        should_show = proxy_type in ["HttpProxy", "Socks5Proxy"]
+
+        self.BodyLabel_10.setVisible(should_show)
+        self.LineEdit.setVisible(should_show)
+        self.BodyLabel_14.setVisible(should_show)
+        self.LineEdit_2.setVisible(should_show)
+        self.BodyLabel_16.setVisible(should_show)
+        self.LineEdit_3.setVisible(should_show)
+        self.BodyLabel_17.setVisible(should_show)
+        self.PasswordLineEdit.setVisible(should_show)
+
+    def check_if_settings_changed(self):
+        if (self.SwitchButton.isChecked() != self.window.save_last_win_size_setting or
+            self.SwitchButton_4.isChecked() != self.window.open_last_url_at_startup_setting or
+            self.SwitchButton_3.isChecked() != self.window.ad_blocker_setting or
+            self.SwitchButton_5.isChecked() != self.window.fullscreen_mode_support_setting or
+            self.SwitchButton_6.isChecked() != self.window.support_animated_scrolling_setting or
+            self.SwitchButton_2.isChecked() != self.window.save_last_pos_of_mp_setting or
+            self.SwitchButton_8.isChecked() != self.window.save_last_zoom_factor_setting or
+            self.SwitchButton_7.isChecked() != self.window.discord_rpc_setting or
+            self.SwitchButton_11.isChecked() != self.window.win_thumbmail_buttons_setting or
+            self.SwitchButton_12.isChecked() != self.window.tray_icon_setting or
+            self.ComboBox.currentText() != self.window.proxy_type_setting or
+            self.LineEdit.text() != self.window.proxy_host_name_setting or
+            self.LineEdit_2.text() != (str(self.window.proxy_port_setting) if self.window.proxy_port_setting is not None else "") or
+            self.LineEdit_3.text() != self.window.proxy_login_setting or
+            self.PasswordLineEdit.text() != self.window.proxy_password_setting):
+            self.PrimaryPushButton.setEnabled(True)
+            self.PushButton_2.setEnabled(True)
+        else:
+            self.PrimaryPushButton.setEnabled(False)
+            self.PushButton_2.setEnabled(False)
 
     def load_ui(self):
         loadUi(f'{self.window.current_dir}/core/ui/settings_dialog.ui', self)

@@ -20,6 +20,10 @@ script.onload = function() {
             thumbnailUrl: ''
         };
         var lastLikeStatus = '';
+        var lastTrackProgress = {
+            currentTime: '',
+            totalTime: ''
+        };
 
         function updateVideoState() {
             var player = document.getElementById('player');
@@ -70,6 +74,7 @@ script.onload = function() {
             }
 
             updateLikeStatus();
+            updateTrackProgress();
         }
 
         function updateLikeStatus() {
@@ -82,7 +87,26 @@ script.onload = function() {
                     lastLikeStatus = likeStatus;
                 }
             }
-        }     
+        }
+
+        function updateTrackProgress() {
+            var timeInfoElement = document.querySelector('.time-info.style-scope.ytmusic-player-bar');
+            if (timeInfoElement) {
+                var timeText = timeInfoElement.textContent.trim();
+                var timeParts = timeText.split('/');
+                if (timeParts.length === 2) {
+                    var currentTime = timeParts[0].trim();
+                    var totalTime = timeParts[1].trim();
+
+                    if (currentTime !== lastTrackProgress.currentTime || totalTime !== lastTrackProgress.totalTime) {
+                        backend.track_progress_changed(currentTime, totalTime);
+                        lastTrackProgress = { currentTime, totalTime };
+                    }
+                }
+            }
+        }
+
+        setInterval(updateTrackProgress, 1000);
 
         var likeObserver = new MutationObserver(updateLikeStatus);
         var likeButton = document.querySelector('ytmusic-like-button-renderer#like-button-renderer');

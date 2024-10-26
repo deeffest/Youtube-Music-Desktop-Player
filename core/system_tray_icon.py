@@ -14,10 +14,10 @@ class SystemTrayIcon(QSystemTrayIcon):
     def setup_tray_menu(self):
         self.tray_menu = SystemTrayMenu()
 
-        self.show_action = Action('Hide/Show', self)
-        self.show_action.triggered.connect(self.hide_show_window)
+        self.show_action = Action('YTMDPlayer', self)
         self.show_action.setIcon(
-            QIcon(f"{self.window.icon_folder}/show.png"))
+            QIcon(f"{self.window.icon_folder}/logo.png"))
+        self.show_action.triggered.connect(self.window.show_window)
         self.tray_menu.addAction(self.show_action)
         
         self.tray_menu.addSeparator()
@@ -69,17 +69,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 
     def on_tray_icon_activated(self, reason):
         if reason == QSystemTrayIcon.Trigger:
-            self.hide_show_window()
-
-    def hide_show_window(self):
-        if self.window.isMinimized() or self.window.isHidden():
-            if self.window.isMinimized():
-                self.window.showNormal()
-            else:
-                self.window.show()
-            self.window.activateWindow()
-        else:
-            self.window.hide()
+            self.window.show_window()
 
     def close_window(self):
         self.window.force_exit = True
