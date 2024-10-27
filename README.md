@@ -1,30 +1,29 @@
 <p align="center">
-  <img width="15%" align="center" src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/icons/logo.png" alt="logo">
+    <img width="15%" align="center" src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/icons/logo.png" alt="logo">
 </p>
-  <h1 align="center">
-  Youtube Music Desktop Player
+<h1 align="center">
+    Youtube Music Desktop Player
 </h1>
 <p align="center">
-  Makes the Youtube Music site a desktop app
+    Makes the Youtube Music site a desktop app 🎶
 </p>
 
 <p align="center">
-
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/Python-3.11.3-blue.svg?color=00B16A" alt="Python 3.11.3"/>
+      <img src="https://img.shields.io/badge/Python-3.11.3-blue.svg?color=00B16A" alt="Python 3.11.3"/>
   </a>
 
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/>
+      <img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/>
   </a>
 
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/Platform-Win32-blue?color=00B16A" alt="Platform Win32"/>
+      <img src="https://img.shields.io/badge/Platform-Win32-blue?color=00B16A" alt="Platform Win32"/>
   </a>
 </p>
 
 <p align="center">
-<a href="https://github.com/deeffest/Youtube-Music-Desktop-Player/blob/main/README.md">English</a>
+    <a href="https://github.com/deeffest/Youtube-Music-Desktop-Player/blob/main/README.md">English</a>
 </p>
 
 ![Main Window](https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_1.png)
@@ -34,7 +33,7 @@
 <div style="text-align: left;">
   <p><strong>• Mini-Player</strong></p>
   <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_2.png" style="max-width: 100%; height: auto;">
-  
+    
   <p><strong>• Discord Rich Presence</strong></p>
   <img src="https://github.com/deeffest/Youtube-Music-Desktop-Player/raw/main/resources/images/Screenshot_3.png" style="max-width: 100%; height: auto;">
   

@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.uic import loadUi
+from qfluentwidgets import ToolTipFilter, ToolTipPosition
 from core.thumbnail_loader import ThumbnailLoader
 
 class MiniPlayerDialog(QDialog):
@@ -25,6 +26,12 @@ class MiniPlayerDialog(QDialog):
         self.next_button.clicked.connect(self.window.skip_next)
         self.like_button.clicked.connect(self.window.like)
         self.dislike_button.clicked.connect(self.window.dislike)
+
+        self.previous_button.installEventFilter(ToolTipFilter(self.previous_button, 300, ToolTipPosition.TOP))
+        self.play_pause_button.installEventFilter(ToolTipFilter(self.play_pause_button, 300, ToolTipPosition.TOP))
+        self.next_button.installEventFilter(ToolTipFilter(self.next_button, 300, ToolTipPosition.TOP))
+        self.like_button.installEventFilter(ToolTipFilter(self.like_button, 300, ToolTipPosition.TOP))
+        self.dislike_button.installEventFilter(ToolTipFilter(self.dislike_button, 300, ToolTipPosition.TOP))
 
     def load_thumbnail(self, url):
         if hasattr(self, 'thumbnail_loader') and self.thumbnail_loader.is_running():

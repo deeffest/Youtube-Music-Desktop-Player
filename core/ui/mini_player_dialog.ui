@@ -245,6 +245,9 @@ FluentLabelBase{color:lightgray}</string>
          <height>40</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Dislike</string>
+       </property>
        <property name="icon">
         <iconset>
          <normaloff>../../resources/icons/dislike.png</normaloff>../../resources/icons/dislike.png</iconset>
@@ -273,6 +276,9 @@ FluentLabelBase{color:lightgray}</string>
          <width>40</width>
          <height>40</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Previous</string>
        </property>
        <property name="icon">
         <iconset>
@@ -303,6 +309,9 @@ FluentLabelBase{color:lightgray}</string>
          <height>40</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Play/Pause</string>
+       </property>
        <property name="icon">
         <iconset>
          <normaloff>../../resources/icons/play-filled.png</normaloff>../../resources/icons/play-filled.png</iconset>
@@ -332,6 +341,9 @@ FluentLabelBase{color:lightgray}</string>
          <height>40</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Next</string>
+       </property>
        <property name="icon">
         <iconset>
          <normaloff>../../resources/icons/next-filled.png</normaloff>../../resources/icons/next-filled.png</iconset>
@@ -360,6 +372,9 @@ FluentLabelBase{color:lightgray}</string>
          <width>40</width>
          <height>40</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Like</string>
        </property>
        <property name="icon">
         <iconset>

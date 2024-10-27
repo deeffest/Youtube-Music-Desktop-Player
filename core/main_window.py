@@ -16,7 +16,7 @@ from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.uic import loadUi
 from qfluentwidgets import setTheme, setThemeColor, Theme, \
     RoundMenu, Action, SplashScreen, MessageBox, InfoBar, InfoBarPosition, \
-    PushButton
+    PushButton, ToolTipFilter, ToolTipPosition
 from core.web_engine_view import WebEngineView
 from core.web_engine_page import WebEnginePage
 from core.settings_dialog import SettingsDialog
@@ -253,9 +253,11 @@ class MainWindow(QMainWindow):
 
     def setup_shortcuts(self):
         self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
+        self.back_shortcut.setEnabled(False)
         self.back_shortcut.activated.connect(self.back)
 
         self.forward_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Right), self)
+        self.forward_shortcut.setEnabled(False)
         self.forward_shortcut.activated.connect(self.forward)
 
         self.home_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_H), self)
@@ -265,9 +267,11 @@ class MainWindow(QMainWindow):
         self.reload_shortcut.activated.connect(self.reload)
 
         self.download_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_D), self)
+        self.download_shortcut.setEnabled(False)
         self.download_shortcut.activated.connect(self.download)
 
         self.mini_player_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_M), self)
+        self.mini_player_shortcut.setEnabled(False)
         self.mini_player_shortcut.activated.connect(self.mini_player)
 
         self.settings_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
@@ -544,10 +548,12 @@ class MainWindow(QMainWindow):
     def create_menu(self):
         self.back_action = Action("Back", shortcut="Alt+Left")
         self.back_action.setIcon(QIcon(f"{self.icon_folder}/left.png"))
+        self.back_action.setEnabled(False)
         self.back_action.triggered.connect(self.webview.back)
 
         self.forward_action = Action("Forward", shortcut="Alt+Right")
         self.forward_action.setIcon(QIcon(f"{self.icon_folder}/right.png"))
+        self.forward_action.setEnabled(False)
         self.forward_action.triggered.connect(self.webview.forward)
 
         self.home_action = Action("Home", shortcut="Ctrl+H")
@@ -560,10 +566,12 @@ class MainWindow(QMainWindow):
 
         self.download_action = Action("Download", shortcut="Ctrl+D")
         self.download_action.setIcon(QIcon(f"{self.icon_folder}/download.png"))
+        self.download_action.setEnabled(False)
         self.download_action.triggered.connect(self.download)
 
         self.mini_player_action = Action("Mini-Player", shortcut="Ctrl+M")
         self.mini_player_action.setIcon(QIcon(f"{self.icon_folder}/mini-player.png"))
+        self.mini_player_action.setEnabled(False)
         self.mini_player_action.triggered.connect(self.mini_player)
 
         self.settings_action = Action("Settings", shortcut="Ctrl+S")
@@ -608,26 +616,37 @@ class MainWindow(QMainWindow):
 
     def create_toolbar(self):
         self.back_tbutton.setIcon(QIcon(f"{self.icon_folder}/left.png"))
+        self.back_tbutton.setEnabled(False)
+        self.back_tbutton.installEventFilter(ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP))
         self.back_tbutton.clicked.connect(self.webview.back)
 
         self.forward_tbutton.setIcon(QIcon(f"{self.icon_folder}/right.png"))
+        self.forward_tbutton.setEnabled(False)
+        self.forward_tbutton.installEventFilter(ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.TOP))
         self.forward_tbutton.clicked.connect(self.webview.forward)
 
         self.home_tbutton.setIcon(QIcon(f"{self.icon_folder}/home.png"))
+        self.home_tbutton.installEventFilter(ToolTipFilter(self.home_tbutton, 300, ToolTipPosition.TOP))
         self.home_tbutton.clicked.connect(self.home)
 
         self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
+        self.reload_tbutton.installEventFilter(ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP))
         self.reload_tbutton.clicked.connect(self.webview.reload)
 
         self.LineEdit.textChanged.connect(self.on_line_edit_text_changed)
 
         self.download_tbutton.setIcon(QIcon(f"{self.icon_folder}/download.png"))
+        self.download_tbutton.setEnabled(False)
+        self.download_tbutton.installEventFilter(ToolTipFilter(self.download_tbutton, 300, ToolTipPosition.TOP))
         self.download_tbutton.clicked.connect(self.download)
 
         self.mini_player_tbutton.setIcon(QIcon(f"{self.icon_folder}/mini-player.png"))
+        self.mini_player_tbutton.setEnabled(False)
+        self.mini_player_tbutton.installEventFilter(ToolTipFilter(self.mini_player_tbutton, 300, ToolTipPosition.TOP))
         self.mini_player_tbutton.clicked.connect(self.mini_player)
 
         self.settings_tbutton.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
+        self.settings_tbutton.installEventFilter(ToolTipFilter(self.settings_tbutton, 300, ToolTipPosition.TOP))
         self.settings_tbutton.clicked.connect(self.settings)
 
     def activate_plugins(self):

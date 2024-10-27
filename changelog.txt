@@ -1,4 +1,12 @@
-### Update 1.12-rc1🎉 (October 27, 2024)
+### Update 1.12 🎉 (October 27, 2024)
+
+- The buttons on the main window toolbar have reverted back to the Fluent interface tooltips.
+- All buttons in the mini-player have also gotten modern Fluent interface tooltips.
+- PyQt updated to 5.15.11.
+- PyQtWebEngine updated to 5.15.7.
+- Other minor fixes and improvements.
+
+### Update 1.12-rc1 🎉 (October 27, 2024)
 
 - The color of the toolbar in the main window has become darker.
 - Mini player now tracks track progress in real time - in the left corner current track time, in the right total track time.

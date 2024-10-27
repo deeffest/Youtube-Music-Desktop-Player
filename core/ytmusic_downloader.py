@@ -3,6 +3,7 @@ import os
 import logging
 from PyQt5.QtCore import QThread, pyqtSignal
 from pytubefix import YouTube, Playlist
+from core.get_proxies import get_proxies
 
 class DownloadThread(QThread):
     download_finished = pyqtSignal(str, str)
@@ -28,7 +29,17 @@ class DownloadThread(QThread):
             self.download_finished.emit(self.download_folder, self.title)
 
     def download_youtube(self):
-        yt = YouTube(self.url, client="MWEB", proxies=self.get_proxies())
+        yt = YouTube(
+            self.url,
+            client="MWEB",
+            proxies=get_proxies(
+                self.window.proxy_type_setting,
+                self.window.proxy_host_name_setting,
+                self.window.proxy_port_setting,
+                self.window.proxy_login_setting,
+                self.window.proxy_password_setting
+            )
+        )
         self.title = yt.title
         sanitized_title = self.sanitize_filename(yt.title)
         stream = yt.streams.get_audio_only()
@@ -36,7 +47,17 @@ class DownloadThread(QThread):
                         timeout=5, skip_existing=False, max_retries=2)
 
     def download_playlist(self):
-        pl = Playlist(self.url, client="MWEB", proxies=self.get_proxies())
+        pl = Playlist(
+            self.url, 
+            client="MWEB",
+            proxies=get_proxies(
+                self.window.proxy_type_setting,
+                self.window.proxy_host_name_setting,
+                self.window.proxy_port_setting,
+                self.window.proxy_login_setting,
+                self.window.proxy_password_setting
+            )
+        )
         self.title = self.sanitize_filename(pl.title)
         playlist_folder = os.path.join(self.download_folder, self.title)
         os.makedirs(playlist_folder, exist_ok=True)
@@ -45,22 +66,7 @@ class DownloadThread(QThread):
             sanitized_title = self.sanitize_filename(video.title)
             stream = video.streams.get_audio_only()
             stream.download(output_path=playlist_folder, filename=f"{sanitized_title}.mp3", 
-                            timeout=5, skip_existing=False, max_retries=2)
+                            timeout=5, skip_existing=False, max_retries=2)    
 
     def sanitize_filename(self, filename):
         return re.sub(r'[<>:"/\\|?*]', '_', filename)
-
-    def get_proxies(self):
-        if self.window.proxy_type_setting in ["HttpProxy", "Socks5Proxy"]:
-            proxy_address = f"{self.window.proxy_host_name_setting}:{self.window.proxy_port_setting}"
-
-            if self.window.proxy_login_setting and self.window.proxy_password_setting:
-                proxy_address = f"{self.window.proxy_login_setting}:{self.window.proxy_password_setting}@{proxy_address}"
-                
-            proxy_type = "http" if self.window.proxy_type_setting == "HttpProxy" else "socks5"
-            return {
-                "http": f"{proxy_type}://{proxy_address}",
-                "https": f"{proxy_type}://{proxy_address}"
-            }
-        else:
-            return None
