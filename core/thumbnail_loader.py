@@ -1,9 +1,9 @@
 import logging
 import requests
 
-from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap
 from core.get_proxies import get_proxies
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 
 class ThumbnailLoader(QThread):
     thumbnail_loaded = pyqtSignal(QPixmap)

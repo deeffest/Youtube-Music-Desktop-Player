@@ -1,9 +1,9 @@
-import re
 import os
+import re
 import logging
-from PyQt5.QtCore import QThread, pyqtSignal
 from pytubefix import YouTube, Playlist
 from core.get_proxies import get_proxies
+from PyQt5.QtCore import QThread, pyqtSignal
 
 class DownloadThread(QThread):
     download_finished = pyqtSignal(str, str)

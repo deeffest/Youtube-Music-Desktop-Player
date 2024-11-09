@@ -1,3 +1,8 @@
+### Update 1.12.1 🎉 (November 9, 2024)
+
+- Added a new domain to the list of allowed sites for navigation, namely `consent.youtube.com`, without which cookie saving could not be accepted or rejected.
+- Other minor fixes and improvements.
+
 ### Update 1.12 🎉 (October 27, 2024)
 
 - The buttons on the main window toolbar have reverted back to the Fluent interface tooltips.

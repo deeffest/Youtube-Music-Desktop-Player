@@ -1,9 +1,9 @@
-import webbrowser
 import logging
+import webbrowser
 
-from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from qfluentwidgets import MessageBox
 from core.input_message_box import InputMessageBox
+from PyQt5.QtWebEngineWidgets import QWebEnginePage
 
 class WebEnginePage(QWebEnginePage):
     def __init__(self, parent=None):
@@ -14,6 +14,7 @@ class WebEnginePage(QWebEnginePage):
             "accounts.google.com" not in url.toString() and
             "googlesyndication.com" not in url.toString() and
             "google.com/tools/feedback" not in url.toString() and
+            "consent.youtube.com" not in url.toString() and
             "google.com/recaptcha" not in url.toString()):
             webbrowser.open_new_tab(url.toString())
             return False

@@ -1,31 +1,29 @@
-import pywinstyles
-import webbrowser
-import pypresence
 import os
 import logging
+import webbrowser
+import pypresence
+import pywinstyles
 
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QShortcut, \
-    QFileDialog
-from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings, \
-    QWebEngineScript
-from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtCore import QSettings, QUrl, Qt, QSize, pyqtSlot, QRect
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
-from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.uic import loadUi
-from qfluentwidgets import setTheme, setThemeColor, Theme, \
-    RoundMenu, Action, SplashScreen, MessageBox, InfoBar, InfoBarPosition, \
-    PushButton, ToolTipFilter, ToolTipPosition
+from PyQt5.QtNetwork import QNetworkProxy
+from core.about_dialog import AboutDialog
+from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtGui import QIcon, QKeySequence
+from packaging import version as pkg_version
+from core.update_checker import UpdateChecker
 from core.web_engine_view import WebEngineView
 from core.web_engine_page import WebEnginePage
 from core.settings_dialog import SettingsDialog
-from core.about_dialog import AboutDialog
-from core.mini_player_dialog import MiniPlayerDialog
 from core.system_tray_icon import SystemTrayIcon
-from core.update_checker import UpdateChecker
-from packaging import version as pkg_version
 from core.ytmusic_downloader import DownloadThread
+from core.mini_player_dialog import MiniPlayerDialog
+from PyQt5.QtCore import QSettings, QUrl, Qt, QSize, pyqtSlot, \
+    QRect
+from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
+from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QShortcut, QFileDialog
+from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings, QWebEngineScript
+from qfluentwidgets import setTheme, setThemeColor, Theme, RoundMenu, Action, SplashScreen, \
+    MessageBox, InfoBar, InfoBarPosition, PushButton, ToolTipFilter, ToolTipPosition
 
 class MainWindow(QMainWindow):
     def __init__(self, custom_url, app_info, parent=None):
@@ -237,9 +235,8 @@ class MainWindow(QMainWindow):
     def handle_update_checked(self, version, download):
         if pkg_version.parse(self.version) < pkg_version.parse(version):
             msg_box = MessageBox(
-                f"A new update {version} is available",
+                f"A new update {version} is available 🎉",
                 (
-                    "New features, bug fixes and application optimization are waiting for you!\n"
                     "Do you want to update now?"
                 ),
                 self

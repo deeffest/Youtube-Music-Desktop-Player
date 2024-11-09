@@ -1,11 +1,11 @@
 import pywinstyles
 
-from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 from PyQt5.uic import loadUi
-from qfluentwidgets import ToolTipFilter, ToolTipPosition
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QDialog
 from core.thumbnail_loader import ThumbnailLoader
+from qfluentwidgets import ToolTipFilter, ToolTipPosition
 
 class MiniPlayerDialog(QDialog):
     def __init__(self, parent=None):

@@ -4,14 +4,15 @@ import shutil
 import getpass
 import logging
 
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
 from core.main_window import MainWindow
+from PyQt5.QtWidgets import QApplication
+from logging.handlers import RotatingFileHandler
 
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "deeffest.pythonanywhere.com"
-version = "1.12"
+version = "1.12.1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def setup_logging():
@@ -20,11 +21,18 @@ def setup_logging():
         os.makedirs(log_dir)
 
     log_file = os.path.join(log_dir, "app.log")
+    rotating_handler = RotatingFileHandler(
+        log_file, maxBytes=1 * 1024 * 1024, backupCount=0
+    )
+    rotating_handler.setLevel(logging.INFO)
+    rotating_handler.setFormatter(logging.Formatter(
+        '[%(asctime)s] %(message)s', datefmt='%Y.%m.%d %H:%M:%S'
+    ))
+
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler(log_file),
+            rotating_handler,
             logging.StreamHandler()
         ]
     )

@@ -17,16 +17,22 @@ if (typeof videoPlayerObserver === 'undefined') {
 
 function findAndSkipAds(mutations) {
     for (let mutation of mutations) {
+        const videoElement = mutation.target.querySelector("video");
+        
         if (mutation.target.classList.contains("ad-showing") && mutation.target.classList.contains("playing-mode")) {
-            videoElement = mutation.target.querySelector("video");
-            videoElement.play();
-            if (videoElement.currentTime < videoElement.duration) {
-                mutation.target.querySelector("video").currentTime = videoElement.duration;
-                videoElement.play();
+            if (videoElement) {
+                if (videoElement.paused && videoElement.readyState >= 2) {
+                    videoElement.play().catch(() => {});
+                }
+
+                if (videoElement.currentTime < videoElement.duration) {
+                    videoElement.currentTime = videoElement.duration;
+                }
             }
         }
+
         if (mutation.target.classList.contains("ended-mode")) {
-            skipButton = document.querySelector(".ytp-ad-skip-button");
+            const skipButton = document.querySelector(".ytp-ad-skip-button");
             if (skipButton != null) {
                 skipButton.click();
             }
@@ -58,19 +64,3 @@ function findVideo() {
     }
     if (adSkipperIterations >= 500) clearInterval(adSkipperIntervalID);
 }
-
-(function () {
-    const nativeParse = JSON.parse;
-    JSON.parse = function (input) {
-        let response = nativeParse(...arguments);
-        if (response.playerAds) {
-            delete response.playerAds;
-            delete response.adPlacements;
-            return response;
-        } else {
-            return typeof input === 'object' ?
-                input :
-                nativeParse(...arguments);
-        }
-    }
-})();
