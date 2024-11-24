@@ -199,7 +199,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel">
                      <property name="text">
-                      <string>Save and restore window size</string>
+                      <string>Save and restore window geometry</string>
                      </property>
                     </widget>
                    </item>
@@ -231,7 +231,7 @@
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_4">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the application remembers the window size for your next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the application remembers the window geometry for your next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1127,7 +1127,7 @@
         <item>
          <widget class="PushButton" name="PushButton_2">
           <property name="text">
-           <string>Restart + Save</string>
+           <string>Restart</string>
           </property>
           <property name="icon">
            <iconset>

@@ -1,10 +1,11 @@
 # python
-__pycache__/
+__pycache__
 
 # deployment
 output
 deploy_config.json
 setup.smm
+smmrtf.rtf
 
 # ui
 about_dialog_ui.py

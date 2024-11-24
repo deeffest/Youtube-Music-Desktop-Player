@@ -1,3 +1,14 @@
+### Update 1.13-rc1 🎉 (November 24, 2024)
+
+- Added playing a notification on the desktop about hiding the main window in the system tray.
+- Added ability to download tracks/playlists with Google OAuth 2.0, which gives 99% probability of avoiding bot detection errors etc.
+- It is now allowed to enter your own or modify the URL in the input box at the top of the main window, so the function of specifying a custom url in the arguments to run has been removed.
+- The application now remembers not only the size, but also the position of the main window. (On by default, disable: Settings > Main > Save and restore window geometry).
+- Small changes to the user interface.
+- Fixed a bug where shortcuts for `Back` and `Forward` actions did not work.
+- In the settings dialog, you can now freely restart the application without saving.
+- Tracks are now converted to `.mp3` format using `ffmpeg` after downloading.
+
 ### Update 1.12.1 🎉 (November 9, 2024)
 
 - Added a new domain to the list of allowed sites for navigation, namely `consent.youtube.com`, without which cookie saving could not be accepted or rejected.

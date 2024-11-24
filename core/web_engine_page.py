@@ -15,6 +15,7 @@ class WebEnginePage(QWebEnginePage):
             "googlesyndication.com" not in url.toString() and
             "google.com/tools/feedback" not in url.toString() and
             "consent.youtube.com" not in url.toString() and
+            "google.com/device" not in url.toString() and
             "google.com/recaptcha" not in url.toString()):
             webbrowser.open_new_tab(url.toString())
             return False

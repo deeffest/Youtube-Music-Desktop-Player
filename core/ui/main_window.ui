@@ -85,7 +85,7 @@
        <item>
         <widget class="LineEdit" name="LineEdit">
          <property name="readOnly">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="placeholderText">
           <string>https://music.youtube.com/</string>
@@ -93,9 +93,9 @@
         </widget>
        </item>
        <item>
-        <widget class="ToolButton" name="download_tbutton">
+        <widget class="DropDownToolButton" name="download_ddtbutton">
          <property name="toolTip">
-          <string>Download</string>
+          <string>Download...</string>
          </property>
         </widget>
        </item>
@@ -110,6 +110,20 @@
         <widget class="ToolButton" name="settings_tbutton">
          <property name="toolTip">
           <string>Settings</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ToolButton" name="bug_report_tbutton">
+         <property name="toolTip">
+          <string>Bug Report</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ToolButton" name="about_tbutton">
+         <property name="toolTip">
+          <string>About...</string>
          </property>
         </widget>
        </item>
@@ -139,6 +153,11 @@
  <customwidgets>
   <customwidget>
    <class>ToolButton</class>
+   <extends>QToolButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>DropDownToolButton</class>
    <extends>QToolButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>

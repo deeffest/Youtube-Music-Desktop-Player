@@ -12,7 +12,7 @@ from logging.handlers import RotatingFileHandler
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "deeffest.pythonanywhere.com"
-version = "1.12.1"
+version = "1.13-rc1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def setup_logging():
@@ -36,12 +36,11 @@ def setup_logging():
             logging.StreamHandler()
         ]
     )
-
+    
 if __name__ == '__main__':
     setup_logging()
 
     sys_argv = sys.argv
-
     app = QApplication(sys_argv)
     app.setApplicationName(name)
     app.setOrganizationName(author)
@@ -50,7 +49,7 @@ if __name__ == '__main__':
 
     with open(f"{current_dir}/core/css/styles.css", 'r') as file:
         app.setStyleSheet(file.read())
-    
+
     username = getpass.getuser()
     sw_dir = f"C:/Users/{username}/AppData/Local/{author}/{name}/QtWebEngine/Default/Service Worker"
     try:
@@ -58,10 +57,5 @@ if __name__ == '__main__':
     except Exception as e:
         logging.error("Failed to remove Service Worker directory: " + str(e))
 
-    custom_url = None
-    if len(sys_argv) > 1:
-        custom_url = sys_argv[1]
-
-    main_window = MainWindow(custom_url, app_info=[name, version, current_dir])
-    
+    main_window = MainWindow(app_info=[name, version, current_dir])
     sys.exit(app.exec_())

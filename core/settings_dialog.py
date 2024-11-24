@@ -1,12 +1,11 @@
-import pywinstyles
 import sys
+import pywinstyles
 
-from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.QtGui import QIcon, QIntValidator
-from PyQt5.QtCore import Qt, QProcess
 from PyQt5.uic import loadUi
-
+from PyQt5.QtCore import Qt, QProcess
 from qfluentwidgets import MessageBox
+from PyQt5.QtGui import QIcon, QIntValidator
+from PyQt5.QtWidgets import QDialog, QApplication
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -29,7 +28,7 @@ class SettingsDialog(QDialog):
         self.ComboBox.addItems(self.proxy_types)
 
     def setup_settings(self):
-        self.SwitchButton.setChecked(self.window.save_last_win_size_setting)
+        self.SwitchButton.setChecked(self.window.save_last_win_geometry_setting)
         self.SwitchButton_4.setChecked(self.window.open_last_url_at_startup_setting)
         self.SwitchButton_3.setChecked(self.window.ad_blocker_setting)
         self.SwitchButton_5.setChecked(self.window.fullscreen_mode_support_setting)
@@ -92,11 +91,12 @@ class SettingsDialog(QDialog):
         
         if msg_box.exec_():
             self.save_and_close()
+            self.window.save_settings()
             QApplication.quit()
             QProcess.startDetached(sys.executable, sys.argv)
 
     def save_and_close(self):
-        self.window.save_last_win_size_setting = int(self.SwitchButton.isChecked())
+        self.window.save_last_win_geometry_setting = int(self.SwitchButton.isChecked())
         self.window.open_last_url_at_startup_setting = int(self.SwitchButton_4.isChecked())
         self.window.ad_blocker_setting = int(self.SwitchButton_3.isChecked())
         self.window.fullscreen_mode_support_setting = int(self.SwitchButton_5.isChecked())
@@ -113,7 +113,7 @@ class SettingsDialog(QDialog):
         self.window.proxy_login_setting = self.LineEdit_3.text()
         self.window.proxy_password_setting = self.PasswordLineEdit.text()
 
-        self.window.settings_.setValue("save_last_win_size", self.window.save_last_win_size_setting)
+        self.window.settings_.setValue("save_last_win_geometry", self.window.save_last_win_geometry_setting)
         self.window.settings_.setValue("open_last_url_at_startup", self.window.open_last_url_at_startup_setting)
         self.window.settings_.setValue("ad_blocker", self.window.ad_blocker_setting)
         self.window.settings_.setValue("fullscreen_mode_support", self.window.fullscreen_mode_support_setting)
@@ -166,7 +166,7 @@ class SettingsDialog(QDialog):
         self.PasswordLineEdit.setVisible(should_show)
 
     def check_if_settings_changed(self):
-        if (self.SwitchButton.isChecked() != self.window.save_last_win_size_setting or
+        if (self.SwitchButton.isChecked() != self.window.save_last_win_geometry_setting or
             self.SwitchButton_4.isChecked() != self.window.open_last_url_at_startup_setting or
             self.SwitchButton_3.isChecked() != self.window.ad_blocker_setting or
             self.SwitchButton_5.isChecked() != self.window.fullscreen_mode_support_setting or
@@ -182,10 +182,10 @@ class SettingsDialog(QDialog):
             self.LineEdit_3.text() != self.window.proxy_login_setting or
             self.PasswordLineEdit.text() != self.window.proxy_password_setting):
             self.PrimaryPushButton.setEnabled(True)
-            self.PushButton_2.setEnabled(True)
+            self.PushButton_2.setText("Restart + Save")
         else:
             self.PrimaryPushButton.setEnabled(False)
-            self.PushButton_2.setEnabled(False)
+            self.PushButton_2.setText("Restart")
 
     def load_ui(self):
         loadUi(f'{self.window.current_dir}/core/ui/settings_dialog.ui', self)
