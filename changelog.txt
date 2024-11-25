@@ -1,3 +1,7 @@
+### Update 1.13 🎉 (November 25, 2024)
+
+- pytubefix updated to version 8.5.2, fixing double-specifying an extension when downloading.
+
 ### Update 1.13-rc1 🎉 (November 24, 2024)
 
 - Added playing a notification on the desktop about hiding the main window in the system tray.

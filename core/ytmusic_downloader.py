@@ -47,10 +47,11 @@ class DownloadThread(QThread):
             os.chmod(self.ffmpeg_path, 0o755)
 
     def download_video(self, yt, output_folder):
-        title = self.sanitize_filename(f"{yt.title}.mp3")
-        stream = yt.streams.get_audio_only()
-        temp_file = stream.download(output_path=output_folder, filename=title)
-        self.convert_to_mp3(temp_file, os.path.join(output_folder, title))
+        original_filename = self.sanitize_filename(f"{yt.title}.m4a")
+        temp_file = yt.streams.get_audio_only().download(output_path=output_folder, filename=original_filename)
+        final_filename = self.sanitize_filename(f"{yt.title}.mp3")
+        output_file = os.path.join(output_folder, final_filename)
+        self.convert_to_mp3(temp_file, output_file)
 
     def setup_yt_object(self, url, is_playlist=False):
         yt_object = (Playlist if is_playlist else YouTube)(
@@ -91,14 +92,8 @@ class DownloadThread(QThread):
         loop.exec_()    
 
     def convert_to_mp3(self, input_file, output_file):
-        output_dir = os.path.dirname(output_file)
-        base_filename = os.path.basename(output_file)
-        
-        sanitized_filename = self.sanitize_filename(base_filename)
-        sanitized_output_file = os.path.join(output_dir, sanitized_filename)
-
         subprocess.run(
-            [self.ffmpeg_path, "-y", "-i", input_file, "-vn", "-ar", "44100", "-ac", "2", "-b:a", "192k", sanitized_output_file],
+            [self.ffmpeg_path, "-y", "-i", input_file, "-vn", "-ar", "44100", "-ac", "2", "-b:a", "192k", output_file],
             check=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,

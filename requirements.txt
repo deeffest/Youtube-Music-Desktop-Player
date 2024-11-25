@@ -2,7 +2,7 @@ packaging==24.2
 PyQt5==5.15.11
 PyQtWebEngine==5.15.7
 PyQt_Fluent_Widgets==1.7.0
-pytubefix==8.5.1
+pytubefix==8.5.2
 pywinstyles==1.8
 Requests==2.32.3
 
