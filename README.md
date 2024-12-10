@@ -58,8 +58,8 @@
    ```
 
 ### **Ready-to-Use Builds**
-1. Download `YTMDPlayer-Setup.exe` from the [release page](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases).
-2. Run `YTMDPlayer-Setup.exe` as administrator and follow the installer instructions.
+1. Download `YTMDPlayer-vX.X.X-Setup.exe` from the [release page](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases).
+2. Run `YTMDPlayer-vX.X.X-Setup.exe` as administrator and follow the installer instructions.
 3. Go to the directory with the installed application, run `YTMDPlayer.exe` and start enjoying listening :)
 
 ## 📚 See also

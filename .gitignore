@@ -5,7 +5,6 @@ __pycache__
 output
 deploy_config.json
 setup.smm
-smmrtf.rtf
 
 # ui
 about_dialog_ui.py
