@@ -34,7 +34,8 @@
 5. **Ad Blocker (Skipper)** — Skip ads automatically for uninterrupted music.
 6. **Track/Playlist Downloader** — Save your favorite tracks and playlists locally.
   
-## 🚀 Quick start
+## 🚀 Quick Start
+### **Source Code**
 1. **Clone the Repository**  
    Clone the project repository to your local machine:
    ```bash
@@ -56,10 +57,10 @@
    python main.py
    ```
 
-## 🛠️ Install
-1. Download `YTMDPlayer-Setup.exe` from [release page](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases).
+### **Ready-to-Use Builds**
+1. Download `YTMDPlayer-Setup.exe` from the [release page](https://github.com/deeffest/Youtube-Music-Desktop-Player/releases).
 2. Run `YTMDPlayer-Setup.exe` as administrator and follow the installer instructions.
-3. Go to the directory with the installed application, run `YTMDPlayer.exe` and start enjoying listening:)
+3. Go to the directory with the installed application, run `YTMDPlayer.exe` and start enjoying listening :)
 
 ## 📚 See also
 - [deeffest/DEEF-Lite-Media-Player](https://github.com/deeffest/DEEF-Lite-Media-Player)：Сross-platform media player. 

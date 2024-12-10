@@ -331,22 +331,16 @@ class MainWindow(QMainWindow):
                 self.tray_icon.dislike_action.setText("Dislike")
                 self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like-checked.png"))
                 self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
-                self.tray_icon.like_action.setEnabled(True)
-                self.tray_icon.dislike_action.setEnabled(True)
             elif self.like_status == "Dislike":
                 self.tray_icon.like_action.setText("Like")
                 self.tray_icon.dislike_action.setText("Disliked")
                 self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike-checked.png"))
-                self.tray_icon.like_action.setEnabled(True)
-                self.tray_icon.dislike_action.setEnabled(True)
             else:
                 self.tray_icon.like_action.setText("Like")
                 self.tray_icon.dislike_action.setText("Dislike")
                 self.tray_icon.like_action.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.tray_icon.dislike_action.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
-                self.tray_icon.like_action.setEnabled(True)
-                self.tray_icon.dislike_action.setEnabled(True)
 
     def update_win_thumbnail_buttons_like_dislike_controls(self):
         if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
@@ -355,22 +349,16 @@ class MainWindow(QMainWindow):
                 self.tool_btn_dislike.setToolTip("Dislike")
                 self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border-checked.png"))
                 self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
-                self.tool_btn_like.setEnabled(True)
-                self.tool_btn_dislike.setEnabled(True)
             elif self.like_status == "Dislike":
                 self.tool_btn_like.setToolTip("Like")
                 self.tool_btn_dislike.setToolTip("Disliked")
                 self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
                 self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border-checked.png"))
-                self.tool_btn_like.setEnabled(True)
-                self.tool_btn_dislike.setEnabled(True)
             else:
                 self.tool_btn_like.setToolTip("Like")
                 self.tool_btn_dislike.setToolTip("Dislike")
                 self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
                 self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
-                self.tool_btn_like.setEnabled(True)
-                self.tool_btn_dislike.setEnabled(True)
     
     def update_mini_player_like_dislike_controls(self):
         if self.mini_player_dialog:
@@ -379,22 +367,16 @@ class MainWindow(QMainWindow):
                 self.mini_player_dialog.dislike_button.setToolTip("Dislike")
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like-filled-checked.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
-                self.mini_player_dialog.like_button.setEnabled(True)
-                self.mini_player_dialog.dislike_button.setEnabled(True)
             elif self.like_status == "Dislike":
                 self.mini_player_dialog.like_button.setToolTip("Like")
                 self.mini_player_dialog.dislike_button.setToolTip("Disliked")
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike-filled-checked.png"))
-                self.mini_player_dialog.like_button.setEnabled(True)
-                self.mini_player_dialog.dislike_button.setEnabled(True)
             else:
                 self.mini_player_dialog.like_button.setToolTip("Like")
                 self.mini_player_dialog.dislike_button.setToolTip("Dislike")
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
-                self.mini_player_dialog.like_button.setEnabled(True)
-                self.mini_player_dialog.dislike_button.setEnabled(True)
 
     @pyqtSlot(str, str, str)
     def track_info_changed(self, title, author, thumbnail_url):
@@ -494,16 +476,22 @@ class MainWindow(QMainWindow):
                 self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/pause.png"))
                 self.tray_icon.play_pause_action.setEnabled(True)
                 self.tray_icon.next_action.setEnabled(True)
+                self.tray_icon.like_action.setEnabled(True)
+                self.tray_icon.dislike_action.setEnabled(True)
             elif self.video_state == "VideoPaused":
                 self.tray_icon.previous_action.setEnabled(True)
                 self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/play.png"))
                 self.tray_icon.play_pause_action.setEnabled(True)
                 self.tray_icon.next_action.setEnabled(True)
+                self.tray_icon.like_action.setEnabled(True)
+                self.tray_icon.dislike_action.setEnabled(True)
             else:
                 self.tray_icon.previous_action.setEnabled(False)
                 self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/play.png"))
                 self.tray_icon.play_pause_action.setEnabled(False)
                 self.tray_icon.next_action.setEnabled(False)
+                self.tray_icon.like_action.setEnabled(False)
+                self.tray_icon.dislike_action.setEnabled(False)
     
     def update_win_thumbnail_buttons_track_controls(self):
         if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
@@ -511,23 +499,35 @@ class MainWindow(QMainWindow):
                 self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-border.png"))
                 self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/pause-border.png"))            
                 self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-border.png"))
+                self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
+                self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
                 self.tool_btn_previous.setEnabled(True)
                 self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setEnabled(True)
+                self.tool_btn_like.setEnabled(True)
+                self.tool_btn_dislike.setEnabled(True)
             elif self.video_state == "VideoPaused":
                 self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-border.png"))
                 self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/play-border.png"))
                 self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-border.png"))
+                self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border.png"))
+                self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border.png"))
                 self.tool_btn_previous.setEnabled(True)
                 self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setEnabled(True)
+                self.tool_btn_like.setEnabled(True)
+                self.tool_btn_dislike.setEnabled(True)
             else:
                 self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-border-disabled.png"))
                 self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/play-border-disabled.png"))
                 self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-border-disabled.png"))
+                self.tool_btn_like.setIcon(QIcon(f"{self.icon_folder}/like-border-disabled.png"))
+                self.tool_btn_dislike.setIcon(QIcon(f"{self.icon_folder}/dislike-border-disabled.png"))
                 self.tool_btn_previous.setEnabled(False)
                 self.tool_btn_play_pause.setEnabled(False)
                 self.tool_btn_next.setEnabled(False)
+                self.tool_btn_like.setEnabled(False)
+                self.tool_btn_dislike.setEnabled(False)
 
     def update_mini_player_track_controls(self):
         if self.mini_player_dialog:
@@ -536,16 +536,22 @@ class MainWindow(QMainWindow):
                 self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/pause-filled.png"))
                 self.mini_player_dialog.play_pause_button.setEnabled(True)
                 self.mini_player_dialog.next_button.setEnabled(True)
+                self.mini_player_dialog.like_button.setEnabled(True)
+                self.mini_player_dialog.dislike_button.setEnabled(True)
             elif self.video_state == "VideoPaused":
                 self.mini_player_dialog.previous_button.setEnabled(True)
                 self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/play-filled.png"))
                 self.mini_player_dialog.play_pause_button.setEnabled(True)
                 self.mini_player_dialog.next_button.setEnabled(True)
+                self.mini_player_dialog.like_button.setEnabled(True)
+                self.mini_player_dialog.dislike_button.setEnabled(True)
             else:
                 self.mini_player_dialog.previous_button.setEnabled(False)
                 self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/play-filled.png"))
                 self.mini_player_dialog.play_pause_button.setEnabled(False)
                 self.mini_player_dialog.next_button.setEnabled(False)
+                self.mini_player_dialog.like_button.setEnabled(False)
+                self.mini_player_dialog.dislike_button.setEnabled(False)
 
     def create_menu(self):
         self.back_action = Action("Back", shortcut="Alt+Left")
@@ -875,7 +881,7 @@ class MainWindow(QMainWindow):
         info_bar.addWidget(retry_download_btn)
         info_bar.show()
 
-    def update_download_buttons_state(self, is_downloading):        
+    def update_download_buttons_state(self, is_downloading):
         self.download_with_oauth_action.setEnabled(not is_downloading)
         self.download_as_unauthorized_action.setEnabled(not is_downloading)
         self.download_with_oauth_shortcut.setEnabled(not is_downloading)

@@ -1,3 +1,8 @@
+v1.13.1 is Here! (11.12.2024)
+- pytubefix updated to version 8.8.1, fixed critical error `get_throttling_function_name: could not find match for multiple in https://youtube.com/s/player/3bb1f723/player_ias.vflset/en_US/base.js` when downloading track/playlist.
+- Fixed permanent (when there is no video) enabled state of like/dislike buttons in tray, taskbar thumbnail and mini player.
+- Other minor fixes and improvements.
+
 ### Update 1.13 🎉 (November 25, 2024)
 
 - pytubefix updated to version 8.5.2, fixing double-specifying an extension when downloading.
