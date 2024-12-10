@@ -12,7 +12,7 @@ from logging.handlers import RotatingFileHandler
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "deeffest.pythonanywhere.com"
-version = "1.13.1"
+version = "v1.13.1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def setup_logging():

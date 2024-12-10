@@ -14,7 +14,7 @@ class UpdateChecker(QThread):
             response.raise_for_status()
             
             data = response.json()
-            last_version = data["name"]
+            last_version = data["tag_name"]
             last_release_url = data.get("html_url")
         except Exception as e:
             logging.error("UpdateChecker UnexpectedError: " + str(e))
