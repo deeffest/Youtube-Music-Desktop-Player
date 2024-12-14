@@ -123,7 +123,7 @@
        <item>
         <widget class="ToolButton" name="about_tbutton">
          <property name="toolTip">
-          <string>About...</string>
+          <string>About</string>
          </property>
         </widget>
        </item>
@@ -152,6 +152,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
    <class>ToolButton</class>
    <extends>QToolButton</extends>
    <header>qfluentwidgets</header>
@@ -159,11 +164,6 @@
   <customwidget>
    <class>DropDownToolButton</class>
    <extends>QToolButton</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEdit</class>
-   <extends>QLineEdit</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>

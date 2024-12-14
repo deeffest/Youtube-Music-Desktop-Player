@@ -82,7 +82,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>../../resources/icons/icon.ico</pixmap>
+           <pixmap>../../resources/icons/logo.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -114,8 +114,14 @@
         </item>
         <item>
          <widget class="BodyLabel" name="BodyLabel_2">
+          <property name="contextMenuPolicy">
+           <enum>Qt::DefaultContextMenu</enum>
+          </property>
           <property name="text">
-           <string>Version: Unknown</string>
+           <string>Unknown Version</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse</set>
           </property>
          </widget>
         </item>
@@ -176,7 +182,7 @@
           <property name="text">
            <string>Icons8</string>
           </property>
-          <property name="url">
+          <property name="url" stdset="0">
            <url>
             <string>https://icons8.com</string>
            </url>

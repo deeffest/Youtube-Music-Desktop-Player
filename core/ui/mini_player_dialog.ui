@@ -246,7 +246,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Dislike</string>
+        <string>Dislike (D)</string>
        </property>
        <property name="icon">
         <iconset>
@@ -278,7 +278,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Previous</string>
+        <string>Previous (Left)</string>
        </property>
        <property name="icon">
         <iconset>
@@ -310,7 +310,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Play/Pause</string>
+        <string>Play/Pause (Space)</string>
        </property>
        <property name="icon">
         <iconset>
@@ -342,7 +342,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Next</string>
+        <string>Next (Right)</string>
        </property>
        <property name="icon">
         <iconset>
@@ -374,7 +374,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Like</string>
+        <string>Like (L)</string>
        </property>
        <property name="icon">
         <iconset>

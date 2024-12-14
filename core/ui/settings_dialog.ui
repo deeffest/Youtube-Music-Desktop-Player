@@ -70,7 +70,7 @@
            <string>Main</string>
           </property>
           <property name="checked">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
           <property name="autoExclusive">
            <bool>true</bool>
@@ -101,7 +101,7 @@
          </widget>
         </item>
         <item>
-         <widget class="HorizontalSeparator" name="HorizontalSeparator"/>
+         <widget class="HorizontalSeparator" name="HorizontalSeparator" native="true"/>
         </item>
         <item>
          <widget class="PillPushButton" name="PillPushButton_4">
@@ -158,9 +158,9 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
-            <width>390</width>
-            <height>864</height>
+            <y>-659</y>
+            <width>394</width>
+            <height>879</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -217,11 +217,11 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton">
+                    <widget class="SwitchButton" name="SwitchButton" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
-                     <property name="checked">
+                     <property name="checked" stdset="0">
                       <bool>false</bool>
                      </property>
                     </widget>
@@ -273,11 +273,11 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_4">
+                    <widget class="SwitchButton" name="SwitchButton_4" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
-                     <property name="checked">
+                     <property name="checked" stdset="0">
                       <bool>false</bool>
                      </property>
                     </widget>
@@ -353,11 +353,11 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_5">
+                    <widget class="SwitchButton" name="SwitchButton_5" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
-                     <property name="checked">
+                     <property name="checked" stdset="0">
                       <bool>false</bool>
                      </property>
                     </widget>
@@ -399,7 +399,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_6">
+                    <widget class="SwitchButton" name="SwitchButton_6" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
@@ -442,7 +442,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_8">
+                    <widget class="SwitchButton" name="SwitchButton_8" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
@@ -736,7 +736,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_2">
+                    <widget class="SwitchButton" name="SwitchButton_2" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
@@ -800,7 +800,7 @@
                <number>0</number>
               </property>
               <property name="rightMargin">
-               <number>0</number>
+               <number>16</number>
               </property>
               <property name="bottomMargin">
                <number>0</number>
@@ -862,7 +862,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_3">
+                    <widget class="SwitchButton" name="SwitchButton_3" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
@@ -930,7 +930,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_7">
+                    <widget class="SwitchButton" name="SwitchButton_7" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
@@ -998,7 +998,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_11">
+                    <widget class="SwitchButton" name="SwitchButton_11" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
@@ -1066,7 +1066,157 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="SwitchButton" name="SwitchButton_12">
+                    <widget class="SwitchButton" name="SwitchButton_12" native="true">
+                     <property name="layoutDirection">
+                      <enum>Qt::RightToLeft</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="SettingBox12">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_23">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_15">
+                   <item>
+                    <widget class="QLabel" name="label_5">
+                     <property name="minimumSize">
+                      <size>
+                       <width>22</width>
+                       <height>22</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>22</width>
+                       <height>22</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../../resources/icons/music-notify.png</pixmap>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_21">
+                     <property name="text">
+                      <string>Track Change Notificator</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_6">
+                     <property name="text">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0004;&quot;&gt;(NEW)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_14">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="SwitchButton" name="SwitchButton_13" native="true">
+                     <property name="layoutDirection">
+                      <enum>Qt::RightToLeft</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="SettingBox13">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_24">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_17">
+                   <item>
+                    <widget class="QLabel" name="label_7">
+                     <property name="minimumSize">
+                      <size>
+                       <width>22</width>
+                       <height>22</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>22</width>
+                       <height>22</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap>../../resources/icons/hotkeys.png</pixmap>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_23">
+                     <property name="text">
+                      <string>Hotkey Playback Control</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_8">
+                     <property name="text">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0004;&quot;&gt;(NEW)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_15">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="SwitchButton" name="SwitchButton_14" native="true">
                      <property name="layoutDirection">
                       <enum>Qt::RightToLeft</enum>
                      </property>
@@ -1222,11 +1372,6 @@
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>PillPushButton</class>
-   <extends>ToggleButton</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
    <class>SwitchButton</class>
    <extends>QWidget</extends>
    <header>qfluentwidgets</header>
@@ -1260,6 +1405,11 @@
   <customwidget>
    <class>PasswordLineEdit</class>
    <extends>LineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PillPushButton</class>
+   <extends>ToggleButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>

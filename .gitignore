@@ -2,9 +2,7 @@
 __pycache__
 
 # deployment
-output
-deploy_config.json
-setup.smm
+builds
 
 # ui
 about_dialog_ui.py

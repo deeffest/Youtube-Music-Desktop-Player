@@ -1,3 +1,13 @@
+v1.14.0 is Here! (15.12.2024)
+- Added a new `Track Change Notificator` plugin that shows a desktop notification whenever a new track is opened/played.
+- Added a new `Hotkey Playback Control` plugin, adding hotkey support to the site for playback control.
+- The message box when a new version of the application is found now displays the change log.
+- The ability to like or dislike a track being played has been removed from the window thumbnail and system tray icon menu.
+- Removed desktop notification about minimizing the main window to the system tray.
+- Changed some icons, including the application icon.
+- Some changes to the interface.
+- Other fixes and improvements.
+
 v1.13.1 is Here! (11.12.2024)
 - pytubefix updated to version 8.8.1, fixed critical error `get_throttling_function_name: could not find match for multiple in https://youtube.com/s/player/3bb1f723/player_ias.vflset/en_US/base.js` when downloading track/playlist.
 - Fixed permanent (when there is no video) enabled state of like/dislike buttons in tray, taskbar thumbnail and mini player.

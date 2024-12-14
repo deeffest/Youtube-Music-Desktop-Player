@@ -16,7 +16,7 @@ class AboutDialog(QDialog):
         self.setup_content()
 
     def setup_content(self):
-        self.BodyLabel_2.setText(f"Version: {self.window.version}")
+        self.BodyLabel_2.setText(self.window.version)
 
     def setup_connect(self):
         self.PrimaryPushButton.clicked.connect(self.close)
@@ -29,9 +29,9 @@ class AboutDialog(QDialog):
         loadUi(f'{self.window.current_dir}/core/ui/about_dialog.ui', self)
         pywinstyles.apply_style(self, "dark")
 
-        self.setWindowTitle("About app")
+        self.setWindowTitle("About")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about-red.png"))
+        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about.png"))
 
         self.setFixedSize(self.size())
 

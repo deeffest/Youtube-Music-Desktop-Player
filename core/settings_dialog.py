@@ -21,6 +21,7 @@ class SettingsDialog(QDialog):
         self.PillPushButton_4.setIcon(self.window.icon_folder+"/plugins.png")
 
     def setup_content(self):
+        self.PillPushButton.setChecked(True)
         int_validator = QIntValidator()
         self.LineEdit_2.setValidator(int_validator)
         self.proxy_types = ["HttpProxy", "Socks5Proxy", 
@@ -48,6 +49,8 @@ class SettingsDialog(QDialog):
             self.LineEdit_3.setText(self.window.proxy_login_setting)
         if self.window.proxy_password_setting is not None:
             self.PasswordLineEdit.setText(self.window.proxy_password_setting)
+        self.SwitchButton_13.setChecked(self.window.track_change_notificator_setting)
+        self.SwitchButton_14.setChecked(self.window.hotkey_playback_control_setting)
 
         self.check_if_settings_changed()
 
@@ -76,6 +79,8 @@ class SettingsDialog(QDialog):
         self.LineEdit_2.textChanged.connect(self.check_if_settings_changed)
         self.LineEdit_3.textChanged.connect(self.check_if_settings_changed)
         self.PasswordLineEdit.textChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_13.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_14.checkedChanged.connect(self.check_if_settings_changed)
 
     def restart_app(self):
         msg_box = MessageBox(
@@ -112,6 +117,8 @@ class SettingsDialog(QDialog):
         self.window.proxy_port_setting = int(port_text) if port_text else None
         self.window.proxy_login_setting = self.LineEdit_3.text()
         self.window.proxy_password_setting = self.PasswordLineEdit.text()
+        self.window.track_change_notificator_setting = int(self.SwitchButton_13.isChecked())
+        self.window.hotkey_playback_control_setting = int(self.SwitchButton_14.isChecked())
 
         self.window.settings_.setValue("save_last_win_geometry", self.window.save_last_win_geometry_setting)
         self.window.settings_.setValue("open_last_url_at_startup", self.window.open_last_url_at_startup_setting)
@@ -128,6 +135,8 @@ class SettingsDialog(QDialog):
         self.window.settings_.setValue("proxy_port", self.window.proxy_port_setting)
         self.window.settings_.setValue("proxy_login", self.window.proxy_login_setting)
         self.window.settings_.setValue("proxy_password", self.window.proxy_password_setting)
+        self.window.settings_.setValue("track_change_notificator", self.window.track_change_notificator_setting)
+        self.window.settings_.setValue("hotkey_playback_control", self.window.hotkey_playback_control_setting)
 
         self.close()
 
@@ -180,7 +189,10 @@ class SettingsDialog(QDialog):
             self.LineEdit.text() != self.window.proxy_host_name_setting or
             self.LineEdit_2.text() != (str(self.window.proxy_port_setting) if self.window.proxy_port_setting is not None else "") or
             self.LineEdit_3.text() != self.window.proxy_login_setting or
-            self.PasswordLineEdit.text() != self.window.proxy_password_setting):
+            self.PasswordLineEdit.text() != self.window.proxy_password_setting or
+            self.SwitchButton_13.isChecked() != self.window.track_change_notificator_setting or
+            self.SwitchButton_14.isChecked() != self.window.hotkey_playback_control_setting):
+
             self.PrimaryPushButton.setEnabled(True)
             self.PushButton_2.setText("Restart + Save")
         else:
@@ -193,7 +205,7 @@ class SettingsDialog(QDialog):
 
         self.setWindowTitle("Settings")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings-red.png"))
+        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings.png"))
         
         self.setFixedSize(self.size())
 
