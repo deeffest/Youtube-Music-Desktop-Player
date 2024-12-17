@@ -1,3 +1,6 @@
+v1.14.1 is Here! (17.12.2024)
+- Fixed Track/Playlist Downloader.
+
 v1.14.0 is Here! (15.12.2024)
 - Added a new `Track Change Notificator` plugin that shows a desktop notification whenever a new track is opened/played.
 - Added a new `Hotkey Playback Control` plugin, adding hotkey support to the site for playback control.
