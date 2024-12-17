@@ -1,4 +1,4 @@
-![Icon](resources/icons/logo@96x96.png)
+![Icon](resources/icons/logo@128x128.png)
 
 # Youtube-Music-Desktop-Player
 Turns the [Youtube Music](https://music.youtube.com) site into a desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
