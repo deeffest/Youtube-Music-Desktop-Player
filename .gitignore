@@ -1,11 +1,2 @@
-# python
 __pycache__
-
-# deployment
-builds
-
-# ui
-about_dialog_ui.py
-main_window_ui.py
-mini_player_dialog_ui.py
-settings_dialog_ui.py
+YTMDPlayer.dist

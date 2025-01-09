@@ -34,26 +34,12 @@ QFrame#SettingBox9,
 QFrame#SettingBox10,
 QFrame#SettingBox11,
 QFrame#SettingBox12,
-QFrame#SettingBox13 {
+QFrame#SettingBox13,
+QFrame#SettingBox14,
+QFrame#SettingBox15 {
     border-radius: 5px;
     background-color: rgb(50,50,50);
     border: 1px solid rgb(35,35,35);
-}
-
-QFrame#SettingBox:hover,
-QFrame#SettingBox2:hover,
-QFrame#SettingBox3:hover,
-QFrame#SettingBox4:hover,
-QFrame#SettingBox5:hover,
-QFrame#SettingBox6:hover,
-QFrame#SettingBox7:hover,
-QFrame#SettingBox8:hover,
-QFrame#SettingBox9:hover,
-QFrame#SettingBox10:hover,
-QFrame#SettingBox11:hover,
-QFrame#SettingBox12:hover,
-QFrame#SettingBox13:hover {
-    background-color: rgb(55, 55, 55);
 }
 
 QWidget#scrollAreaWidgetContents {

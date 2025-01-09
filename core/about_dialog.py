@@ -1,9 +1,10 @@
-import pywinstyles
+import logging
 import webbrowser
 
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QIcon
+import pywinstyles
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QDialog
 from PyQt5.uic import loadUi
 
 class AboutDialog(QDialog):
@@ -27,7 +28,10 @@ class AboutDialog(QDialog):
 
     def load_ui(self):
         loadUi(f'{self.window.current_dir}/core/ui/about_dialog.ui', self)
-        pywinstyles.apply_style(self, "dark")
+        try:
+            pywinstyles.apply_style(self, "dark")
+        except Exception as e:
+            logging.error("Failed to apply dark style: " + str(e))
 
         self.setWindowTitle("About")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)

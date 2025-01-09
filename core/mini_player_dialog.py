@@ -1,11 +1,14 @@
+import logging
 import pywinstyles
 
 from PyQt5.QtCore import Qt
-from PyQt5.uic import loadUi
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QDialog
-from core.thumbnail_loader import ThumbnailLoader
+from PyQt5.QtWidgets import QDialog, QDesktopWidget
+from PyQt5.uic import loadUi
 from qfluentwidgets import ToolTipFilter, ToolTipPosition
+
+from core.thumbnail_loader import ThumbnailLoader
+from core.get_taskbar_position import get_taskbar_position
 
 class MiniPlayerDialog(QDialog):
     def __init__(self, parent=None):
@@ -47,16 +50,30 @@ class MiniPlayerDialog(QDialog):
         self.thumbnail_label.setPixmap(self.thumbnail)
 
     def init_ui(self):
-        pywinstyles.apply_style(self, "dark")
+        try:
+            pywinstyles.apply_style(self, "dark")
+        except Exception as e:
+            logging.error("Failed to apply dark style: " + str(e))
         loadUi(f'{self.window.current_dir}/core/ui/mini_player_dialog.ui', self)
 
         self.setWindowTitle("Mini-Player")        
         self.setWindowFlags(Qt.Window)
         self.setWindowFlag(Qt.WindowStaysOnTopHint)
 
-        self.setFixedSize(360, 150)
         if self.window.save_last_pos_of_mp_setting == 1:
             self.setGeometry(self.window.geometry_of_mp_setting)
+        else:
+            screen_geometry = QDesktopWidget().screenGeometry()
+            taskbar_position = get_taskbar_position()
+            x = screen_geometry.width() - self.width() - 30
+            y = screen_geometry.height() - self.height() - 30
+            if taskbar_position == "Right":
+                x = screen_geometry.width() - self.width() - 93
+            elif taskbar_position == "Bottom":
+                y = screen_geometry.height() - self.height() - 71
+            self.setGeometry(x, y, self.width(), self.height())
+        
+        self.setFixedSize(self.size())
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -65,8 +82,9 @@ class MiniPlayerDialog(QDialog):
             super().keyPressEvent(event)
             
     def closeEvent(self, event):
-        self.window.geometry_of_mp_setting = self.geometry()
-        self.window.settings_.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
+        if self.window.save_last_pos_of_mp_setting == 1:
+            self.window.geometry_of_mp_setting = self.geometry()
+            self.window.settings_.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
         
         self.window.show()
         self.window.show_tray_icon()

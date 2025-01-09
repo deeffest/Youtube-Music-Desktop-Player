@@ -5,13 +5,20 @@ class WebEngineView(QWebEngineView):
         super(WebEngineView, self).__init__(parent)
 
     def contextMenuEvent(self, event):
-        context_data = self.page().contextMenuData()            
+        context_data = self.page().contextMenuData()
         flags = context_data.editFlags()
 
-        self.window().copy_action.setEnabled(flags & QWebEngineContextMenuData.CanCopy)
-        self.window().paste_action.setEnabled(flags & QWebEngineContextMenuData.CanPaste)
-
-        if self.page().selectedText() or context_data.isContentEditable():
+        if context_data.isContentEditable() and self.page().selectedText():
+            self.window().edit_menu.actions()[0].setEnabled(flags & QWebEngineContextMenuData.CanCopy)
+            self.window().edit_menu.actions()[1].setEnabled(flags & QWebEngineContextMenuData.CanPaste)
             self.window().edit_menu.exec(event.globalPos())
+        elif context_data.isContentEditable():
+            self.window().paste_menu.actions()[0].setEnabled(flags & QWebEngineContextMenuData.CanPaste)
+            self.window().paste_menu.exec(event.globalPos())
+        elif self.page().selectedText():
+            self.window().copy_menu.actions()[0].setEnabled(flags & QWebEngineContextMenuData.CanCopy)
+            self.window().copy_menu.exec(event.globalPos())
         else:
             self.window().main_menu.exec(event.globalPos())
+
+        event.accept()

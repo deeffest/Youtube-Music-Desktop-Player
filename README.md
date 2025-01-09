@@ -28,7 +28,7 @@ Turns the [Youtube Music](https://music.youtube.com) site into a desktop applica
 4. **Run the Application**  
    Start the YTMDPlayer:
    ```bash
-   python main.py
+   python YTMDPlayer.py
    ```
 
 ### Ready-to-Use Builds

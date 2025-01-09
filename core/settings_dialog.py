@@ -1,11 +1,12 @@
 import sys
-import pywinstyles
+import logging
 
-from PyQt5.uic import loadUi
+import pywinstyles
 from PyQt5.QtCore import Qt, QProcess
-from qfluentwidgets import MessageBox
 from PyQt5.QtGui import QIcon, QIntValidator
 from PyQt5.QtWidgets import QDialog, QApplication
+from PyQt5.uic import loadUi
+from qfluentwidgets import MessageBox
 
 class SettingsDialog(QDialog):
     def __init__(self, parent=None):
@@ -27,6 +28,9 @@ class SettingsDialog(QDialog):
         self.proxy_types = ["HttpProxy", "Socks5Proxy", 
                             "DefaultProxy", "NoProxy"]
         self.ComboBox.addItems(self.proxy_types)
+        self.opengl_enviroments = ["Desktop", "Angle",
+                                   "Software", "Auto"]
+        self.ComboBox_3.addItems(self.opengl_enviroments)
 
     def setup_settings(self):
         self.SwitchButton.setChecked(self.window.save_last_win_geometry_setting)
@@ -51,6 +55,8 @@ class SettingsDialog(QDialog):
             self.PasswordLineEdit.setText(self.window.proxy_password_setting)
         self.SwitchButton_13.setChecked(self.window.track_change_notificator_setting)
         self.SwitchButton_14.setChecked(self.window.hotkey_playback_control_setting)
+        self.SwitchButton_15.setChecked(self.window.only_audio_mode_setting)
+        self.ComboBox_3.setCurrentIndex(self.opengl_enviroments.index(self.window.opengl_enviroment_setting))
 
         self.check_if_settings_changed()
 
@@ -81,22 +87,27 @@ class SettingsDialog(QDialog):
         self.PasswordLineEdit.textChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_13.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_14.checkedChanged.connect(self.check_if_settings_changed)
+        self.SwitchButton_15.checkedChanged.connect(self.check_if_settings_changed)
+        self.ComboBox_3.currentIndexChanged.connect(self.check_if_settings_changed)
 
     def restart_app(self):
-        msg_box = MessageBox(
-            "Restart Confirmation",
-            (
-                "Restarting now will stop the current playback and close the application.\n"
-                "Do you want to restart now?"
-            ),
-            self
-        )
-        msg_box.yesButton.setText("Restart")
-        msg_box.cancelButton.setText("Cancel")
+        msg_box = None
+
+        if self.window.video_state == "VideoPlaying":
+            msg_box = MessageBox(
+                "Restart Confirmation",
+                (
+                    "Restarting now will stop the current playback and close the application.\n"
+                    "Do you want to restart now?"
+                ),
+                self
+            )
+            msg_box.yesButton.setText("Restart")
+            msg_box.cancelButton.setText("Cancel")
         
-        if msg_box.exec_():
-            self.save_and_close()
+        if not msg_box or msg_box.exec_():
             self.window.save_settings()
+            self.save_and_close()
             QApplication.quit()
             QProcess.startDetached(sys.executable, sys.argv)
 
@@ -119,6 +130,8 @@ class SettingsDialog(QDialog):
         self.window.proxy_password_setting = self.PasswordLineEdit.text()
         self.window.track_change_notificator_setting = int(self.SwitchButton_13.isChecked())
         self.window.hotkey_playback_control_setting = int(self.SwitchButton_14.isChecked())
+        self.window.only_audio_mode_setting = int(self.SwitchButton_15.isChecked())
+        self.window.opengl_enviroment_setting = self.ComboBox_3.currentText()
 
         self.window.settings_.setValue("save_last_win_geometry", self.window.save_last_win_geometry_setting)
         self.window.settings_.setValue("open_last_url_at_startup", self.window.open_last_url_at_startup_setting)
@@ -137,6 +150,8 @@ class SettingsDialog(QDialog):
         self.window.settings_.setValue("proxy_password", self.window.proxy_password_setting)
         self.window.settings_.setValue("track_change_notificator", self.window.track_change_notificator_setting)
         self.window.settings_.setValue("hotkey_playback_control", self.window.hotkey_playback_control_setting)
+        self.window.settings_.setValue("only_audio_mode", self.window.only_audio_mode_setting)
+        self.window.settings_.setValue("opengl_enviroment", self.window.opengl_enviroment_setting)
 
         self.close()
 
@@ -191,17 +206,22 @@ class SettingsDialog(QDialog):
             self.LineEdit_3.text() != self.window.proxy_login_setting or
             self.PasswordLineEdit.text() != self.window.proxy_password_setting or
             self.SwitchButton_13.isChecked() != self.window.track_change_notificator_setting or
-            self.SwitchButton_14.isChecked() != self.window.hotkey_playback_control_setting):
+            self.SwitchButton_14.isChecked() != self.window.hotkey_playback_control_setting or
+            self.SwitchButton_15.isChecked() != self.window.only_audio_mode_setting or
+            self.ComboBox_3.currentText() != self.window.opengl_enviroment_setting):
 
             self.PrimaryPushButton.setEnabled(True)
-            self.PushButton_2.setText("Restart + Save")
+            self.PushButton_2.setText("Restart && Save")
         else:
             self.PrimaryPushButton.setEnabled(False)
             self.PushButton_2.setText("Restart")
 
     def load_ui(self):
         loadUi(f'{self.window.current_dir}/core/ui/settings_dialog.ui', self)
-        pywinstyles.apply_style(self, "dark")
+        try:
+            pywinstyles.apply_style(self, "dark")
+        except Exception as e:
+            logging.error("Failed to apply dark style: " + str(e))
 
         self.setWindowTitle("Settings")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)

@@ -1,35 +1,37 @@
-import os
 import logging
+import os
 import webbrowser
+
 import pypresence
 import pywinstyles
-
-from PyQt5.uic import loadUi
-from win10toast import ToastNotifier
-from PyQt5.QtNetwork import QNetworkProxy
-from core.about_dialog import AboutDialog
-from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtCore import QUrl, Qt, QSize, QRect, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon, QKeySequence
+from PyQt5.QtNetwork import QNetworkProxy
+from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings, QWebEngineScript
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QFileDialog, QMainWindow, QShortcut
+from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
+from PyQt5.uic import loadUi
+from qfluentwidgets import (
+    Action, InfoBar, InfoBarPosition, MessageBox, PushButton, RoundMenu, 
+    SplashScreen, ToolTipFilter, ToolTipPosition, Theme, setTheme, setThemeColor
+)
 from packaging import version as pkg_version
-from core.update_checker import UpdateChecker
-from core.web_engine_view import WebEngineView
-from core.web_engine_page import WebEnginePage
+from win10toast import ToastNotifier
+
+from core.about_dialog import AboutDialog
+from core.mini_player_dialog import MiniPlayerDialog
 from core.settings_dialog import SettingsDialog
 from core.system_tray_icon import SystemTrayIcon
+from core.update_checker import UpdateChecker
+from core.web_channel_backend import WebChannelBackend
+from core.web_engine_page import WebEnginePage
+from core.web_engine_view import WebEngineView
 from core.ytmusic_downloader import DownloadThread
-from core.mini_player_dialog import MiniPlayerDialog
-from PyQt5.QtCore import QSettings, QUrl, Qt, QSize, pyqtSlot, \
-    QRect, pyqtSignal
-from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QShortcut, QFileDialog, \
-    QApplication
-from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings, QWebEngineScript
-from qfluentwidgets import setTheme, setThemeColor, Theme, RoundMenu, Action, SplashScreen, \
-    MessageBox, InfoBar, InfoBarPosition, PushButton, ToolTipFilter, ToolTipPosition
 
 class MainWindow(QMainWindow):
     oauth_completed = pyqtSignal()
-    def __init__(self, app_info, parent=None):
+    def __init__(self, app_settings, opengl_enviroment_setting, app_info, parent=None):
         super().__init__(parent)
         self.name = app_info[0]
         self.version = app_info[1]
@@ -47,6 +49,8 @@ class MainWindow(QMainWindow):
         self.like_status = None
         self.current_time = "NaN"
         self.total_time = "NaN"
+        self.settings_ = app_settings
+        self.opengl_enviroment_setting = opengl_enviroment_setting
     
         self.load_settings()
         self.load_ui()
@@ -59,8 +63,6 @@ class MainWindow(QMainWindow):
         self.activate_plugins()
 
     def load_settings(self):
-        self.settings_ = QSettings()
-
         if self.settings_.value("ad_blocker") is None:
             self.settings_.setValue("ad_blocker", 1)
         if self.settings_.value("save_last_win_geometry") is None:
@@ -76,7 +78,7 @@ class MainWindow(QMainWindow):
         if self.settings_.value("save_last_pos_of_mp") is None:
             self.settings_.setValue("save_last_pos_of_mp", 1)
         if self.settings_.value("last_win_geometry") is None:
-            self.settings_.setValue("last_win_geometry", QRect(self.get_centered_geometry()))
+            self.settings_.setValue("last_win_geometry", QRect(self.get_centered_geometry(1000, 580)))
         if self.settings_.value("save_last_zoom_factor") is None:
             self.settings_.setValue("save_last_zoom_factor", 1)
         if self.settings_.value("last_zoom_factor") is None:
@@ -88,7 +90,7 @@ class MainWindow(QMainWindow):
         if self.settings_.value("save_geometry_of_mp") is None:
             self.settings_.setValue("save_geometry_of_mp", 1)
         if self.settings_.value("geometry_of_mp") is None:
-            self.settings_.setValue("geometry_of_mp", QRect(30, 60, 360, 150))
+            self.settings_.setValue("geometry_of_mp", QRect(self.get_centered_geometry(360, 150)))
         if self.settings_.value("win_thumbmail_buttons") is None:
             self.settings_.setValue("win_thumbmail_buttons", 1)
         if self.settings_.value("tray_icon") is None:
@@ -107,6 +109,8 @@ class MainWindow(QMainWindow):
             self.settings_.setValue("track_change_notificator", 0)
         if self.settings_.value("hotkey_playback_control") is None:
             self.settings_.setValue("hotkey_playback_control", 1)
+        if self.settings_.value("only_audio_mode") is None:
+            self.settings_.setValue("only_audio_mode", 0)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(self.settings_.value("save_last_win_geometry"))
@@ -131,9 +135,13 @@ class MainWindow(QMainWindow):
         self.proxy_password_setting = self.settings_.value("proxy_password")
         self.track_change_notificator_setting = int(self.settings_.value("track_change_notificator"))
         self.hotkey_playback_control_setting = int(self.settings_.value("hotkey_playback_control"))
+        self.only_audio_mode_setting = int(self.settings_.value("only_audio_mode"))
 
     def load_ui(self):
-        pywinstyles.apply_style(self, "dark")
+        try:
+            pywinstyles.apply_style(self, "dark")
+        except Exception as e:
+            logging.error("Failed to apply dark style: " + str(e))
         setTheme(Theme.DARK)
         setThemeColor("red")
         
@@ -145,12 +153,10 @@ class MainWindow(QMainWindow):
         if self.save_last_win_geometry_setting == 1:
             self.setGeometry(self.last_win_geometry_setting)
         else:
-            self.setGeometry(self.get_centered_geometry())
+            self.setGeometry(self.get_centered_geometry(1000, 560))
 
-    def get_centered_geometry(self):
-        width = 1080
-        height = 600
-        screen_geometry = QDesktopWidget().availableGeometry()
+    def get_centered_geometry(self, width, height):
+        screen_geometry = QDesktopWidget().screenGeometry()
         x = (screen_geometry.width() - width) // 2 
         y = (screen_geometry.height() - height) // 2
         return QRect(x, y, width, height)
@@ -246,8 +252,8 @@ class MainWindow(QMainWindow):
                 title, 
                 whats_new, 
                 self)
-            msg_box.yesButton.setText("Yes")
-            msg_box.cancelButton.setText("No")
+            msg_box.yesButton.setText("Download")
+            msg_box.cancelButton.setText("Later")
             if msg_box.exec_():
                 webbrowser.open_new_tab(last_release_url)
                 self.force_exit = True
@@ -311,9 +317,11 @@ class MainWindow(QMainWindow):
             self.download_as_unauthorized_shortcut.setEnabled(self.is_video_or_playlist)
 
     def setup_webchannel(self):
+        self.webchannel_backend = WebChannelBackend(self)
+
         self.webchannel = QWebChannel()
         self.webpage.setWebChannel(self.webchannel)
-        self.webchannel.registerObject("backend", self)
+        self.webchannel.registerObject("backend", self.webchannel_backend)
 
     @pyqtSlot(str)
     def like_status_changed(self, status):
@@ -327,18 +335,12 @@ class MainWindow(QMainWindow):
     def update_mini_player_like_dislike_controls(self):
         if self.mini_player_dialog:
             if self.like_status == "Like":
-                self.mini_player_dialog.like_button.setToolTip("Liked (L)")
-                self.mini_player_dialog.dislike_button.setToolTip("Dislike (D)")
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like-filled.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
             elif self.like_status == "Dislike":
-                self.mini_player_dialog.like_button.setToolTip("Like (L)")
-                self.mini_player_dialog.dislike_button.setToolTip("Disliked (D)")
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike-filled.png"))
             else:
-                self.mini_player_dialog.like_button.setToolTip("Like (L)")
-                self.mini_player_dialog.dislike_button.setToolTip("Dislike (D)")
                 self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
                 self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
 
@@ -554,6 +556,10 @@ class MainWindow(QMainWindow):
         self.about_action.setIcon(QIcon(f"{self.icon_folder}/about.png"))
         self.about_action.triggered.connect(self.about)
 
+        self.cut_action = Action("Cut", shortcut="Ctrl+X")
+        self.cut_action.setIcon(QIcon(f"{self.icon_folder}/cut.png"))
+        self.cut_action.triggered.connect(self.cut)
+
         self.copy_action = Action("Copy", shortcut="Ctrl+C")
         self.copy_action.setIcon(QIcon(f"{self.icon_folder}/copy.png"))
         self.copy_action.triggered.connect(self.copy)
@@ -563,9 +569,15 @@ class MainWindow(QMainWindow):
         self.paste_action.triggered.connect(self.paste)
 
         self.main_menu = RoundMenu(self)
+
         self.download_menu = RoundMenu("Download...", self)
         self.download_menu.setIcon(QIcon(f"{self.icon_folder}/download.png"))
+        
         self.edit_menu = RoundMenu(self)
+
+        self.copy_menu = RoundMenu(self)
+
+        self.paste_menu = RoundMenu(self)
 
         self.main_menu.addAction(self.back_action)
         self.main_menu.addAction(self.forward_action)
@@ -583,8 +595,13 @@ class MainWindow(QMainWindow):
         self.download_menu.addAction(self.download_with_oauth_action)
         self.download_menu.addAction(self.download_as_unauthorized_action)
 
+        self.edit_menu.addAction(self.cut_action)
         self.edit_menu.addAction(self.copy_action)
         self.edit_menu.addAction(self.paste_action)
+
+        self.copy_menu.addAction(self.copy_action)
+
+        self.paste_menu.addAction(self.paste_action)
 
     def create_toolbar(self):
         self.back_tbutton.setIcon(QIcon(f"{self.icon_folder}/left.png"))
@@ -637,6 +654,7 @@ class MainWindow(QMainWindow):
         self.activate_tray_icon()
         self.activate_track_notifier()
         self.activate_yt_hotkeys()
+        self.activate_only_audio()
 
     def activate_ad_blocker(self):
         if self.ad_blocker_setting == 1:
@@ -733,6 +751,16 @@ class MainWindow(QMainWindow):
             yt_hotkeys_script.setWorldId(QWebEngineScript.MainWorld)
             yt_hotkeys_script.setRunsOnSubFrames(True)
             self.webpage.profile().scripts().insert(yt_hotkeys_script)
+
+    def activate_only_audio(self):
+        if self.only_audio_mode_setting == 1:
+            only_audio_script = QWebEngineScript()
+            only_audio_script.setName("OnlyAudio")
+            only_audio_script.setSourceCode(self.read_script("only_audio.js"))
+            only_audio_script.setInjectionPoint(QWebEngineScript.Deferred)
+            only_audio_script.setWorldId(QWebEngineScript.MainWorld)
+            only_audio_script.setRunsOnSubFrames(True)
+            self.webpage.profile().scripts().insert(only_audio_script)
 
     def skip_previous(self):
         self.run_js_script("skip_previous.js")
@@ -917,6 +945,9 @@ class MainWindow(QMainWindow):
     def bug_report(self):
         webbrowser.open_new_tab("https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose")
 
+    def cut(self):  
+        self.webpage.triggerAction(QWebEnginePage.Cut)
+
     def copy(self):
         self.webpage.triggerAction(QWebEnginePage.Copy)
 
@@ -928,7 +959,7 @@ class MainWindow(QMainWindow):
             self.last_zoom_factor_setting = self.webview.zoomFactor()
             self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
         if self.save_last_win_geometry_setting == 1:
-            if not self.isFullScreen() or not self.isMaximized():
+            if not self.isMaximized() and not self.isFullScreen():
                 self.last_win_geometry_setting = self.geometry()
                 self.settings_.setValue("last_win_geometry", self.last_win_geometry_setting)
         if self.current_url is not None:
@@ -941,15 +972,13 @@ class MainWindow(QMainWindow):
                 self.showNormal()
             else:
                 self.show()
-        self.activateWindow()
+            self.activateWindow()
         
     def closeEvent(self, event):
-        self.save_settings()
-
         if self.tray_icon_setting == 1 and self.tray_icon is not None:
             if not self.force_exit:
-                event.ignore()
                 self.hide()
+                event.ignore()
                 return
 
         if self.video_state == "VideoPlaying":
@@ -963,9 +992,10 @@ class MainWindow(QMainWindow):
             msg_box.yesButton.setText("Exit")
             msg_box.cancelButton.setText("Cancel")
             
-            if msg_box.exec_():
-                self.save_settings()
-                event.accept()
-            else:
+            if not msg_box.exec_():
                 self.force_exit = False
                 event.ignore()
+                return
+
+        self.save_settings()
+        event.accept()

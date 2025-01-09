@@ -3,9 +3,11 @@ import re
 import logging
 import requests
 import subprocess
-from pytubefix import YouTube, Playlist
-from core.get_proxies import get_proxies
+
 from PyQt5.QtCore import QThread, pyqtSignal, QEventLoop
+from pytubefix import YouTube, Playlist
+
+from core.get_proxies import get_proxies
 
 class DownloadThread(QThread):
     download_finished = pyqtSignal(str, str)

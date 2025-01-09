@@ -1,9 +1,10 @@
 import logging
 import webbrowser
 
-from qfluentwidgets import MessageBox
-from core.input_message_box import InputMessageBox
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
+from qfluentwidgets import MessageBox
+
+from core.input_message_box import InputMessageBox
 
 class WebEnginePage(QWebEnginePage):
     def __init__(self, parent=None):
@@ -21,6 +22,16 @@ class WebEnginePage(QWebEnginePage):
             return False
 
         return QWebEnginePage.acceptNavigationRequest(self, url, _type, isMainFrame)
+    
+    def createWindow(self, type):
+        temp_page = QWebEnginePage(self.profile(), self)
+        
+        def handle_url_change(url):
+            webbrowser.open_new_tab(url.toString())
+            temp_page.deleteLater()
+        
+        temp_page.urlChanged.connect(handle_url_change)
+        return temp_page
 
     def javaScriptAlert(self, qurl, text):
         w = MessageBox(f"JavaScript Alert - {qurl.toString()}", text, self.parent())
