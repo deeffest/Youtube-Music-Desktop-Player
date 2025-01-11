@@ -36,7 +36,7 @@ class ThumbnailLoader(QThread):
 
             self.thumbnail_loaded.emit(resized_pixmap)
         except Exception as e:
-            logging.error("ThumbnailLoader UnexpectedError: " + str(e))
+            logging.error(f"Error loading thumbnail: {str(e)}")
             self.thumbnail_loaded.emit(QPixmap())
         finally:
             self._is_running = False

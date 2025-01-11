@@ -228,7 +228,7 @@ class MainWindow(QMainWindow):
 
             QNetworkProxy.setApplicationProxy(proxy)
         except Exception as e:
-            logging.error(f"QNetworkProxy An error occurred: {e}")
+            logging.error(f"Failed to set application proxy: {str(e)}")
 
     def load_progress(self, progress):
         if progress > 80 and self.splash_screen:
@@ -396,7 +396,7 @@ class MainWindow(QMainWindow):
                     activity_type=pypresence.ActivityType.LISTENING
                 )
             except Exception as e:
-                logging.error("An error occurred while updating Discord RPC: " + str(e))
+                logging.error(f"An error occurred while updating Discord RPC: {str(e)}")
                 self.reconnect_discord_rpc(retry_update=True)
 
     def reconnect_discord_rpc(self, retry_update=False):
@@ -406,14 +406,14 @@ class MainWindow(QMainWindow):
                 if retry_update:
                     self.update_discord_rpc()
             except Exception as e:
-                logging.error("An error occurred while reconnecting Discord RPC: " + str(e))
+                logging.error(f"An error occurred while reconnecting to Discord RPC: {str(e)}")
 
     def clear_discord_rpc(self):
         if self.discord_rpc:
             try:
                 self.discord_rpc.clear()
             except Exception as e:
-                logging.error("An error occurred while clearing Discord RPC: " + str(e))
+                logging.error(f"An error occurred while clearing Discord RPC: {str(e)}")
 
     @pyqtSlot(str, str)
     def track_progress_changed(self, current_time, total_time):
@@ -682,7 +682,7 @@ class MainWindow(QMainWindow):
             try:
                 self.discord_rpc.connect()
             except Exception as e:
-                logging.error("An error occurred while connecting to Discord RPC: " + str(e))
+                logging.error(f"Discord RPC connection failed: {str(e)}")
         else:
             self.discord_rpc = None
 
@@ -972,7 +972,7 @@ class MainWindow(QMainWindow):
                 self.showNormal()
             else:
                 self.show()
-            self.activateWindow()
+        self.activateWindow()
         
     def closeEvent(self, event):
         if self.tray_icon_setting == 1 and self.tray_icon is not None:

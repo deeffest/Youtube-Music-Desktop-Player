@@ -166,12 +166,14 @@ class SettingsDialog(QDialog):
 
         if self.PillPushButton.isChecked():
             self.frame.show()
+            self.ScrollArea.verticalScrollBar().setValue(0)
         elif self.PillPushButton_2.isChecked():
             self.frame_2.show()
         elif self.PillPushButton_3.isChecked():
             self.frame_3.show()        
         else:
             self.frame_4.show()
+            self.ScrollArea.verticalScrollBar().setValue(0)
             icon_path = self.window.icon_folder + "/plugins-black.png"
 
         self.PillPushButton_4.setIcon(icon_path)

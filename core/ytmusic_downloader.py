@@ -32,20 +32,41 @@ class DownloadThread(QThread):
             elif "playlist" in self.url:
                 self.download_playlist()
         except Exception as e:
-            logging.error("DownloadThread UnexpectedError: " + str(e))
+            logging.error(f"Error during download: {str(e)}")
             self.download_failed.emit(self.url, self.download_folder, self.title, self.use_oauth)
         else:
             self.download_finished.emit(self.download_folder, self.title)
 
+    def is_ffmpeg_valid(self):
+        try:
+            result = subprocess.run(
+                [self.ffmpeg_path, "-version"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+                creationflags=subprocess.CREATE_NO_WINDOW
+            )
+            return b"ffmpeg version" in result.stdout
+        except Exception as e:
+            logging.error(f"FFmpeg validation failed: {str(e)}")
+            return False
+
     def ensure_ffmpeg(self):
-        if not os.path.exists(self.ffmpeg_path):
+        if not os.path.exists(self.ffmpeg_path) or not self.is_ffmpeg_valid():
             os.makedirs(os.path.dirname(self.ffmpeg_path), exist_ok=True)
             ffmpeg_url = "https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/download/1.0/ffmpeg.exe"
+            temp_ffmpeg_path = self.ffmpeg_path + ".tmp"
+
             response = requests.get(ffmpeg_url, stream=True)
-            with open(self.ffmpeg_path, "wb") as f:
+            with open(temp_ffmpeg_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=1024):
                     if chunk:
                         f.write(chunk)
+            
+            if os.path.exists(self.ffmpeg_path):
+                os.remove(self.ffmpeg_path)
+                
+            os.rename(temp_ffmpeg_path, self.ffmpeg_path)
             os.chmod(self.ffmpeg_path, 0o755)
 
     def download_video(self, yt, output_folder):

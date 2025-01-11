@@ -19,7 +19,7 @@ class UpdateChecker(QThread):
             whats_new = data.get("body")
             last_release_url = data.get("html_url")
         except Exception as e:
-            logging.error("UpdateChecker UnexpectedError: " + str(e))
+            logging.error(f"Failed to check for updates: {str(e)}")
             return
             
         if response.status_code == 200:
