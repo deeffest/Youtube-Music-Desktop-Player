@@ -1,3 +1,21 @@
+v1.15.0 is Here! (12.01.2025)
+- Now ffmpeg is downloaded as a temporary file and only after successful download it becomes ready to work.
+- Now ffmpeg is checked to see if it works before starting to download a track/playlist - if it fails, it will start downloading again.
+- Now in the settings window when switching tabs, the scroll area is reset to the very beginning.
+- Removed color change of an option in the settings window when hovering over it.
+- The Mini Player now opens on the bottom right by default (if saving its position is off).
+- Mini player now takes into account the position of the taskbar when opening, so that it can move to the bottom right and not interfere with it (if saving its position is off).
+- Added new `Only Audio Mode` plugin, which turns YT Music clips into regular music without video content.
+- Added a new `QT OpenGL environment` parameter that changes the OpenGL visualization module to the specified one. (Partially fixes the problem of invisible menus and tooltips when the window is in fullscreen (select Angle or Software.).).
+- The default position for the mini player is now the center of the screen (if saving its position is On).
+- Added `Cut` action to the edit context menu.
+- The edit context menu is now smarter and only shows the action when it is available.
+- The application restart message box now only pops up when music is playing.
+- The `Proxy Server Configuration` parameter has been moved from the `Web Engine` tab to the `Main` tab.
+- URLs that should have been opened in a new tab/window (but were not, since there is no support for tabs and new windows) are now opened in the default browser.
+- Some changes to the interface.
+- Other fixes and improvements.
+
 v1.15.0-rc2 is Here! (11.01.2025)
 - Now ffmpeg is downloaded as a temporary file and only after successful download it becomes ready to work.
 - Now ffmpeg is checked to see if it works before starting to download a track/playlist - if it fails, it will start downloading again.
