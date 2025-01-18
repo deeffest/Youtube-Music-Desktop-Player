@@ -1,10 +1,10 @@
 import logging
-import requests
 
+import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 
-from core.get_proxies import get_proxies
+from core.helpers import get_proxies
 
 class ThumbnailLoader(QThread):
     thumbnail_loaded = pyqtSignal(QPixmap)
@@ -13,10 +13,8 @@ class ThumbnailLoader(QThread):
         super().__init__(parent)
         self.url = url
         self.window = parent
-        self._is_running = False
 
     def run(self):
-        self._is_running = True
         try:
             response = requests.get(
                 self.url,
@@ -26,9 +24,12 @@ class ThumbnailLoader(QThread):
                     self.window.proxy_port_setting,
                     self.window.proxy_login_setting,
                     self.window.proxy_password_setting
-                )
+                ),
+                timeout=10
             )
             response.raise_for_status()
+            if response.status_code != 200:
+                raise Exception(f"Failed to load thumbnail: {response.status_code}")
 
             pixmap = QPixmap()
             pixmap.loadFromData(response.content)
@@ -38,8 +39,3 @@ class ThumbnailLoader(QThread):
         except Exception as e:
             logging.error(f"Error loading thumbnail: {str(e)}")
             self.thumbnail_loaded.emit(QPixmap())
-        finally:
-            self._is_running = False
-            
-    def is_running(self):
-        return self._is_running

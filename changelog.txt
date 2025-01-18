@@ -1,3 +1,11 @@
+v1.16.0-rc1 is Here! (18.01.2025)
+- Fixed application crash when saving settings with “-” in the proxy port input field.
+- The `Track Change Notificator` plugin has been redesigned - now it works only when the `System Tray App Icon` plugin is enabled (due to the change of win10toast framework to the standard Qt notification implementation, which is directly linked to the tray icon), and also supports clicking on a notification and then showing the window if it is hidden.
+- Fixed a bug with the `Hotkey Playback Control` plugin - when the page focus is on the input field, playback hotkeys are ignored.
+- The `Discord Rich Presence` plugin was also affected by the change of framework - the `pypresence` library was causing a lot of problems that there is no point in continuing to fight with when there is a replacement in the form of `discord-rpc`, thanks to which YTMDPlayer finally forgot about long freezes when interacting with Discord.
+- Significant refactoring of the codebase to improve performance. (Spoiler: he achieved this.)
+- Other fixes and improvements.
+
 v1.15.0 is Here! (12.01.2025)
 - Now ffmpeg is downloaded as a temporary file and only after successful download it becomes ready to work.
 - Now ffmpeg is checked to see if it works before starting to download a track/playlist - if it fails, it will start downloading again.

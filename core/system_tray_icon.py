@@ -1,14 +1,20 @@
+from typing import TYPE_CHECKING
+
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QSystemTrayIcon
 from qfluentwidgets import SystemTrayMenu, Action
+if TYPE_CHECKING:
+    from main_window import MainWindow
+
 
 class SystemTrayIcon(QSystemTrayIcon):
     def __init__(self, icon, parent=None):
         super().__init__(icon, parent)
-        self.window = parent
+        self.window:"MainWindow" = parent
 
         self.menu = SystemTrayMenu(self)
         self.activated.connect(self.on_tray_icon_activated)
+        self.messageClicked.connect(self.window.show_window)
         self.setup_tray_menu()
 
     def setup_tray_menu(self):

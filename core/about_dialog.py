@@ -1,43 +1,42 @@
 import logging
 import webbrowser
+from typing import TYPE_CHECKING
 
-import pywinstyles
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog
-from PyQt5.uic import loadUi
+from pywinstyles import apply_style
+if TYPE_CHECKING:
+    from core.main_window import MainWindow
 
-class AboutDialog(QDialog):
+from core.ui.ui_about_dialog import Ui_AboutDialog
+
+class AboutDialog(QDialog, Ui_AboutDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.window = parent
+        self.setupUi(self)
+        self.window:"MainWindow" = parent
 
-        self.load_ui()
-        self.setup_connect()
-        self.setup_content()
-
-    def setup_content(self):
-        self.BodyLabel_2.setText(self.window.version)
-
-    def setup_connect(self):
-        self.PrimaryPushButton.clicked.connect(self.close)
-        self.PushButton.clicked.connect(self.go_to_github)
-
-    def go_to_github(self):
-        webbrowser.open("https://github.com/deeffest/Youtube-Music-Desktop-Player")
-
-    def load_ui(self):
-        loadUi(f'{self.window.current_dir}/core/ui/about_dialog.ui', self)
         try:
-            pywinstyles.apply_style(self, "dark")
+            apply_style(self, "dark")
         except Exception as e:
             logging.error("Failed to apply dark style: " + str(e))
 
         self.setWindowTitle("About")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about.png"))
-
         self.setFixedSize(self.size())
+
+        self.BodyLabel_2.setText(self.window.version)
+
+        self.PrimaryPushButton.clicked.connect(self.close)
+        self.PushButton.clicked.connect(self.github)
+
+        self.label.setPixmap(QPixmap(f"{self.window.icon_folder}/logo@128x128.png"))
+        self.PushButton.setIcon(QIcon(f"{self.window.icon_folder}/github.png"))
+
+    def github(self):
+        webbrowser.open("https://github.com/deeffest/Youtube-Music-Desktop-Player")
 
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Escape:

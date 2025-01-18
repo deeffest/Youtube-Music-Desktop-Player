@@ -1,14 +1,19 @@
 import logging
 import webbrowser
+from typing import TYPE_CHECKING
 
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from qfluentwidgets import MessageBox
 
 from core.input_message_box import InputMessageBox
+if TYPE_CHECKING:
+    from core.main_window import MainWindow
+
 
 class WebEnginePage(QWebEnginePage):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.window:"MainWindow" = parent
 
     def acceptNavigationRequest(self, url, _type, isMainFrame):
         if ("music.youtube.com" not in url.toString() and
@@ -34,16 +39,16 @@ class WebEnginePage(QWebEnginePage):
         return temp_page
 
     def javaScriptAlert(self, qurl, text):
-        w = MessageBox(f"JavaScript Alert - {qurl.toString()}", text, self.parent())
+        w = MessageBox(f"JavaScript Alert - {qurl.toString()}", text, self.window)
         w.cancelButton.hide()
         w.exec_()
 
     def javaScriptConfirm(self, qurl, text):
-        w = MessageBox(f"JavaScript Confirm - {qurl.toString()}", text, self.parent())
+        w = MessageBox(f"JavaScript Confirm - {qurl.toString()}", text, self.window)
         return w.exec_() == True
 
     def javaScriptPrompt(self, qurl, text, text_value):
-        w = InputMessageBox(self.parent())
+        w = InputMessageBox(self.window)
         w.titleLabel.setText(text)
         w.lineEdit.setText(text_value)
         if w.exec_():

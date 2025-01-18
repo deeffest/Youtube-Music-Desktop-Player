@@ -1,13 +1,16 @@
 import os
-import re
 import logging
 import requests
 import subprocess
+from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import QThread, pyqtSignal, QEventLoop
 from pytubefix import YouTube, Playlist
 
-from core.get_proxies import get_proxies
+from core.helpers import get_proxies, sanitize_filename
+if TYPE_CHECKING:
+    from core.main_window import MainWindow
+
 
 class DownloadThread(QThread):
     download_finished = pyqtSignal(str, str)
@@ -19,7 +22,7 @@ class DownloadThread(QThread):
         self.url = url
         self.download_folder = download_folder
         self.title = "Unknown"
-        self.window = parent
+        self.window:"MainWindow" = parent
         self.use_oauth = use_oauth
         self.ffmpeg_path = os.path.join(os.path.expanduser("~"), self.window.name, "bin", "ffmpeg.exe")
         self.oauth_cache_path = os.path.join(os.path.expanduser("~"), self.window.name, "__cache__", "tokens.json")
@@ -70,9 +73,9 @@ class DownloadThread(QThread):
             os.chmod(self.ffmpeg_path, 0o755)
 
     def download_video(self, yt, output_folder):
-        original_filename = self.sanitize_filename(f"{yt.title}.m4a")
+        original_filename = sanitize_filename(f"{yt.title}.m4a")
         temp_file = yt.streams.get_audio_only().download(output_path=output_folder, filename=original_filename)
-        final_filename = self.sanitize_filename(f"{yt.title}.mp3")
+        final_filename = sanitize_filename(f"{yt.title}.mp3")
         output_file = os.path.join(output_folder, final_filename)
         self.convert_to_mp3(temp_file, output_file)
 
@@ -96,12 +99,12 @@ class DownloadThread(QThread):
 
     def download_youtube(self):
         yt = self.setup_yt_object(self.url, is_playlist=False)
-        self.title = self.sanitize_filename(yt.title)
+        self.title = sanitize_filename(yt.title)
         self.download_video(yt, self.download_folder)
 
     def download_playlist(self):
         pl = self.setup_yt_object(self.url, is_playlist=True)
-        self.title = self.sanitize_filename(pl.title)
+        self.title = sanitize_filename(pl.title)
         playlist_folder = os.path.join(self.download_folder, self.title)
         os.makedirs(playlist_folder, exist_ok=True)
 
@@ -123,6 +126,3 @@ class DownloadThread(QThread):
             creationflags=subprocess.CREATE_NO_WINDOW
         )
         os.remove(input_file)
-
-    def sanitize_filename(self, filename):
-        return re.sub(r'[<>:"/\\|?*]', '_', filename)

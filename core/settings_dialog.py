@@ -1,29 +1,35 @@
 import sys
 import logging
+from typing import TYPE_CHECKING
 
-import pywinstyles
 from PyQt5.QtCore import Qt, QProcess
-from PyQt5.QtGui import QIcon, QIntValidator
+from PyQt5.QtGui import QIcon, QIntValidator, QPixmap
 from PyQt5.QtWidgets import QDialog, QApplication
-from PyQt5.uic import loadUi
 from qfluentwidgets import MessageBox
+from pywinstyles import apply_style
+if TYPE_CHECKING:
+    from main_window import MainWindow
+from core.ui.ui_settings_dialog import Ui_SettingsDialog
 
-class SettingsDialog(QDialog):
+
+class SettingsDialog(QDialog, Ui_SettingsDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.window = parent
+        self.setupUi(self)
+        self.window:"MainWindow" = parent
 
-        self.load_ui()
-        self.setup_content()
-        self.set_connect()
-        self.configure_tabs()
-        self.setup_settings()
+        try:
+            apply_style(self, "dark")
+        except Exception as e:
+            logging.error("Failed to apply dark style: " + str(e))
 
-        self.PillPushButton_4.setIcon(self.window.icon_folder+"/plugins.png")
+        self.setWindowTitle("Settings")
+        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
+        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings.png"))
+        self.setFixedSize(self.size())
 
-    def setup_content(self):
         self.PillPushButton.setChecked(True)
-        int_validator = QIntValidator()
+        int_validator = QIntValidator(1, 65535)
         self.LineEdit_2.setValidator(int_validator)
         self.proxy_types = ["HttpProxy", "Socks5Proxy", 
                             "DefaultProxy", "NoProxy"]
@@ -32,35 +38,6 @@ class SettingsDialog(QDialog):
                                    "Software", "Auto"]
         self.ComboBox_3.addItems(self.opengl_enviroments)
 
-    def setup_settings(self):
-        self.SwitchButton.setChecked(self.window.save_last_win_geometry_setting)
-        self.SwitchButton_4.setChecked(self.window.open_last_url_at_startup_setting)
-        self.SwitchButton_3.setChecked(self.window.ad_blocker_setting)
-        self.SwitchButton_5.setChecked(self.window.fullscreen_mode_support_setting)
-        self.SwitchButton_6.setChecked(self.window.support_animated_scrolling_setting)
-        self.SwitchButton_2.setChecked(self.window.save_last_pos_of_mp_setting)
-        self.SwitchButton_8.setChecked(self.window.save_last_zoom_factor_setting)
-        self.SwitchButton_7.setChecked(self.window.discord_rpc_setting)
-        self.SwitchButton_11.setChecked(self.window.win_thumbmail_buttons_setting)
-        self.SwitchButton_12.setChecked(self.window.tray_icon_setting)
-        self.ComboBox.setCurrentIndex(self.proxy_types.index(self.window.proxy_type_setting))
-        self.toggle_proxy_config()
-        if self.window.proxy_host_name_setting is not None:
-            self.LineEdit.setText(self.window.proxy_host_name_setting)
-        if self.window.proxy_port_setting is not None:
-            self.LineEdit_2.setText(str(self.window.proxy_port_setting))
-        if self.window.proxy_login_setting is not None:
-            self.LineEdit_3.setText(self.window.proxy_login_setting)
-        if self.window.proxy_password_setting is not None:
-            self.PasswordLineEdit.setText(self.window.proxy_password_setting)
-        self.SwitchButton_13.setChecked(self.window.track_change_notificator_setting)
-        self.SwitchButton_14.setChecked(self.window.hotkey_playback_control_setting)
-        self.SwitchButton_15.setChecked(self.window.only_audio_mode_setting)
-        self.ComboBox_3.setCurrentIndex(self.opengl_enviroments.index(self.window.opengl_enviroment_setting))
-
-        self.check_if_settings_changed()
-
-    def set_connect(self):
         self.PillPushButton.clicked.connect(self.configure_tabs)
         self.PillPushButton_2.clicked.connect(self.configure_tabs)
         self.PillPushButton_3.clicked.connect(self.configure_tabs)
@@ -89,6 +66,61 @@ class SettingsDialog(QDialog):
         self.SwitchButton_14.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_15.checkedChanged.connect(self.check_if_settings_changed)
         self.ComboBox_3.currentIndexChanged.connect(self.check_if_settings_changed)
+
+        self.configure_tabs()
+
+        self.SwitchButton.setChecked(self.window.save_last_win_geometry_setting)
+        self.SwitchButton_4.setChecked(self.window.open_last_url_at_startup_setting)
+        self.SwitchButton_3.setChecked(self.window.ad_blocker_setting)
+        self.SwitchButton_5.setChecked(self.window.fullscreen_mode_support_setting)
+        self.SwitchButton_6.setChecked(self.window.support_animated_scrolling_setting)
+        self.SwitchButton_2.setChecked(self.window.save_last_pos_of_mp_setting)
+        self.SwitchButton_8.setChecked(self.window.save_last_zoom_factor_setting)
+        self.SwitchButton_7.setChecked(self.window.discord_rpc_setting)
+        self.SwitchButton_11.setChecked(self.window.win_thumbmail_buttons_setting)
+        self.SwitchButton_12.setChecked(self.window.tray_icon_setting)
+        self.ComboBox.setCurrentIndex(self.proxy_types.index(self.window.proxy_type_setting))
+        self.toggle_proxy_config()
+        if self.window.proxy_host_name_setting is not None:
+            self.LineEdit.setText(self.window.proxy_host_name_setting)
+        if self.window.proxy_port_setting is not None:
+            self.LineEdit_2.setText(str(self.window.proxy_port_setting))
+        if self.window.proxy_login_setting is not None:
+            self.LineEdit_3.setText(self.window.proxy_login_setting)
+        if self.window.proxy_password_setting is not None:
+            self.PasswordLineEdit.setText(self.window.proxy_password_setting)
+        self.SwitchButton_13.setChecked(self.window.track_change_notificator_setting)
+        self.SwitchButton_14.setChecked(self.window.hotkey_playback_control_setting)
+        self.SwitchButton_15.setChecked(self.window.only_audio_mode_setting)
+        self.ComboBox_3.setCurrentIndex(self.opengl_enviroments.index(self.window.opengl_enviroment_setting))
+
+        self.check_track_change_notificator_dependency()
+        self.SwitchButton_12.checkedChanged.connect(self.check_track_change_notificator_dependency)
+
+        self.check_if_settings_changed()
+
+        self.PushButton_2.setIcon(QIcon(f"{self.window.icon_folder}/restart.png"))
+        self.PillPushButton_4.setIcon(QIcon(QPixmap(f"{self.window.icon_folder}/plugins.png")))
+        self.label.setPixmap(QPixmap(f"{self.window.icon_folder}/adblock.png"))
+        self.label_2.setPixmap(QPixmap(f"{self.window.icon_folder}/discord.png"))
+        self.label_3.setPixmap(QPixmap(f"{self.window.icon_folder}/windows.png"))
+        self.label_4.setPixmap(QPixmap(f"{self.window.icon_folder}/logo@48x48.png"))
+        self.label_5.setPixmap(QPixmap(f"{self.window.icon_folder}/music-notify.png"))
+        self.label_7.setPixmap(QPixmap(f"{self.window.icon_folder}/hotkeys.png"))
+        self.label_9.setPixmap(QPixmap(f"{self.window.icon_folder}/audio.png"))
+
+    def check_track_change_notificator_dependency(self):
+        if not self.SwitchButton_12.isChecked():
+            self.SwitchButton_13.setChecked(False)
+            self.SettingBox12.setEnabled(False)
+            self.SettingBox12.setStyleSheet("background-color: rgb(45,45,45);")
+            self.BodyLabel_21.setStyleSheet("color: gray;")
+        else:
+            self.SettingBox12.setEnabled(True)
+            self.SettingBox12.setStyleSheet("")
+            self.BodyLabel_21.setStyleSheet("color: white;")
+
+        self.check_if_settings_changed()
 
     def restart_app(self):
         msg_box = None
@@ -124,8 +156,7 @@ class SettingsDialog(QDialog):
         self.window.tray_icon_setting = int(self.SwitchButton_12.isChecked())
         self.window.proxy_type_setting = self.ComboBox.currentText()
         self.window.proxy_host_name_setting = self.LineEdit.text()
-        port_text = self.LineEdit_2.text()
-        self.window.proxy_port_setting = int(port_text) if port_text else None
+        self.window.proxy_port_setting = int(self.LineEdit_2.text()) if self.LineEdit_2.text().isdigit() else None
         self.window.proxy_login_setting = self.LineEdit_3.text()
         self.window.proxy_password_setting = self.PasswordLineEdit.text()
         self.window.track_change_notificator_setting = int(self.SwitchButton_13.isChecked())
@@ -217,19 +248,6 @@ class SettingsDialog(QDialog):
         else:
             self.PrimaryPushButton.setEnabled(False)
             self.PushButton_2.setText("Restart")
-
-    def load_ui(self):
-        loadUi(f'{self.window.current_dir}/core/ui/settings_dialog.ui', self)
-        try:
-            pywinstyles.apply_style(self, "dark")
-        except Exception as e:
-            logging.error("Failed to apply dark style: " + str(e))
-
-        self.setWindowTitle("Settings")
-        self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings.png"))
-        
-        self.setFixedSize(self.size())
 
     def closeEvent(self, event):
         self.window.show()

@@ -1,1 +1,4 @@
-document.querySelector(".previous-button").click();
+var previousButton = document.querySelector('.previous-button');
+if (previousButton) {
+    previousButton.click();
+}

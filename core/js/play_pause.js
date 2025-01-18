@@ -1,2 +1,8 @@
-var video = document.getElementsByTagName('video')[0];
-if (video.paused) video.play(); else video.pause();
+var video = document.querySelector('video');
+if (video) {
+    if (video.paused) {
+        video.play();
+    } else {
+        video.pause();
+    }
+}

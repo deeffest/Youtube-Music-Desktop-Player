@@ -2,22 +2,20 @@ import logging
 import os
 import webbrowser
 
-import pypresence
-import pywinstyles
-from PyQt5.QtCore import QUrl, Qt, QSize, QRect, pyqtSignal, pyqtSlot
+import discordrpc
+from PyQt5.QtCore import QUrl, Qt, QSize, QRect, pyqtSignal
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineSettings, QWebEngineScript
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QFileDialog, QMainWindow, QShortcut
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QShortcut, QSystemTrayIcon
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
-from PyQt5.uic import loadUi
 from qfluentwidgets import (
     Action, InfoBar, InfoBarPosition, MessageBox, PushButton, RoundMenu, 
     SplashScreen, ToolTipFilter, ToolTipPosition, Theme, setTheme, setThemeColor
 )
 from packaging import version as pkg_version
-from win10toast import ToastNotifier
+from pywinstyles import apply_style
 
 from core.about_dialog import AboutDialog
 from core.mini_player_dialog import MiniPlayerDialog
@@ -28,11 +26,16 @@ from core.web_channel_backend import WebChannelBackend
 from core.web_engine_page import WebEnginePage
 from core.web_engine_view import WebEngineView
 from core.ytmusic_downloader import DownloadThread
+from core.helpers import get_centered_geometry
+from core.ui.ui_main_window import Ui_MainWindow
 
-class MainWindow(QMainWindow):
+
+class MainWindow(QMainWindow, Ui_MainWindow):
     oauth_completed = pyqtSignal()
     def __init__(self, app_settings, opengl_enviroment_setting, app_info, parent=None):
         super().__init__(parent)
+        self.setupUi(self)
+
         self.name = app_info[0]
         self.version = app_info[1]
         self.current_dir = app_info[2]
@@ -51,18 +54,7 @@ class MainWindow(QMainWindow):
         self.total_time = "NaN"
         self.settings_ = app_settings
         self.opengl_enviroment_setting = opengl_enviroment_setting
-    
-        self.load_settings()
-        self.load_ui()
-        self.setup_shortcuts()
-        self.show_splash_screen()
-        self.create_webengine()
-        self.setup_webchannel()
-        self.create_menu()
-        self.create_toolbar()
-        self.activate_plugins()
 
-    def load_settings(self):
         if self.settings_.value("ad_blocker") is None:
             self.settings_.setValue("ad_blocker", 1)
         if self.settings_.value("save_last_win_geometry") is None:
@@ -78,7 +70,7 @@ class MainWindow(QMainWindow):
         if self.settings_.value("save_last_pos_of_mp") is None:
             self.settings_.setValue("save_last_pos_of_mp", 1)
         if self.settings_.value("last_win_geometry") is None:
-            self.settings_.setValue("last_win_geometry", QRect(self.get_centered_geometry(1000, 580)))
+            self.settings_.setValue("last_win_geometry", QRect(get_centered_geometry(1000, 580)))
         if self.settings_.value("save_last_zoom_factor") is None:
             self.settings_.setValue("save_last_zoom_factor", 1)
         if self.settings_.value("last_zoom_factor") is None:
@@ -90,7 +82,7 @@ class MainWindow(QMainWindow):
         if self.settings_.value("save_geometry_of_mp") is None:
             self.settings_.setValue("save_geometry_of_mp", 1)
         if self.settings_.value("geometry_of_mp") is None:
-            self.settings_.setValue("geometry_of_mp", QRect(self.get_centered_geometry(360, 150)))
+            self.settings_.setValue("geometry_of_mp", QRect(get_centered_geometry(360, 150)))
         if self.settings_.value("win_thumbmail_buttons") is None:
             self.settings_.setValue("win_thumbmail_buttons", 1)
         if self.settings_.value("tray_icon") is None:
@@ -111,6 +103,9 @@ class MainWindow(QMainWindow):
             self.settings_.setValue("hotkey_playback_control", 1)
         if self.settings_.value("only_audio_mode") is None:
             self.settings_.setValue("only_audio_mode", 0)
+
+        if self.settings_.value("tray_icon") == 0:
+            self.settings_.setValue("track_change_notificator", 0)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(self.settings_.value("save_last_win_geometry"))
@@ -136,130 +131,21 @@ class MainWindow(QMainWindow):
         self.track_change_notificator_setting = int(self.settings_.value("track_change_notificator"))
         self.hotkey_playback_control_setting = int(self.settings_.value("hotkey_playback_control"))
         self.only_audio_mode_setting = int(self.settings_.value("only_audio_mode"))
-
-    def load_ui(self):
+        
         try:
-            pywinstyles.apply_style(self, "dark")
+            apply_style(self, "dark")
         except Exception as e:
             logging.error("Failed to apply dark style: " + str(e))
         setTheme(Theme.DARK)
         setThemeColor("red")
         
-        loadUi(f"{self.current_dir}/core/ui/main_window.ui", self)
-        
         self.setWindowTitle("Youtube Music Desktop Player")
         self.setWindowIcon(QIcon(f"{self.icon_folder}/icon.ico"))
-        
         if self.save_last_win_geometry_setting == 1:
             self.setGeometry(self.last_win_geometry_setting)
         else:
-            self.setGeometry(self.get_centered_geometry(1000, 560))
+            self.setGeometry(get_centered_geometry(1000, 560))
 
-    def get_centered_geometry(self, width, height):
-        screen_geometry = QDesktopWidget().screenGeometry()
-        x = (screen_geometry.width() - width) // 2 
-        y = (screen_geometry.height() - height) // 2
-        return QRect(x, y, width, height)
-
-    def show_splash_screen(self):
-        self.splash_screen = SplashScreen(self.windowIcon(), self)
-        self.splash_screen.setIconSize(QSize(102, 102))
-        self.splash_screen.titleBar.hide()
-
-        self.show()
-
-    def create_webengine(self):
-        self.webview = WebEngineView(self)
-        self.webpage = WebEnginePage(self)
-        self.websettings = QWebEngineSettings.globalSettings()
-        self.webview.setPage(self.webpage)
-
-        self.set_application_proxy()
-        
-        if self.open_last_url_at_startup_setting == 1:
-            self.webview.load(QUrl(self.last_url_setting))
-        else:
-            self.home()
-            
-        self.webview.urlChanged.connect(self.url_changed)
-        self.webview.loadProgress.connect(self.load_progress)
-        self.webpage.fullScreenRequested.connect(self.handle_fullscreen)
-        
-        self.websettings.setAttribute(QWebEngineSettings.FullScreenSupportEnabled, self.fullscreen_mode_support_setting)
-        self.websettings.setAttribute(QWebEngineSettings.ScrollAnimatorEnabled, self.support_animated_scrolling_setting)
-        
-        if self.save_last_zoom_factor_setting == 1:
-            self.webview.setZoomFactor(self.last_zoom_factor_setting)
-            
-        self.MainLayout.addWidget(self.webview)
-        self.webview.setFocus()
-
-    def set_application_proxy(self):
-        try:
-            proxy = QNetworkProxy()
-        
-            if self.proxy_type_setting == "HttpProxy":
-                proxy.setType(QNetworkProxy.HttpProxy)
-            elif self.proxy_type_setting == "Socks5Proxy":
-                proxy.setType(QNetworkProxy.Socks5Proxy)
-            elif self.proxy_type_setting == "DefaultProxy":
-                proxy.setType(QNetworkProxy.DefaultProxy)
-                return
-            else:
-                proxy.setType(QNetworkProxy.NoProxy)
-                return
-            
-            if self.proxy_host_name_setting:
-                proxy.setHostName(self.proxy_host_name_setting)
-            else:
-                raise ValueError("Proxy host name is not set.")
-            
-            if self.proxy_port_setting:
-                if not (1 <= self.proxy_port_setting <= 65535):
-                    raise ValueError("Proxy port is out of range (1-65535).")
-                proxy.setPort(self.proxy_port_setting)
-            else:
-                raise ValueError("Proxy port is not set.")
-            
-            if self.proxy_login_setting:
-                proxy.setUser(self.proxy_login_setting)
-            if self.proxy_password_setting:
-                proxy.setPassword(self.proxy_password_setting)
-
-            QNetworkProxy.setApplicationProxy(proxy)
-        except Exception as e:
-            logging.error(f"Failed to set application proxy: {str(e)}")
-
-    def load_progress(self, progress):
-        if progress > 80 and self.splash_screen:
-            if self.isHidden():
-                self.showNormal()
-                self.activateWindow()
-
-            self.splash_screen.finish()
-            self.splash_screen = None
-            
-            self.check_updates()
-
-    def check_updates(self):
-        self.update_checker = UpdateChecker()
-        self.update_checker.update_checked.connect(self.handle_update_checked)
-        self.update_checker.start()
-        
-    def handle_update_checked(self, last_version, title, whats_new, last_release_url):
-        if pkg_version.parse(self.version) < pkg_version.parse(last_version):
-            msg_box = MessageBox(
-                title, 
-                whats_new, 
-                self)
-            msg_box.yesButton.setText("Download")
-            msg_box.cancelButton.setText("Later")
-            if msg_box.exec_():
-                webbrowser.open_new_tab(last_release_url)
-                self.force_exit = True
-                self.close()
-
-    def setup_shortcuts(self):
         self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
         self.back_shortcut.activated.connect(self.back)
 
@@ -287,230 +173,81 @@ class MainWindow(QMainWindow):
         self.settings_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
         self.settings_shortcut.activated.connect(self.settings)
 
-    def handle_fullscreen(self, request):
-        if not self.isFullScreen():
-            self.ToolBar.hide()
-            self.showFullScreen()
+        self.splash_screen = SplashScreen(self.windowIcon(), self)
+        self.splash_screen.setIconSize(QSize(102, 102))
+        self.splash_screen.titleBar.hide()
+
+        self.show()
+
+        self.webview = WebEngineView(self)
+        self.webpage = WebEnginePage(self)
+        self.websettings = QWebEngineSettings.globalSettings()
+        self.webview.setPage(self.webpage)
+
+        proxy = QNetworkProxy()
+
+        if self.proxy_type_setting == "HttpProxy":
+            proxy.setType(QNetworkProxy.HttpProxy)
+        elif self.proxy_type_setting == "Socks5Proxy":
+            proxy.setType(QNetworkProxy.Socks5Proxy)
+        elif self.proxy_type_setting == "DefaultProxy":
+            proxy.setType(QNetworkProxy.DefaultProxy)
         else:
-            self.ToolBar.show()
-            self.showNormal()
+            proxy.setType(QNetworkProxy.NoProxy)
+
+        proxy_valid = True
+
+        if self.proxy_type_setting in ["HttpProxy", "Socks5Proxy"]:
+            if self.proxy_host_name_setting:
+                proxy.setHostName(self.proxy_host_name_setting)
+            else:
+                logging.error("Proxy host name is not set.")
+                proxy_valid = False
             
-        request.accept()
+            if self.proxy_port_setting:
+                if not (1 <= self.proxy_port_setting <= 65535):
+                    logging.error("Proxy port is not valid.")
+                    proxy_valid = False
+                else:
+                    proxy.setPort(self.proxy_port_setting)
+            else:
+                logging.error("Proxy port is not set.")
+                proxy_valid = False
+            
+        if self.proxy_login_setting:
+            proxy.setUser(self.proxy_login_setting)
+        if self.proxy_password_setting:
+            proxy.setPassword(self.proxy_password_setting)
 
-    def url_changed(self, url):
-        self.current_url = url.toString()
-        self.LineEdit.setText(self.current_url)
+        if proxy_valid:
+            QNetworkProxy.setApplicationProxy(proxy)
+        else:
+            logging.error("Proxy setup failed due to invalid configuration.")
+        
+        if self.open_last_url_at_startup_setting == 1:
+            self.webview.load(QUrl(self.last_url_setting))
+        else:
+            self.home()
+            
+        self.webview.urlChanged.connect(self.url_changed)
+        self.webview.loadProgress.connect(self.load_progress)
+        self.webpage.fullScreenRequested.connect(self.handle_fullscreen)
+        
+        self.websettings.setAttribute(QWebEngineSettings.FullScreenSupportEnabled, self.fullscreen_mode_support_setting)
+        self.websettings.setAttribute(QWebEngineSettings.ScrollAnimatorEnabled, self.support_animated_scrolling_setting)
+        
+        if self.save_last_zoom_factor_setting == 1:
+            self.webview.setZoomFactor(self.last_zoom_factor_setting)
+            
+        self.MainLayout.addWidget(self.webview)
+        self.webview.setFocus()
 
-        can_go_back = self.webview.history().canGoBack()
-        can_go_forward = self.webview.history().canGoForward()
-        self.back_action.setEnabled(can_go_back)
-        self.back_tbutton.setEnabled(can_go_back)
-        self.forward_action.setEnabled(can_go_forward)
-        self.forward_tbutton.setEnabled(can_go_forward)
-
-        self.is_video_or_playlist = ("watch" in self.current_url or "playlist" in self.current_url)
-
-        if not self.is_downloading:
-            self.download_with_oauth_action.setEnabled(self.is_video_or_playlist)
-            self.download_as_unauthorized_action.setEnabled(self.is_video_or_playlist)
-            self.download_with_oauth_shortcut.setEnabled(self.is_video_or_playlist)
-            self.download_as_unauthorized_shortcut.setEnabled(self.is_video_or_playlist)
-
-    def setup_webchannel(self):
         self.webchannel_backend = WebChannelBackend(self)
 
         self.webchannel = QWebChannel()
         self.webpage.setWebChannel(self.webchannel)
         self.webchannel.registerObject("backend", self.webchannel_backend)
 
-    @pyqtSlot(str)
-    def like_status_changed(self, status):
-        if status != "":
-            self.like_status = status
-        else:
-            self.like_status = None
-
-        self.update_mini_player_like_dislike_controls()
-    
-    def update_mini_player_like_dislike_controls(self):
-        if self.mini_player_dialog:
-            if self.like_status == "Like":
-                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like-filled.png"))
-                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
-            elif self.like_status == "Dislike":
-                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
-                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike-filled.png"))
-            else:
-                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
-                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
-
-    @pyqtSlot(str, str, str)
-    def track_info_changed(self, title, author, thumbnail_url):
-        self.title = title
-        self.author = author
-        self.thumbnail_url = thumbnail_url
-
-        is_empty = not self.title or not self.author or not self.thumbnail_url
-        window_title = "Youtube Music Desktop Player" if is_empty else f"{self.title} - Youtube Music Desktop Player"
-        self.setWindowTitle(window_title)
-        
-        if self.tray_icon:
-            self.tray_icon.setToolTip(window_title)
-
-        if not is_empty and self.track_change_notificator_setting and self.track_notifier is not None:
-            self.track_notifier.show_toast(
-                self.title,
-                self.author,
-                duration=5,
-                icon_path=f"{self.icon_folder}/music-notify.ico",
-                threaded=True
-            )
-        
-        if is_empty:
-            self.clear_discord_rpc()
-        else:
-            self.update_mini_player_track_info()
-            self.update_discord_rpc()
-
-    def update_mini_player_track_info(self):
-        if self.mini_player_dialog:
-            self.mini_player_dialog.title_label.setText(self.title)
-            self.mini_player_dialog.title_label.setToolTip(self.title)
-            self.mini_player_dialog.author_label.setText(self.author)
-            self.mini_player_dialog.author_label.setToolTip(self.author)
-            self.mini_player_dialog.load_thumbnail(self.thumbnail_url)
-
-    def update_discord_rpc(self):
-        if self.discord_rpc:
-            details = self.title[:128]
-            state = self.author[:128]
-            large_image = self.thumbnail_url
-            small_image = "https://music.youtube.com/img/favicon_48.png"
-
-            try:
-                self.discord_rpc.update(
-                    details=details,
-                    state=state,
-                    large_image=large_image,
-                    small_image=small_image,
-                    activity_type=pypresence.ActivityType.LISTENING
-                )
-            except Exception as e:
-                logging.error(f"An error occurred while updating Discord RPC: {str(e)}")
-                self.reconnect_discord_rpc(retry_update=True)
-
-    def reconnect_discord_rpc(self, retry_update=False):
-        if self.discord_rpc:
-            try:
-                self.discord_rpc.connect()
-                if retry_update:
-                    self.update_discord_rpc()
-            except Exception as e:
-                logging.error(f"An error occurred while reconnecting to Discord RPC: {str(e)}")
-
-    def clear_discord_rpc(self):
-        if self.discord_rpc:
-            try:
-                self.discord_rpc.clear()
-            except Exception as e:
-                logging.error(f"An error occurred while clearing Discord RPC: {str(e)}")
-
-    @pyqtSlot(str, str)
-    def track_progress_changed(self, current_time, total_time):
-        self.current_time = current_time
-        self.total_time = total_time
-
-        self.update_mini_player_track_progress()
-
-    def update_mini_player_track_progress(self):
-        if self.mini_player_dialog:
-            self.mini_player_dialog.BodyLabel.setText(self.current_time)
-            self.mini_player_dialog.BodyLabel_2.setText(self.total_time)
-
-    @pyqtSlot(str)
-    def video_state_changed(self, state):
-        self.video_state = state
-
-        if self.video_state == "VideoPlaying" or self.video_state == "VideoPaused":
-            self.mini_player_action.setEnabled(True)
-            self.mini_player_tbutton.setEnabled(True)
-            self.mini_player_shortcut.setEnabled(True)
-        else:
-            self.mini_player_action.setEnabled(False)
-            self.mini_player_tbutton.setEnabled(False)
-            self.mini_player_shortcut.setEnabled(False)
-
-        self.update_mini_player_track_controls()
-        self.update_win_thumbnail_buttons_track_controls()
-        self.update_tray_icon_track_controls()
-
-    def update_tray_icon_track_controls(self):
-        if self.tray_icon_setting == 1 and self.tray_icon:
-            if self.video_state == "VideoPlaying":
-                self.tray_icon.previous_action.setEnabled(True)
-                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/pause.png"))
-                self.tray_icon.play_pause_action.setEnabled(True)
-                self.tray_icon.next_action.setEnabled(True)
-            elif self.video_state == "VideoPaused":
-                self.tray_icon.previous_action.setEnabled(True)
-                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/play.png"))
-                self.tray_icon.play_pause_action.setEnabled(True)
-                self.tray_icon.next_action.setEnabled(True)
-            else:
-                self.tray_icon.previous_action.setEnabled(False)
-                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/play.png"))
-                self.tray_icon.play_pause_action.setEnabled(False)
-                self.tray_icon.next_action.setEnabled(False)
-    
-    def update_win_thumbnail_buttons_track_controls(self):
-        if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
-            if self.video_state == "VideoPlaying":
-                self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-filled-border.png"))
-                self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/pause-filled-border.png"))            
-                self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-filled-border.png"))
-                self.tool_btn_previous.setEnabled(True)
-                self.tool_btn_play_pause.setEnabled(True)
-                self.tool_btn_next.setEnabled(True)
-            elif self.video_state == "VideoPaused":
-                self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-filled-border.png"))
-                self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/play-filled-border.png"))
-                self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-filled-border.png"))
-                self.tool_btn_previous.setEnabled(True)
-                self.tool_btn_play_pause.setEnabled(True)
-                self.tool_btn_next.setEnabled(True)
-            else:
-                self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-filled-border-disabled.png"))
-                self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/play-filled-border-disabled.png"))
-                self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-filled-border-disabled.png"))
-                self.tool_btn_previous.setEnabled(False)
-                self.tool_btn_play_pause.setEnabled(False)
-                self.tool_btn_next.setEnabled(False)
-
-    def update_mini_player_track_controls(self):
-        if self.mini_player_dialog:
-            if self.video_state == "VideoPlaying":
-                self.mini_player_dialog.previous_button.setEnabled(True)
-                self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/pause-filled.png"))
-                self.mini_player_dialog.play_pause_button.setEnabled(True)
-                self.mini_player_dialog.next_button.setEnabled(True)
-                self.mini_player_dialog.like_button.setEnabled(True)
-                self.mini_player_dialog.dislike_button.setEnabled(True)
-            elif self.video_state == "VideoPaused":
-                self.mini_player_dialog.previous_button.setEnabled(True)
-                self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/play-filled.png"))
-                self.mini_player_dialog.play_pause_button.setEnabled(True)
-                self.mini_player_dialog.next_button.setEnabled(True)
-                self.mini_player_dialog.like_button.setEnabled(True)
-                self.mini_player_dialog.dislike_button.setEnabled(True)
-            else:
-                self.mini_player_dialog.previous_button.setEnabled(False)
-                self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/play-filled.png"))
-                self.mini_player_dialog.play_pause_button.setEnabled(False)
-                self.mini_player_dialog.next_button.setEnabled(False)
-                self.mini_player_dialog.like_button.setEnabled(False)
-                self.mini_player_dialog.dislike_button.setEnabled(False)
-
-    def create_menu(self):
         self.back_action = Action("Back", shortcut="Alt+Left")
         self.back_action.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_action.setEnabled(False)
@@ -603,7 +340,6 @@ class MainWindow(QMainWindow):
 
         self.paste_menu.addAction(self.paste_action)
 
-    def create_toolbar(self):
         self.back_tbutton.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_tbutton.setEnabled(False)
         self.back_tbutton.installEventFilter(ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP))
@@ -622,7 +358,7 @@ class MainWindow(QMainWindow):
         self.reload_tbutton.installEventFilter(ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP))
         self.reload_tbutton.clicked.connect(self.webview.reload)
 
-        self.LineEdit.returnPressed.connect(self.on_line_edit_return_pressed)
+        self.url_line_edit.returnPressed.connect(self.load_url)
 
         self.download_ddtbutton.setIcon(QIcon(f"{self.icon_folder}/download.png"))
         self.download_ddtbutton.setMenu(self.download_menu)
@@ -645,18 +381,6 @@ class MainWindow(QMainWindow):
         self.about_tbutton.installEventFilter(ToolTipFilter(self.about_tbutton, 300, ToolTipPosition.TOP))
         self.about_tbutton.clicked.connect(self.about)
 
-    def activate_plugins(self):
-        self.activate_ad_blocker()
-        self.activate_scrollbar_styles()
-        self.activate_discord_rpc()
-        self.activate_ytmusic_observer()
-        self.activate_win_thumbnail_toolbar()
-        self.activate_tray_icon()
-        self.activate_track_notifier()
-        self.activate_yt_hotkeys()
-        self.activate_only_audio()
-
-    def activate_ad_blocker(self):
         if self.ad_blocker_setting == 1:
             ad_blocker_plugin = QWebEngineScript()
             ad_blocker_plugin.setName("AdBlocker")
@@ -666,7 +390,6 @@ class MainWindow(QMainWindow):
             ad_blocker_plugin.setRunsOnSubFrames(True)
             self.webpage.profile().scripts().insert(ad_blocker_plugin)
 
-    def activate_scrollbar_styles(self):
         scrollbar_styles_plugin = QWebEngineScript()
         scrollbar_styles_plugin.setName("ScrollbarStyles")
         scrollbar_styles_plugin.setSourceCode(self.read_script("scrollbar_styles.js"))
@@ -674,28 +397,20 @@ class MainWindow(QMainWindow):
         scrollbar_styles_plugin.setWorldId(QWebEngineScript.ApplicationWorld)
         scrollbar_styles_plugin.setRunsOnSubFrames(True)
         self.webpage.profile().scripts().insert(scrollbar_styles_plugin)
-
-    def activate_discord_rpc(self):
+    
         if self.discord_rpc_setting == 1:
-            app_id = "1254202610781655050"
-            self.discord_rpc = pypresence.Presence(app_id)
-            try:
-                self.discord_rpc.connect()
-            except Exception as e:
-                logging.error(f"Discord RPC connection failed: {str(e)}")
+            self.run_discord_rpc()
         else:
             self.discord_rpc = None
 
-    def activate_ytmusic_observer(self):
         ytmusic_observer_plugin = QWebEngineScript()
         ytmusic_observer_plugin.setName("YtMusicObserver")
         ytmusic_observer_plugin.setSourceCode(self.read_script("ytmusic_observer.js"))
         ytmusic_observer_plugin.setInjectionPoint(QWebEngineScript.Deferred)
         ytmusic_observer_plugin.setWorldId(QWebEngineScript.MainWorld)
         ytmusic_observer_plugin.setRunsOnSubFrames(True)
-        self.webpage.profile().scripts().insert(ytmusic_observer_plugin)
+        self.webpage.profile().scripts().insert(ytmusic_observer_plugin)  
 
-    def activate_win_thumbnail_toolbar(self):
         if self.win_thumbmail_buttons_setting == 1:
             self.win_thumbnail_toolbar = QWinThumbnailToolBar(self)
             self.create_previous_button()
@@ -703,7 +418,237 @@ class MainWindow(QMainWindow):
             self.create_next_button()
             self.win_thumbnail_toolbar.setWindow(self.windowHandle())
         else:
-            self.win_thumbnail_toolbar = None
+            self.win_thumbnail_toolbar = None  
+            
+        if self.tray_icon_setting == 1:
+            self.tray_icon = SystemTrayIcon(self.windowIcon(), self)
+            self.tray_icon.show()
+        else:
+            self.tray_icon = None
+
+        if self.hotkey_playback_control_setting == 1:
+            yt_hotkeys_script = QWebEngineScript()
+            yt_hotkeys_script.setName("YtHotkeys")
+            yt_hotkeys_script.setSourceCode(self.read_script("yt_hotkeys.js"))
+            yt_hotkeys_script.setInjectionPoint(QWebEngineScript.Deferred)
+            yt_hotkeys_script.setWorldId(QWebEngineScript.MainWorld)
+            yt_hotkeys_script.setRunsOnSubFrames(True)
+            self.webpage.profile().scripts().insert(yt_hotkeys_script)
+
+        if self.only_audio_mode_setting == 1:
+            only_audio_script = QWebEngineScript()
+            only_audio_script.setName("OnlyAudio")
+            only_audio_script.setSourceCode(self.read_script("only_audio.js"))
+            only_audio_script.setInjectionPoint(QWebEngineScript.Deferred)
+            only_audio_script.setWorldId(QWebEngineScript.MainWorld)
+            only_audio_script.setRunsOnSubFrames(True)
+            self.webpage.profile().scripts().insert(only_audio_script)
+
+    def load_progress(self, progress):
+        if progress > 80 and self.splash_screen:
+            if self.isHidden():
+                self.showNormal()
+                self.activateWindow()
+
+            self.splash_screen.finish()
+            self.splash_screen = None
+            
+            self.check_updates()
+
+    def check_updates(self):
+        self.update_checker = UpdateChecker()
+        self.update_checker.update_checked.connect(self.handle_update_checked)
+        self.update_checker.start()
+        
+    def handle_update_checked(self, last_version, title, whats_new, last_release_url):
+        if pkg_version.parse(self.version) < pkg_version.parse(last_version):
+            msg_box = MessageBox(
+                title, 
+                whats_new, 
+                self)
+            msg_box.yesButton.setText("Download")
+            msg_box.cancelButton.setText("Later")
+            if msg_box.exec_():
+                webbrowser.open_new_tab(last_release_url)
+                self.force_exit = True
+                self.close()
+
+    def handle_fullscreen(self, request):
+        if not self.isFullScreen():
+            self.ToolBar.hide()
+            self.showFullScreen()
+        else:
+            self.ToolBar.show()
+            self.showNormal()
+            
+        request.accept()
+
+    def url_changed(self, url):
+        self.current_url = url.toString()
+
+        if self.open_last_url_at_startup_setting == 1:
+            self.last_url_setting = self.current_url
+            self.settings_.setValue("last_url", self.last_url_setting)
+
+        self.url_line_edit.setText(self.current_url)
+
+        can_go_back = self.webview.history().canGoBack()
+        can_go_forward = self.webview.history().canGoForward()
+        self.back_action.setEnabled(can_go_back)
+        self.back_tbutton.setEnabled(can_go_back)
+        self.forward_action.setEnabled(can_go_forward)
+        self.forward_tbutton.setEnabled(can_go_forward)
+
+        self.is_video_or_playlist = ("watch" in self.current_url or "playlist" in self.current_url)
+
+        if not self.is_downloading:
+            self.download_with_oauth_action.setEnabled(self.is_video_or_playlist)
+            self.download_as_unauthorized_action.setEnabled(self.is_video_or_playlist)
+            self.download_with_oauth_shortcut.setEnabled(self.is_video_or_playlist)
+            self.download_as_unauthorized_shortcut.setEnabled(self.is_video_or_playlist)
+    
+    def update_mini_player_like_dislike_controls(self):
+        if self.mini_player_dialog:
+            if self.like_status == "Like":
+                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like-filled.png"))
+                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+            elif self.like_status == "Dislike":
+                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike-filled.png"))
+            else:
+                self.mini_player_dialog.like_button.setIcon(QIcon(f"{self.icon_folder}/like.png"))
+                self.mini_player_dialog.dislike_button.setIcon(QIcon(f"{self.icon_folder}/dislike.png"))
+
+    def update_mini_player_track_info(self):
+        if self.mini_player_dialog:
+            self.mini_player_dialog.title_label.setText(self.title)
+            self.mini_player_dialog.title_label.setToolTip(self.title)
+            self.mini_player_dialog.author_label.setText(self.author)
+            self.mini_player_dialog.author_label.setToolTip(self.author)
+            self.mini_player_dialog.load_thumbnail(self.thumbnail_url)
+
+    def run_discord_rpc(self):
+        try:
+            self.discord_rpc = discordrpc.RPC(app_id="1254202610781655050",
+                                              output=False)
+        except Exception as e:
+            logging.error(f"Failed to activate Discord RPC: {str(e)}")
+            self.discord_rpc = None
+
+    def update_discord_rpc(self):
+        if self.discord_rpc:
+            details = self.title[:128]
+            state = self.author[:128]
+            large_image = self.thumbnail_url
+            small_image = "https://music.youtube.com/img/favicon_48.png"
+
+            try:
+                self.discord_rpc.set_activity(
+                    details=details,
+                    state=state,
+                    large_image=large_image,
+                    small_image=small_image,
+                    act_type=2
+                )
+            except Exception as e:
+                if "[Errno 22]" in str(e):
+                    self.reconnect_discord_rpc("update_discord_rpc")
+                else:
+                    logging.error(f"An error occurred while updating Discord RPC: {str(e)}")
+                    if self.discord_rpc.is_connected():
+                        self.discord_rpc.disconnect()
+                
+    def clear_discord_rpc(self):
+        if self.discord_rpc:
+            try:
+                self.discord_rpc.set_activity(details="Nothing's playing yet",
+                                              act_type=2)
+            except Exception as e:
+                if "[Errno 22]" in str(e):
+                    self.reconnect_discord_rpc("clear_discord_rpc")
+                else:
+                    logging.error(f"An error occurred while clearing Discord RPC: {str(e)}")
+                    if self.discord_rpc.is_connected():
+                        self.discord_rpc.disconnect()
+
+    def reconnect_discord_rpc(self, method_to_reconnect):
+        if self.discord_rpc:
+            self.run_discord_rpc()
+            if method_to_reconnect == "update_discord_rpc":
+                self.update_discord_rpc()
+            elif method_to_reconnect == "clear_discord_rpc":
+                self.clear_discord_rpc()
+
+    def update_mini_player_track_progress(self):
+        if self.mini_player_dialog:
+            self.mini_player_dialog.BodyLabel.setText(self.current_time)
+            self.mini_player_dialog.BodyLabel_2.setText(self.total_time)
+
+    def update_tray_icon_track_controls(self):
+        if self.tray_icon_setting == 1 and self.tray_icon:
+            if self.video_state == "VideoPlaying":
+                self.tray_icon.previous_action.setEnabled(True)
+                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/pause.png"))
+                self.tray_icon.play_pause_action.setEnabled(True)
+                self.tray_icon.next_action.setEnabled(True)
+            elif self.video_state == "VideoPaused":
+                self.tray_icon.previous_action.setEnabled(True)
+                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/play.png"))
+                self.tray_icon.play_pause_action.setEnabled(True)
+                self.tray_icon.next_action.setEnabled(True)
+            else:
+                self.tray_icon.previous_action.setEnabled(False)
+                self.tray_icon.play_pause_action.setIcon(QIcon(f"{self.icon_folder}/play.png"))
+                self.tray_icon.play_pause_action.setEnabled(False)
+                self.tray_icon.next_action.setEnabled(False)
+    
+    def update_win_thumbnail_buttons_track_controls(self):
+        if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
+            if self.video_state == "VideoPlaying":
+                self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-filled-border.png"))
+                self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/pause-filled-border.png"))            
+                self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-filled-border.png"))
+                self.tool_btn_previous.setEnabled(True)
+                self.tool_btn_play_pause.setEnabled(True)
+                self.tool_btn_next.setEnabled(True)
+            elif self.video_state == "VideoPaused":
+                self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-filled-border.png"))
+                self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/play-filled-border.png"))
+                self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-filled-border.png"))
+                self.tool_btn_previous.setEnabled(True)
+                self.tool_btn_play_pause.setEnabled(True)
+                self.tool_btn_next.setEnabled(True)
+            else:
+                self.tool_btn_previous.setIcon(QIcon(f"{self.icon_folder}/previous-filled-border-disabled.png"))
+                self.tool_btn_play_pause.setIcon(QIcon(f"{self.icon_folder}/play-filled-border-disabled.png"))
+                self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-filled-border-disabled.png"))
+                self.tool_btn_previous.setEnabled(False)
+                self.tool_btn_play_pause.setEnabled(False)
+                self.tool_btn_next.setEnabled(False)
+
+    def update_mini_player_track_controls(self):
+        if self.mini_player_dialog:
+            if self.video_state == "VideoPlaying":
+                self.mini_player_dialog.previous_button.setEnabled(True)
+                self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/pause-filled.png"))
+                self.mini_player_dialog.play_pause_button.setEnabled(True)
+                self.mini_player_dialog.next_button.setEnabled(True)
+                self.mini_player_dialog.like_button.setEnabled(True)
+                self.mini_player_dialog.dislike_button.setEnabled(True)
+            elif self.video_state == "VideoPaused":
+                self.mini_player_dialog.previous_button.setEnabled(True)
+                self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/play-filled.png"))
+                self.mini_player_dialog.play_pause_button.setEnabled(True)
+                self.mini_player_dialog.next_button.setEnabled(True)
+                self.mini_player_dialog.like_button.setEnabled(True)
+                self.mini_player_dialog.dislike_button.setEnabled(True)
+            else:
+                self.mini_player_dialog.previous_button.setEnabled(False)
+                self.mini_player_dialog.play_pause_button.setIcon(QIcon(f"{self.icon_folder}/play-filled.png"))
+                self.mini_player_dialog.play_pause_button.setEnabled(False)
+                self.mini_player_dialog.next_button.setEnabled(False)
+                self.mini_player_dialog.like_button.setEnabled(False)
+                self.mini_player_dialog.dislike_button.setEnabled(False)
 
     def create_previous_button(self):
         self.tool_btn_previous = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
@@ -728,39 +673,6 @@ class MainWindow(QMainWindow):
         self.tool_btn_next.setIcon(QIcon(f"{self.icon_folder}/next-filled-border-disabled.png"))
         self.tool_btn_next.clicked.connect(self.skip_next)
         self.win_thumbnail_toolbar.addButton(self.tool_btn_next)
-
-    def activate_tray_icon(self):
-        if self.tray_icon_setting == 1:
-            self.tray_icon = SystemTrayIcon(self.windowIcon(), self)
-            self.tray_icon.show()
-        else:
-            self.tray_icon = None
-
-    def activate_track_notifier(self):
-        if self.track_change_notificator_setting == 1:
-            self.track_notifier = ToastNotifier()
-        else:
-            self.track_notifier = None
-
-    def activate_yt_hotkeys(self):
-        if self.hotkey_playback_control_setting == 1:
-            yt_hotkeys_script = QWebEngineScript()
-            yt_hotkeys_script.setName("YtHotkeys")
-            yt_hotkeys_script.setSourceCode(self.read_script("yt_hotkeys.js"))
-            yt_hotkeys_script.setInjectionPoint(QWebEngineScript.Deferred)
-            yt_hotkeys_script.setWorldId(QWebEngineScript.MainWorld)
-            yt_hotkeys_script.setRunsOnSubFrames(True)
-            self.webpage.profile().scripts().insert(yt_hotkeys_script)
-
-    def activate_only_audio(self):
-        if self.only_audio_mode_setting == 1:
-            only_audio_script = QWebEngineScript()
-            only_audio_script.setName("OnlyAudio")
-            only_audio_script.setSourceCode(self.read_script("only_audio.js"))
-            only_audio_script.setInjectionPoint(QWebEngineScript.Deferred)
-            only_audio_script.setWorldId(QWebEngineScript.MainWorld)
-            only_audio_script.setRunsOnSubFrames(True)
-            self.webpage.profile().scripts().insert(only_audio_script)
 
     def skip_previous(self):
         self.run_js_script("skip_previous.js")
@@ -930,8 +842,8 @@ class MainWindow(QMainWindow):
         if self.tray_icon:
             self.tray_icon.hide()
     
-    def on_line_edit_return_pressed(self):
-        url = self.LineEdit.text()
+    def load_url(self):
+        url = self.url_line_edit.text()
         self.webview.load(QUrl(url))
 
     def settings(self):
@@ -954,17 +866,21 @@ class MainWindow(QMainWindow):
     def paste(self):
         self.webpage.triggerAction(QWebEnginePage.Paste)
 
+    def send_notification(self):
+        if self.track_change_notificator_setting  == 1 and self.tray_icon is not None:
+            title = f"{self.title}"
+            message = f"{self.author}"
+            self.tray_icon.showMessage(title, message, icon=QSystemTrayIcon.NoIcon)
+
     def save_settings(self):
         if self.save_last_zoom_factor_setting == 1:
             self.last_zoom_factor_setting = self.webview.zoomFactor()
             self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
+        
         if self.save_last_win_geometry_setting == 1:
             if not self.isMaximized() and not self.isFullScreen():
                 self.last_win_geometry_setting = self.geometry()
                 self.settings_.setValue("last_win_geometry", self.last_win_geometry_setting)
-        if self.current_url is not None:
-            self.last_url_setting = self.current_url
-            self.settings_.setValue("last_url", self.last_url_setting)
 
     def show_window(self):
         if self.isMinimized() or self.isHidden():
@@ -996,6 +912,6 @@ class MainWindow(QMainWindow):
                 self.force_exit = False
                 event.ignore()
                 return
-
+            
         self.save_settings()
         event.accept()

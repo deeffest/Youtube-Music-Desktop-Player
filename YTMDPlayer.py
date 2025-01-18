@@ -10,10 +10,11 @@ from PyQt5.QtWidgets import QApplication
 
 from core.main_window import MainWindow
 
+
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "deeffest.pythonanywhere.com"
-version = "v1.15.0"
+version = "v1.16.0-rc1"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def setup_logging():

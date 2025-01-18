@@ -83,7 +83,10 @@
         </widget>
        </item>
        <item>
-        <widget class="LineEdit" name="LineEdit">
+        <widget class="LineEdit" name="url_line_edit">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="readOnly">
           <bool>false</bool>
          </property>
@@ -152,13 +155,13 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineEdit</class>
-   <extends>QLineEdit</extends>
+   <class>ToolButton</class>
+   <extends>QToolButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>ToolButton</class>
-   <extends>QToolButton</extends>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
