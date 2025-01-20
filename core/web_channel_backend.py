@@ -1,13 +1,14 @@
 from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import QObject, pyqtSlot
+
 if TYPE_CHECKING:
-    from main_window import MainWindow
+    from core.main_window import MainWindow
 
 
 class WebChannelBackend(QObject):
-    def __init__(self, parent):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.window:"MainWindow" = parent
 
     @pyqtSlot(str)

@@ -1,3 +1,10 @@
+v1.16.0-rc2 is Here! (20.01.2025)
+- Improved validation of the input port for proxy server - now you can't enter 0 as the very first digit.
+- Now when you click on the `Save` button, the settings are saved, but the application no longer closes the settings dialog.
+- Fixed logging by clearing the default handler.
+- The logging level is now an error, not an info.
+- Other fixes and improvements.
+
 v1.16.0-rc1 is Here! (18.01.2025)
 - Fixed application crash when saving settings with “-” in the proxy port input field.
 - The `Track Change Notificator` plugin has been redesigned - now it works only when the `System Tray App Icon` plugin is enabled (due to the change of win10toast framework to the standard Qt notification implementation, which is directly linked to the tray icon), and also supports clicking on a notification and then showing the window if it is hidden.

@@ -2,35 +2,37 @@ import sys
 import logging
 from typing import TYPE_CHECKING
 
-from PyQt5.QtCore import Qt, QProcess
-from PyQt5.QtGui import QIcon, QIntValidator, QPixmap
+from PyQt5.QtCore import Qt, QProcess, QRegExp
+from PyQt5.QtGui import QIcon, QPixmap, QRegExpValidator
 from PyQt5.QtWidgets import QDialog, QApplication
 from qfluentwidgets import MessageBox
 from pywinstyles import apply_style
+
+from core.ui.ui_settings_dialog import Ui_SettingsDialog
 if TYPE_CHECKING:
     from main_window import MainWindow
-from core.ui.ui_settings_dialog import Ui_SettingsDialog
 
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setupUi(self)
         self.window:"MainWindow" = parent
 
         try:
             apply_style(self, "dark")
         except Exception as e:
-            logging.error("Failed to apply dark style: " + str(e))
+            logging.error(f"Failed to apply dark style: + {str(e)}")
 
+        self.setupUi(self)
         self.setWindowTitle("Settings")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings.png"))
         self.setFixedSize(self.size())
 
         self.PillPushButton.setChecked(True)
-        int_validator = QIntValidator(1, 65535)
-        self.LineEdit_2.setValidator(int_validator)
+        regex = QRegExp(r"^[1-9][0-9]{0,4}$")
+        regex_validator = QRegExpValidator(regex)
+        self.LineEdit_2.setValidator(regex_validator)
         self.proxy_types = ["HttpProxy", "Socks5Proxy", 
                             "DefaultProxy", "NoProxy"]
         self.ComboBox.addItems(self.proxy_types)
@@ -43,7 +45,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.PillPushButton_3.clicked.connect(self.configure_tabs)
         self.PillPushButton_4.clicked.connect(self.configure_tabs)
         self.PushButton_2.clicked.connect(self.restart_app)
-        self.PrimaryPushButton.clicked.connect(self.save_and_close)
+        self.PrimaryPushButton.clicked.connect(self.save_settings)
         self.PushButton.clicked.connect(self.close)
         self.ComboBox.currentIndexChanged.connect(self.toggle_proxy_config)
 
@@ -116,6 +118,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.SettingBox12.setStyleSheet("background-color: rgb(45,45,45);")
             self.BodyLabel_21.setStyleSheet("color: gray;")
         else:
+            self.SwitchButton_13.setChecked(self.window.track_change_notificator_setting)
             self.SettingBox12.setEnabled(True)
             self.SettingBox12.setStyleSheet("")
             self.BodyLabel_21.setStyleSheet("color: white;")
@@ -139,11 +142,11 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         
         if not msg_box or msg_box.exec_():
             self.window.save_settings()
-            self.save_and_close()
+            self.save_settings()
             QApplication.quit()
             QProcess.startDetached(sys.executable, sys.argv)
 
-    def save_and_close(self):
+    def save_settings(self):
         self.window.save_last_win_geometry_setting = int(self.SwitchButton.isChecked())
         self.window.open_last_url_at_startup_setting = int(self.SwitchButton_4.isChecked())
         self.window.ad_blocker_setting = int(self.SwitchButton_3.isChecked())
@@ -184,7 +187,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.settings_.setValue("only_audio_mode", self.window.only_audio_mode_setting)
         self.window.settings_.setValue("opengl_enviroment", self.window.opengl_enviroment_setting)
 
-        self.close()
+        self.check_if_settings_changed()
 
     def configure_tabs(self):
         self.frame.hide()

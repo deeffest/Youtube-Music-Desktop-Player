@@ -3,8 +3,9 @@ from typing import TYPE_CHECKING
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QSystemTrayIcon
 from qfluentwidgets import SystemTrayMenu, Action
+
 if TYPE_CHECKING:
-    from main_window import MainWindow
+    from core.main_window import MainWindow
 
 
 class SystemTrayIcon(QSystemTrayIcon):

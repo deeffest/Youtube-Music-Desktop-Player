@@ -32,9 +32,8 @@ from core.ui.ui_main_window import Ui_MainWindow
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     oauth_completed = pyqtSignal()
-    def __init__(self, app_settings, opengl_enviroment_setting, app_info, parent=None):
-        super().__init__(parent)
-        self.setupUi(self)
+    def __init__(self, app_settings, opengl_enviroment_setting, app_info):
+        super().__init__()
 
         self.name = app_info[0]
         self.version = app_info[1]
@@ -135,10 +134,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             apply_style(self, "dark")
         except Exception as e:
-            logging.error("Failed to apply dark style: " + str(e))
+            logging.error(f"Failed to apply dark style: + {str(e)}")
         setTheme(Theme.DARK)
         setThemeColor("red")
         
+        self.setupUi(self)
         self.setWindowTitle("Youtube Music Desktop Player")
         self.setWindowIcon(QIcon(f"{self.icon_folder}/icon.ico"))
         if self.save_last_win_geometry_setting == 1:
@@ -177,52 +177,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.splash_screen.setIconSize(QSize(102, 102))
         self.splash_screen.titleBar.hide()
 
-        self.show()
-
         self.webview = WebEngineView(self)
         self.webpage = WebEnginePage(self)
         self.websettings = QWebEngineSettings.globalSettings()
         self.webview.setPage(self.webpage)
 
-        proxy = QNetworkProxy()
+        try:
+            proxy_setup_success = False
+            proxy = QNetworkProxy()
 
-        if self.proxy_type_setting == "HttpProxy":
-            proxy.setType(QNetworkProxy.HttpProxy)
-        elif self.proxy_type_setting == "Socks5Proxy":
-            proxy.setType(QNetworkProxy.Socks5Proxy)
-        elif self.proxy_type_setting == "DefaultProxy":
-            proxy.setType(QNetworkProxy.DefaultProxy)
-        else:
-            proxy.setType(QNetworkProxy.NoProxy)
+            if self.proxy_type_setting == "HttpProxy":
+                proxy.setType(QNetworkProxy.HttpProxy)
+            elif self.proxy_type_setting == "Socks5Proxy":
+                proxy.setType(QNetworkProxy.Socks5Proxy)
+            elif self.proxy_type_setting == "DefaultProxy":
+                proxy.setType(QNetworkProxy.DefaultProxy)
+                QNetworkProxy.setApplicationProxy(proxy)
+                proxy_setup_success = True
+            elif self.proxy_type_setting == "NoProxy":
+                proxy.setType(QNetworkProxy.NoProxy)
+                QNetworkProxy.setApplicationProxy(proxy)
+                proxy_setup_success = True
 
-        proxy_valid = True
-
-        if self.proxy_type_setting in ["HttpProxy", "Socks5Proxy"]:
-            if self.proxy_host_name_setting:
-                proxy.setHostName(self.proxy_host_name_setting)
-            else:
-                logging.error("Proxy host name is not set.")
-                proxy_valid = False
-            
-            if self.proxy_port_setting:
-                if not (1 <= self.proxy_port_setting <= 65535):
-                    logging.error("Proxy port is not valid.")
-                    proxy_valid = False
+            if not proxy_setup_success:
+                if self.proxy_host_name_setting:
+                    proxy.setHostName(self.proxy_host_name_setting)
                 else:
-                    proxy.setPort(self.proxy_port_setting)
-            else:
-                logging.error("Proxy port is not set.")
-                proxy_valid = False
-            
-        if self.proxy_login_setting:
-            proxy.setUser(self.proxy_login_setting)
-        if self.proxy_password_setting:
-            proxy.setPassword(self.proxy_password_setting)
+                    raise ValueError("Proxy host name is not set.")
 
-        if proxy_valid:
-            QNetworkProxy.setApplicationProxy(proxy)
-        else:
-            logging.error("Proxy setup failed due to invalid configuration.")
+                if self.proxy_port_setting:
+                    if not (1 <= self.proxy_port_setting <= 65535):
+                        raise ValueError("Proxy port is out of range (1-65535).")
+                    proxy.setPort(self.proxy_port_setting)
+                else:
+                    raise ValueError("Proxy port is not set.")
+
+                if self.proxy_login_setting:
+                    proxy.setUser(self.proxy_login_setting)
+                if self.proxy_password_setting:
+                    proxy.setPassword(self.proxy_password_setting)
+
+                QNetworkProxy.setApplicationProxy(proxy)
+        except Exception as e:
+            logging.error(f"Failed to set application proxy: {str(e)}")
         
         if self.open_last_url_at_startup_setting == 1:
             self.webview.load(QUrl(self.last_url_setting))
@@ -385,17 +382,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ad_blocker_plugin = QWebEngineScript()
             ad_blocker_plugin.setName("AdBlocker")
             ad_blocker_plugin.setSourceCode(self.read_script("ad_blocker.js"))
-            ad_blocker_plugin.setInjectionPoint(QWebEngineScript.DocumentReady)
-            ad_blocker_plugin.setWorldId(QWebEngineScript.ApplicationWorld)
-            ad_blocker_plugin.setRunsOnSubFrames(True)
+            ad_blocker_plugin.setInjectionPoint(QWebEngineScript.Deferred)
+            ad_blocker_plugin.setWorldId(QWebEngineScript.MainWorld)
+            ad_blocker_plugin.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(ad_blocker_plugin)
 
         scrollbar_styles_plugin = QWebEngineScript()
         scrollbar_styles_plugin.setName("ScrollbarStyles")
         scrollbar_styles_plugin.setSourceCode(self.read_script("scrollbar_styles.js"))
-        scrollbar_styles_plugin.setInjectionPoint(QWebEngineScript.DocumentReady)
-        scrollbar_styles_plugin.setWorldId(QWebEngineScript.ApplicationWorld)
-        scrollbar_styles_plugin.setRunsOnSubFrames(True)
+        scrollbar_styles_plugin.setInjectionPoint(QWebEngineScript.Deferred)
+        scrollbar_styles_plugin.setWorldId(QWebEngineScript.MainWorld)
+        scrollbar_styles_plugin.setRunsOnSubFrames(False)
         self.webpage.profile().scripts().insert(scrollbar_styles_plugin)
     
         if self.discord_rpc_setting == 1:
@@ -408,7 +405,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ytmusic_observer_plugin.setSourceCode(self.read_script("ytmusic_observer.js"))
         ytmusic_observer_plugin.setInjectionPoint(QWebEngineScript.Deferred)
         ytmusic_observer_plugin.setWorldId(QWebEngineScript.MainWorld)
-        ytmusic_observer_plugin.setRunsOnSubFrames(True)
+        ytmusic_observer_plugin.setRunsOnSubFrames(False)
         self.webpage.profile().scripts().insert(ytmusic_observer_plugin)  
 
         if self.win_thumbmail_buttons_setting == 1:
@@ -432,7 +429,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             yt_hotkeys_script.setSourceCode(self.read_script("yt_hotkeys.js"))
             yt_hotkeys_script.setInjectionPoint(QWebEngineScript.Deferred)
             yt_hotkeys_script.setWorldId(QWebEngineScript.MainWorld)
-            yt_hotkeys_script.setRunsOnSubFrames(True)
+            yt_hotkeys_script.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(yt_hotkeys_script)
 
         if self.only_audio_mode_setting == 1:
@@ -441,7 +438,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             only_audio_script.setSourceCode(self.read_script("only_audio.js"))
             only_audio_script.setInjectionPoint(QWebEngineScript.Deferred)
             only_audio_script.setWorldId(QWebEngineScript.MainWorld)
-            only_audio_script.setRunsOnSubFrames(True)
+            only_audio_script.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(only_audio_script)
 
     def load_progress(self, progress):
@@ -485,11 +482,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def url_changed(self, url):
         self.current_url = url.toString()
-
-        if self.open_last_url_at_startup_setting == 1:
-            self.last_url_setting = self.current_url
-            self.settings_.setValue("last_url", self.last_url_setting)
-
         self.url_line_edit.setText(self.current_url)
 
         can_go_back = self.webview.history().canGoBack()
@@ -873,14 +865,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tray_icon.showMessage(title, message, icon=QSystemTrayIcon.NoIcon)
 
     def save_settings(self):
-        if self.save_last_zoom_factor_setting == 1:
-            self.last_zoom_factor_setting = self.webview.zoomFactor()
-            self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
-        
+        if self.open_last_url_at_startup_setting == 1:
+            self.last_url_setting = self.current_url
+            self.settings_.setValue("last_url", self.last_url_setting)
+
         if self.save_last_win_geometry_setting == 1:
             if not self.isMaximized() and not self.isFullScreen():
                 self.last_win_geometry_setting = self.geometry()
                 self.settings_.setValue("last_win_geometry", self.last_win_geometry_setting)
+                
+        if self.save_last_zoom_factor_setting == 1:
+            self.last_zoom_factor_setting = self.webview.zoomFactor()
+            self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
 
     def show_window(self):
         if self.isMinimized() or self.isHidden():
@@ -891,6 +887,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.activateWindow()
         
     def closeEvent(self, event):
+        self.save_settings()
+
         if self.tray_icon_setting == 1 and self.tray_icon is not None:
             if not self.force_exit:
                 self.hide()
@@ -912,6 +910,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.force_exit = False
                 event.ignore()
                 return
-            
+        
         self.save_settings()
         event.accept()

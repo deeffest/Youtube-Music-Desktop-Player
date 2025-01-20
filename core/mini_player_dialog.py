@@ -9,22 +9,22 @@ from pywinstyles import apply_style
 
 from core.thumbnail_loader import ThumbnailLoader
 from core.helpers import get_taskbar_position
+from core.ui.ui_mini_player_dialog import Ui_MiniPlayerDialog
 if TYPE_CHECKING:
     from core.main_window import MainWindow
-from core.ui.ui_mini_player_dialog import Ui_MiniPlayerDialog
 
 
 class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setupUi(self)
         self.window:"MainWindow" = parent
 
         try:
             apply_style(self, "dark")
         except Exception as e:
-            logging.error("Failed to apply dark style: " + str(e))
+            logging.error(f"Failed to apply dark style: + {str(e)}")
 
+        self.setupUi(self)
         self.setWindowTitle("Mini-Player")
         self.setWindowFlags(Qt.Window)
         self.setWindowFlag(Qt.WindowStaysOnTopHint)

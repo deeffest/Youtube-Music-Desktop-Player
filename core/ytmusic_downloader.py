@@ -19,10 +19,11 @@ class DownloadThread(QThread):
 
     def __init__(self, url, download_folder, parent=None, use_oauth=False):
         super().__init__(parent)
+        self.window:"MainWindow" = parent
+        
         self.url = url
         self.download_folder = download_folder
         self.title = "Unknown"
-        self.window:"MainWindow" = parent
         self.use_oauth = use_oauth
         self.ffmpeg_path = os.path.join(os.path.expanduser("~"), self.window.name, "bin", "ffmpeg.exe")
         self.oauth_cache_path = os.path.join(os.path.expanduser("~"), self.window.name, "__cache__", "tokens.json")

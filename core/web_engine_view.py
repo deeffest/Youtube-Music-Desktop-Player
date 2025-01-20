@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING
 
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineContextMenuData
+
 if TYPE_CHECKING:
-    from main_window import MainWindow
+    from core.main_window import MainWindow
 
 
 class WebEngineView(QWebEngineView):

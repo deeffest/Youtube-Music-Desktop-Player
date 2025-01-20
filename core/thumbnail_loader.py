@@ -1,18 +1,22 @@
 import logging
+from typing import TYPE_CHECKING
 
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 
 from core.helpers import get_proxies
+if TYPE_CHECKING:
+    from core.main_window import MainWindow
 
 class ThumbnailLoader(QThread):
     thumbnail_loaded = pyqtSignal(QPixmap)
 
     def __init__(self, url, parent=None):
         super().__init__(parent)
+        self.window:"MainWindow" = parent
+        
         self.url = url
-        self.window = parent
 
     def run(self):
         try:
