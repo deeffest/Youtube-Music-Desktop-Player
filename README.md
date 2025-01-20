@@ -1,4 +1,4 @@
-![Icon](resources/icons/logo@128x128.png)
+<img src="resources/icons/logo.png" width="128" height="128">
 
 # Youtube-Music-Desktop-Player
 Turns the [Youtube Music](https://music.youtube.com) site into a desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
@@ -42,9 +42,9 @@ Turns the [Youtube Music](https://music.youtube.com) site into a desktop applica
    Open the extracted folder, then run the executable file to start the YTMDPlayer.
 
 ## See also
-- [deeffest/DEEF-Lite-Media-Player](https://github.com/deeffest/DEEF-Lite-Media-Player)：Сross-platform media player. 
-- [deeffest/DEEF-Lite-Image-Viewer](https://github.com/deeffest/DEEF-Lite-Image-Viewer)：Сross-platform image viewer.
-- [deeffest/Qt-Multimedia-Player](https://github.com/deeffest/Qt-Multimedia-Player):  Turns Qt's Media Player Example into a complete application. 
+- [deeffest/DEEF-Lite-Media-Player](https://github.com/deeffest/DEEF-Lite-Media-Player): Сross-platform media player. 
+- [deeffest/DEEF-Lite-Image-Viewer](https://github.com/deeffest/DEEF-Lite-Image-Viewer): Сross-platform image viewer.
+- [deeffest/Qt-Multimedia-Player](https://github.com/deeffest/Qt-Multimedia-Player): Media Player Example from doc.qt.io with fixes. 
 
 ## License
 The Youtube Music Desktop Player is distributed under the **GPLv3 license**.
