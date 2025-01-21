@@ -14,7 +14,7 @@ from core.main_window import MainWindow
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "deeffest.pythonanywhere.com"
-version = "v1.16.0-rc2"
+version = "v1.16.0"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 if __name__ == '__main__':
