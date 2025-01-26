@@ -246,16 +246,13 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Dislike (D)</string>
+        <string>Dislike</string>
        </property>
        <property name="iconSize">
         <size>
          <width>20</width>
          <height>20</height>
         </size>
-       </property>
-       <property name="shortcut">
-        <string>D</string>
        </property>
       </widget>
      </item>
@@ -274,7 +271,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Previous (Left)</string>
+        <string>Previous</string>
        </property>
        <property name="iconSize">
         <size>
@@ -302,7 +299,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Play/Pause (Space)</string>
+        <string>Play/Pause</string>
        </property>
        <property name="iconSize">
         <size>
@@ -330,7 +327,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Next (Right)</string>
+        <string>Next</string>
        </property>
        <property name="iconSize">
         <size>
@@ -358,16 +355,13 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Like (L)</string>
+        <string>Like</string>
        </property>
        <property name="iconSize">
         <size>
          <width>20</width>
          <height>20</height>
         </size>
-       </property>
-       <property name="shortcut">
-        <string>L</string>
        </property>
       </widget>
      </item>
@@ -433,13 +427,8 @@ FluentLabelBase{color:lightgray}</string>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
-   <class>ToolButton</class>
-   <extends>QToolButton</extends>
-   <header>qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
    <class>TransparentToolButton</class>
-   <extends>ToolButton</extends>
+   <extends>QToolButton</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>

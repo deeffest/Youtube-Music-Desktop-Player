@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from PyQt5.QtCore import Qt, QProcess, QRegExp
 from PyQt5.QtGui import QIcon, QPixmap, QRegExpValidator
 from PyQt5.QtWidgets import QDialog, QApplication
-from qfluentwidgets import MessageBox
+from qfluentwidgets import MessageBox, ToolTipFilter, ToolTipPosition
 from pywinstyles import apply_style
 
 from core.ui.ui_settings_dialog import Ui_SettingsDialog
@@ -110,6 +110,29 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.label_5.setPixmap(QPixmap(f"{self.window.icon_folder}/music-notify.png"))
         self.label_7.setPixmap(QPixmap(f"{self.window.icon_folder}/hotkeys.png"))
         self.label_9.setPixmap(QPixmap(f"{self.window.icon_folder}/audio.png"))
+
+        self.label_8.setToolTip(
+            "• HttpProxy: For HTTP/HTTPS traffic.\n"
+            "• Socks5Proxy: For TCP/UDP, anonymity.\n"
+            "• DefaultProxy: Uses system proxy.\n"
+            "• NoProxy: Direct connection."
+        )
+        self.label_8.installEventFilter(ToolTipFilter(self.label_8, 300, ToolTipPosition.TOP))
+
+        self.label_10.setToolTip(
+            "• Desktop: Native OpenGL implementation.\n"
+            "• Angle: OpenGL over Direct3D.\n"
+            "• Software: Software-based rendering.\n"
+            "• Auto: Automatic selection based on system."
+        )
+        self.label_10.installEventFilter(ToolTipFilter(self.label_10, 300, ToolTipPosition.TOP))
+
+        self.label_6.setToolTip(
+            "• Ctrl + Shift + Space: Play/Pause.\n"
+            "• Ctrl + Shift + Right: Skip Next.\n"
+            "• Ctrl + Shift + Left: Skip Previous."
+        )
+        self.label_6.installEventFilter(ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP))
 
     def check_track_change_notificator_dependency(self):
         if not self.SwitchButton_12.isChecked():

@@ -1,6 +1,6 @@
 <img src="resources/icons/logo.png" width="128" height="128">
 
-# Youtube-Music-Desktop-Player
+# Youtube Music Desktop Player
 Turns the [Youtube Music](https://music.youtube.com) site into a desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
 
 <img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/> <img src="https://img.shields.io/badge/Python-3.12.3-blue.svg?color=00B16A" alt="Python 3.12.3"/> <img src="https://img.shields.io/badge/Platform-Win32-blue?color=00B16A" alt="Platform Win32"/>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mini_player_dialog.ui'
+# Form implementation generated from reading ui file 'core/ui/mini_player_dialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -177,15 +177,13 @@ class Ui_MiniPlayerDialog(object):
         _translate = QtCore.QCoreApplication.translate
         MiniPlayerDialog.setWindowTitle(_translate("MiniPlayerDialog", "Dialog"))
         self.BodyLabel.setText(_translate("MiniPlayerDialog", "NaN:NaN"))
-        self.dislike_button.setToolTip(_translate("MiniPlayerDialog", "Dislike (D)"))
-        self.dislike_button.setShortcut(_translate("MiniPlayerDialog", "D"))
-        self.previous_button.setToolTip(_translate("MiniPlayerDialog", "Previous (Left)"))
+        self.dislike_button.setToolTip(_translate("MiniPlayerDialog", "Dislike"))
+        self.previous_button.setToolTip(_translate("MiniPlayerDialog", "Previous"))
         self.previous_button.setShortcut(_translate("MiniPlayerDialog", "Left"))
-        self.play_pause_button.setToolTip(_translate("MiniPlayerDialog", "Play/Pause (Space)"))
+        self.play_pause_button.setToolTip(_translate("MiniPlayerDialog", "Play/Pause"))
         self.play_pause_button.setShortcut(_translate("MiniPlayerDialog", "Space"))
-        self.next_button.setToolTip(_translate("MiniPlayerDialog", "Next (Right)"))
+        self.next_button.setToolTip(_translate("MiniPlayerDialog", "Next"))
         self.next_button.setShortcut(_translate("MiniPlayerDialog", "Right"))
-        self.like_button.setToolTip(_translate("MiniPlayerDialog", "Like (L)"))
-        self.like_button.setShortcut(_translate("MiniPlayerDialog", "L"))
+        self.like_button.setToolTip(_translate("MiniPlayerDialog", "Like"))
         self.BodyLabel_2.setText(_translate("MiniPlayerDialog", "NaN:NaN"))
 from qfluentwidgets import BodyLabel, StrongBodyLabel, TransparentToolButton

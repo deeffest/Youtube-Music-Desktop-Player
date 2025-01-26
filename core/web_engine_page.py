@@ -1,3 +1,4 @@
+import re
 import logging
 import webbrowser
 from typing import TYPE_CHECKING
@@ -15,42 +16,62 @@ class WebEnginePage(QWebEnginePage):
         super().__init__(parent)
         self.window:"MainWindow" = parent
 
-    def acceptNavigationRequest(self, url, _type, isMainFrame):
-        if ("music.youtube.com" not in url.toString() and
-            "accounts.google.com" not in url.toString() and
-            "googlesyndication.com" not in url.toString() and
-            "google.com/tools/feedback" not in url.toString() and
-            "consent.youtube.com" not in url.toString() and
-            "google.com/device" not in url.toString() and
-            "google.com/recaptcha" not in url.toString()):
-            webbrowser.open_new_tab(url.toString())
-            return False
+    def acceptNavigationRequest(self, url, type, isMainFrame):
+        url_str = url.toString()
 
-        return QWebEnginePage.acceptNavigationRequest(self, url, _type, isMainFrame)
-    
+        blocklist_patterns = [
+            r"^.*googlesyndication\.com.*$",
+            r"^.*googletagmanager\.com.*$",
+            r"^.*googleadservices\.com.*$",
+            r"^.*doubleclick\.net.*$",
+        ]
+
+        whitelist_patterns = [
+            r"^https://music\.youtube\.com/.*$",
+            r"^https://accounts\.google\..*/.*$",
+            r"^https://consent\.youtube\.com/.*$",
+            r"^https://accounts\.youtube\.com/.*$",
+            r"^https://ogs\.google\.com/.*$",
+            r"^https://www\.google\.com/device.*$",
+            r"^https://www\.google\.com/recaptcha.*$",
+            r"^https://www\.google\.com/tools/feedback/.*$",
+            r"^https://www\.youtube\.com/signin.*action_handle_signin.*$",
+        ]
+
+        for pattern in blocklist_patterns:
+            if re.match(pattern, url_str):
+                return False
+
+        for pattern in whitelist_patterns:
+            if re.match(pattern, url_str):
+                return True
+
+        webbrowser.open_new_tab(url_str)
+        return False
+
     def createWindow(self, type):
         temp_page = QWebEnginePage(self.profile(), self)
         
         def handle_url_change(url):
-            webbrowser.open_new_tab(url.toString())
+            self.window.load_url(url)
             temp_page.deleteLater()
         
         temp_page.urlChanged.connect(handle_url_change)
         return temp_page
 
-    def javaScriptAlert(self, qurl, text):
-        w = MessageBox(f"JavaScript Alert - {qurl.toString()}", text, self.window)
+    def javaScriptAlert(self, securityOrigin, msg):
+        w = MessageBox(f"JavaScript Alert - {securityOrigin.toString()}", msg, self.window)
         w.cancelButton.hide()
         w.exec_()
 
-    def javaScriptConfirm(self, qurl, text):
-        w = MessageBox(f"JavaScript Confirm - {qurl.toString()}", text, self.window)
+    def javaScriptConfirm(self, securityOrigin, msg):
+        w = MessageBox(f"JavaScript Confirm - {securityOrigin.toString()}", msg, self.window)
         return w.exec_() == True
 
-    def javaScriptPrompt(self, qurl, text, text_value):
+    def javaScriptPrompt(self, securityOrigin, msg, defaultValue):
         w = InputMessageBox(self.window)
-        w.titleLabel.setText(text)
-        w.lineEdit.setText(text_value)
+        w.titleLabel.setText(msg)
+        w.lineEdit.setText(defaultValue)
         if w.exec_():
             return (True, w.lineEdit.text())
         else:

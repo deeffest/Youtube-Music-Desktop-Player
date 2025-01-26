@@ -28,6 +28,7 @@ from core.web_engine_view import WebEngineView
 from core.ytmusic_downloader import DownloadThread
 from core.helpers import get_centered_geometry
 from core.ui.ui_main_window import Ui_MainWindow
+from core.hotkey_controller import HotkeyController
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -53,6 +54,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.total_time = "NaN"
         self.settings_ = app_settings
         self.opengl_enviroment_setting = opengl_enviroment_setting
+        self.download_thread = None
+        self.update_checker_thread = None
 
         if self.settings_.value("ad_blocker") is None:
             self.settings_.setValue("ad_blocker", 1)
@@ -99,7 +102,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.settings_.value("track_change_notificator") is None:
             self.settings_.setValue("track_change_notificator", 0)
         if self.settings_.value("hotkey_playback_control") is None:
-            self.settings_.setValue("hotkey_playback_control", 1)
+            self.settings_.setValue("hotkey_playback_control", 0)
         if self.settings_.value("only_audio_mode") is None:
             self.settings_.setValue("only_audio_mode", 0)
 
@@ -355,7 +358,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reload_tbutton.installEventFilter(ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP))
         self.reload_tbutton.clicked.connect(self.webview.reload)
 
-        self.url_line_edit.returnPressed.connect(self.load_url)
+        self.url_line_edit.returnPressed.connect(lambda: self.load_url(self.url_line_edit.text()))
 
         self.download_ddtbutton.setIcon(QIcon(f"{self.icon_folder}/download.png"))
         self.download_ddtbutton.setMenu(self.download_menu)
@@ -424,13 +427,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tray_icon = None
 
         if self.hotkey_playback_control_setting == 1:
-            yt_hotkeys_script = QWebEngineScript()
-            yt_hotkeys_script.setName("YtHotkeys")
-            yt_hotkeys_script.setSourceCode(self.read_script("yt_hotkeys.js"))
-            yt_hotkeys_script.setInjectionPoint(QWebEngineScript.Deferred)
-            yt_hotkeys_script.setWorldId(QWebEngineScript.MainWorld)
-            yt_hotkeys_script.setRunsOnSubFrames(False)
-            self.webpage.profile().scripts().insert(yt_hotkeys_script)
+            self.hotkey_controller_thread = HotkeyController(self)
+            self.hotkey_controller_thread.play_pause.connect(self.play_pause)
+            self.hotkey_controller_thread.skip_previous.connect(self.skip_previous)
+            self.hotkey_controller_thread.skip_next.connect(self.skip_next)
+            self.hotkey_controller_thread.start()
+        else:
+            self.hotkey_controller_thread = None
 
         if self.only_audio_mode_setting == 1:
             only_audio_script = QWebEngineScript()
@@ -453,11 +456,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.check_updates()
 
     def check_updates(self):
-        self.update_checker = UpdateChecker()
-        self.update_checker.update_checked.connect(self.handle_update_checked)
-        self.update_checker.start()
+        self.update_checker_thread = UpdateChecker()
+        self.update_checker_thread.update_checked.connect(self.handle_update_checked)
+        self.update_checker_thread.start()
         
     def handle_update_checked(self, last_version, title, whats_new, last_release_url):
+        self.terminate_update_checker_thread()
+
         if pkg_version.parse(self.version) < pkg_version.parse(last_version):
             msg_box = MessageBox(
                 title, 
@@ -469,6 +474,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 webbrowser.open_new_tab(last_release_url)
                 self.force_exit = True
                 self.close()
+
+    def terminate_update_checker_thread(self):
+        if self.update_checker_thread is not None:
+            if self.update_checker_thread.isRunning():
+                self.update_checker_thread.terminate()
+                self.update_checker_thread.wait()
+        self.update_checker_thread = None
 
     def handle_fullscreen(self, request):
         if not self.isFullScreen():
@@ -709,8 +721,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.is_downloading:
             return
 
-        if info_bar:
-            info_bar.close()
+        self.close_info_bar(info_bar)
 
         url = custom_url or self.current_url
 
@@ -732,6 +743,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_thread.start()
 
     def on_download_finished(self, download_folder, title):
+        self.terminate_download_thread()
+
         self.is_downloading = False
         self.update_download_buttons_state(self.is_downloading)
 
@@ -774,7 +787,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_as_unauthorized_shortcut.setEnabled(not is_downloading)
 
     def open_download_folder(self, download_folder, info_bar):
-        info_bar.close()
+        self.close_info_bar(info_bar)
         os.startfile(download_folder)
 
     def oauth_verifier(self, verification_url, user_code):
@@ -807,10 +820,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         clipboard.setText(code)
 
     def next_oauth_step(self, previous_url, info_bar):
-        info_bar.close()
+        self.close_info_bar(info_bar)
         self.oauth_completed.emit()
         if self.current_url != previous_url:
             self.webview.load(QUrl(previous_url))
+
+    def terminate_download_thread(self):
+        if self.download_thread is not None:
+            if self.download_thread.isRunning():
+                self.download_thread.terminate()
+                self.download_thread.wait()
+        self.download_thread = None
+
+    def close_info_bar(self, info_bar):
+        if info_bar is not None:
+            info_bar.removeEventFilter(info_bar)
+            info_bar.close()
+        info_bar = None
 
     def mini_player(self):
         if self.video_state == "VideoPlaying" or "VideoPaused":
@@ -834,8 +860,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.tray_icon:
             self.tray_icon.hide()
     
-    def load_url(self):
-        url = self.url_line_edit.text()
+    def load_url(self, url):
         self.webview.load(QUrl(url))
 
     def settings(self):
@@ -888,6 +913,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
     def closeEvent(self, event):
         self.save_settings()
+
+        if self.hotkey_controller_thread is not None:
+            if self.hotkey_controller_thread.isRunning():
+                self.hotkey_controller_thread.terminate()
+                self.hotkey_controller_thread.wait()
+        self.hotkey_controller_thread = None
+        
+        self.terminate_download_thread()
+        self.terminate_update_checker_thread()
 
         if self.tray_icon_setting == 1 and self.tray_icon is not None:
             if not self.force_exit:

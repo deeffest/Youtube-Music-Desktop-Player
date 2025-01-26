@@ -19,6 +19,8 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         super().__init__(parent)
         self.window:"MainWindow" = parent
 
+        self.thumbnail_loader_thread = None
+
         try:
             apply_style(self, "dark")
         except Exception as e:
@@ -64,17 +66,22 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.dislike_button.setIcon(QIcon(f"{self.window.icon_folder}/dislike.png"))
 
     def load_thumbnail(self, url):
-        if hasattr(self, "thumbnail_loader") and self.thumbnail_loader.isRunning():
-            self.thumbnail_loader.terminate()
-            self.thumbnail_loader.wait()
+        self.terminate_thumbnail_loader_thread()
 
-        self.thumbnail_loader = ThumbnailLoader(url, self.window)
-        self.thumbnail_loader.thumbnail_loaded.connect(self.on_thumbnail_loaded)
-        self.thumbnail_loader.start()
+        self.thumbnail_loader_thread = ThumbnailLoader(url, self.window)
+        self.thumbnail_loader_thread.thumbnail_loaded.connect(self.on_thumbnail_loaded)
+        self.thumbnail_loader_thread.start()
 
     def on_thumbnail_loaded(self, pixmap):
         self.thumbnail = pixmap
         self.thumbnail_label.setPixmap(self.thumbnail)
+
+    def terminate_thumbnail_loader_thread(self):
+        if self.thumbnail_loader_thread is not None:
+            if self.thumbnail_loader_thread.isRunning():
+                self.thumbnail_loader_thread.terminate()
+                self.thumbnail_loader_thread.wait()
+        self.thumbnail_loader_thread = None
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -82,11 +89,13 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         else:
             super().keyPressEvent(event)
             
-    def closeEvent(self, event):
+    def closeEvent(self, event):        
         if self.window.save_last_pos_of_mp_setting == 1:
             self.window.geometry_of_mp_setting = self.geometry()
             self.window.settings_.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
-        
+
+        self.terminate_thumbnail_loader_thread()
+
         self.window.show()
         self.window.show_tray_icon()
 

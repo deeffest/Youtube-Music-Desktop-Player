@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'settings_dialog.ui'
+# Form implementation generated from reading ui file 'core/ui/settings_dialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -142,6 +142,16 @@ class Ui_SettingsDialog(object):
         self.ComboBox.setSizePolicy(sizePolicy)
         self.ComboBox.setObjectName("ComboBox")
         self.horizontalLayout_11.addWidget(self.ComboBox)
+        self.label_8 = QtWidgets.QLabel(self.SettingBox11)
+        self.label_8.setCursor(QtGui.QCursor(QtCore.Qt.WhatsThisCursor))
+        self.label_8.setStyleSheet("QLabel {\n"
+"    color: white;\n"
+"}\n"
+"QLabel:hover {\n"
+"    color: red;\n"
+"}")
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout_11.addWidget(self.label_8)
         self.verticalLayout_8.addLayout(self.horizontalLayout_11)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
@@ -210,15 +220,15 @@ class Ui_SettingsDialog(object):
         self.SettingBox15.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.SettingBox15.setFrameShadow(QtWidgets.QFrame.Raised)
         self.SettingBox15.setObjectName("SettingBox15")
-        self.verticalLayout_28 = QtWidgets.QVBoxLayout(self.SettingBox15)
-        self.verticalLayout_28.setObjectName("verticalLayout_28")
-        self.horizontalLayout_24 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_24.setObjectName("horizontalLayout_24")
+        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.SettingBox15)
+        self.verticalLayout_10.setObjectName("verticalLayout_10")
+        self.horizontalLayout_19 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_19.setObjectName("horizontalLayout_19")
         self.BodyLabel_36 = BodyLabel(self.SettingBox15)
         self.BodyLabel_36.setObjectName("BodyLabel_36")
-        self.horizontalLayout_24.addWidget(self.BodyLabel_36)
+        self.horizontalLayout_19.addWidget(self.BodyLabel_36)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_24.addItem(spacerItem4)
+        self.horizontalLayout_19.addItem(spacerItem4)
         self.ComboBox_3 = ComboBox(self.SettingBox15)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -226,12 +236,22 @@ class Ui_SettingsDialog(object):
         sizePolicy.setHeightForWidth(self.ComboBox_3.sizePolicy().hasHeightForWidth())
         self.ComboBox_3.setSizePolicy(sizePolicy)
         self.ComboBox_3.setObjectName("ComboBox_3")
-        self.horizontalLayout_24.addWidget(self.ComboBox_3)
-        self.verticalLayout_28.addLayout(self.horizontalLayout_24)
+        self.horizontalLayout_19.addWidget(self.ComboBox_3)
+        self.label_10 = QtWidgets.QLabel(self.SettingBox15)
+        self.label_10.setCursor(QtGui.QCursor(QtCore.Qt.WhatsThisCursor))
+        self.label_10.setStyleSheet("QLabel {\n"
+"    color: white;\n"
+"}\n"
+"QLabel:hover {\n"
+"    color: red;\n"
+"}")
+        self.label_10.setObjectName("label_10")
+        self.horizontalLayout_19.addWidget(self.label_10)
+        self.verticalLayout_10.addLayout(self.horizontalLayout_19)
         self.BodyLabel_42 = BodyLabel(self.SettingBox15)
         self.BodyLabel_42.setWordWrap(True)
         self.BodyLabel_42.setObjectName("BodyLabel_42")
-        self.verticalLayout_28.addWidget(self.BodyLabel_42)
+        self.verticalLayout_10.addWidget(self.BodyLabel_42)
         self.verticalLayout_29.addWidget(self.SettingBox15)
         self.verticalLayout_21.addWidget(self.frame)
         self.frame_2 = QtWidgets.QFrame(self.scrollAreaWidgetContents)
@@ -487,6 +507,7 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_24 = QtWidgets.QVBoxLayout(self.SettingBox13)
         self.verticalLayout_24.setObjectName("verticalLayout_24")
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_17.setContentsMargins(-1, -1, 0, -1)
         self.horizontalLayout_17.setObjectName("horizontalLayout_17")
         self.label_7 = QtWidgets.QLabel(self.SettingBox13)
         self.label_7.setMinimumSize(QtCore.QSize(22, 22))
@@ -504,6 +525,16 @@ class Ui_SettingsDialog(object):
         self.SwitchButton_14.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.SwitchButton_14.setObjectName("SwitchButton_14")
         self.horizontalLayout_17.addWidget(self.SwitchButton_14)
+        self.label_6 = QtWidgets.QLabel(self.SettingBox13)
+        self.label_6.setCursor(QtGui.QCursor(QtCore.Qt.WhatsThisCursor))
+        self.label_6.setStyleSheet("QLabel {\n"
+"    color: white;\n"
+"}\n"
+"QLabel:hover {\n"
+"    color: red;\n"
+"}")
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_17.addWidget(self.label_6)
         self.verticalLayout_24.addLayout(self.horizontalLayout_17)
         self.verticalLayout_16.addWidget(self.SettingBox13)
         self.SettingBox14 = QtWidgets.QFrame(self.frame_4)
@@ -591,6 +622,7 @@ class Ui_SettingsDialog(object):
         self.BodyLabel_7.setText(_translate("SettingsDialog", "Save and restore last URL"))
         self.BodyLabel_8.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, the application remembers the last URL for your next session.</span></p></body></html>"))
         self.BodyLabel_5.setText(_translate("SettingsDialog", "Proxy Server Configuration"))
+        self.label_8.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">?</span></p></body></html>"))
         self.BodyLabel_10.setText(_translate("SettingsDialog", "Host"))
         self.LineEdit.setPlaceholderText(_translate("SettingsDialog", "192.168.1.1"))
         self.BodyLabel_14.setText(_translate("SettingsDialog", "Port"))
@@ -601,6 +633,7 @@ class Ui_SettingsDialog(object):
         self.PasswordLineEdit.setPlaceholderText(_translate("SettingsDialog", "pass123"))
         self.BodyLabel_15.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">Using a proxy server helps when YouTube Music is unavailable in your country.</span></p></body></html>"))
         self.BodyLabel_36.setText(_translate("SettingsDialog", "QT OpenGL environment"))
+        self.label_10.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">?</span></p></body></html>"))
         self.BodyLabel_42.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">Select Angle or Software to fix invisible menus or tooltips in the full screen.</span></p></body></html>"))
         self.BodyLabel_9.setText(_translate("SettingsDialog", "Full screen mode support"))
         self.BodyLabel_11.setText(_translate("SettingsDialog", "Animated scrolling support"))
@@ -614,6 +647,7 @@ class Ui_SettingsDialog(object):
         self.BodyLabel_20.setText(_translate("SettingsDialog", "System Tray App Icon"))
         self.BodyLabel_21.setText(_translate("SettingsDialog", "Track Change Notificator"))
         self.BodyLabel_23.setText(_translate("SettingsDialog", "Hotkey Playback Control"))
+        self.label_6.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">?</span></p></body></html>"))
         self.BodyLabel_24.setText(_translate("SettingsDialog", "Only Audio Mode"))
         self.PushButton_2.setText(_translate("SettingsDialog", "Restart"))
         self.PrimaryPushButton.setText(_translate("SettingsDialog", "Save"))
