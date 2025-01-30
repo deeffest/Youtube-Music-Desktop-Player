@@ -19,8 +19,6 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         super().__init__(parent)
         self.window:"MainWindow" = parent
 
-        self.thumbnail_loader_thread = None
-
         try:
             apply_style(self, "dark")
         except Exception as e:
@@ -45,7 +43,6 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.setFixedSize(self.size())
 
         self.thumbnail = QPixmap()
-        self.current_loader = None
         
         self.previous_button.clicked.connect(self.window.skip_previous)
         self.play_pause_button.clicked.connect(self.window.play_pause)
@@ -66,7 +63,8 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.dislike_button.setIcon(QIcon(f"{self.window.icon_folder}/dislike.png"))
 
     def load_thumbnail(self, url):
-        self.terminate_thumbnail_loader_thread()
+        if hasattr(self, "thumbnail_loader_thread") and self.thumbnail_loader_thread.isRunning():
+            self.thumbnail_loader_thread.stop()
 
         self.thumbnail_loader_thread = ThumbnailLoader(url, self.window)
         self.thumbnail_loader_thread.thumbnail_loaded.connect(self.on_thumbnail_loaded)
@@ -76,25 +74,19 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.thumbnail = pixmap
         self.thumbnail_label.setPixmap(self.thumbnail)
 
-    def terminate_thumbnail_loader_thread(self):
-        if self.thumbnail_loader_thread is not None:
-            if self.thumbnail_loader_thread.isRunning():
-                self.thumbnail_loader_thread.terminate()
-                self.thumbnail_loader_thread.wait()
-        self.thumbnail_loader_thread = None
-
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
         else:
             super().keyPressEvent(event)
             
-    def closeEvent(self, event):        
+    def closeEvent(self, event):
         if self.window.save_last_pos_of_mp_setting == 1:
             self.window.geometry_of_mp_setting = self.geometry()
             self.window.settings_.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
-
-        self.terminate_thumbnail_loader_thread()
+        
+        if hasattr(self, "thumbnail_loader_thread") and self.thumbnail_loader_thread.isRunning():
+            self.thumbnail_loader_thread.stop()
 
         self.window.show()
         self.window.show_tray_icon()

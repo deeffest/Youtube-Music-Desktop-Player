@@ -3,7 +3,7 @@ import os
 import webbrowser
 
 import discordrpc
-from PyQt5.QtCore import QUrl, Qt, QSize, QRect, pyqtSignal
+from PyQt5.QtCore import QUrl, Qt, QSize, QRect, pyqtSignal, QTimer
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.QtWebChannel import QWebChannel
@@ -54,8 +54,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.total_time = "NaN"
         self.settings_ = app_settings
         self.opengl_enviroment_setting = opengl_enviroment_setting
-        self.download_thread = None
-        self.update_checker_thread = None
+        self.notification_in_progress = False
 
         if self.settings_.value("ad_blocker") is None:
             self.settings_.setValue("ad_blocker", 1)
@@ -429,8 +428,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.hotkey_playback_control_setting == 1:
             self.hotkey_controller_thread = HotkeyController(self)
             self.hotkey_controller_thread.play_pause.connect(self.play_pause)
-            self.hotkey_controller_thread.skip_previous.connect(self.skip_previous)
             self.hotkey_controller_thread.skip_next.connect(self.skip_next)
+            self.hotkey_controller_thread.skip_previous.connect(self.skip_previous)
+            self.hotkey_controller_thread.volume_up.connect(self.volume_up)
+            self.hotkey_controller_thread.volume_down.connect(self.volume_down)
             self.hotkey_controller_thread.start()
         else:
             self.hotkey_controller_thread = None
@@ -461,8 +462,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_checker_thread.start()
         
     def handle_update_checked(self, last_version, title, whats_new, last_release_url):
-        self.terminate_update_checker_thread()
-
         if pkg_version.parse(self.version) < pkg_version.parse(last_version):
             msg_box = MessageBox(
                 title, 
@@ -474,13 +473,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 webbrowser.open_new_tab(last_release_url)
                 self.force_exit = True
                 self.close()
-
-    def terminate_update_checker_thread(self):
-        if self.update_checker_thread is not None:
-            if self.update_checker_thread.isRunning():
-                self.update_checker_thread.terminate()
-                self.update_checker_thread.wait()
-        self.update_checker_thread = None
 
     def handle_fullscreen(self, request):
         if not self.isFullScreen():
@@ -678,20 +670,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tool_btn_next.clicked.connect(self.skip_next)
         self.win_thumbnail_toolbar.addButton(self.tool_btn_next)
 
-    def skip_previous(self):
-        self.run_js_script("skip_previous.js")
-
     def play_pause(self):
         self.run_js_script("play_pause.js")
 
     def skip_next(self):
-        self.run_js_script("skip_next.js")
+        self.run_js_script("skip_next.js")    
+        
+    def skip_previous(self):
+        self.run_js_script("skip_previous.js")
 
     def like(self):
         self.run_js_script("like.js")
     
     def dislike(self):
         self.run_js_script("dislike.js")
+
+    def volume_up(self):
+        self.run_js_script("volume_up.js")
+    
+    def volume_down(self):
+        self.run_js_script("volume_down.js")
         
     def run_js_script(self, script_name):
         self.webpage.runJavaScript(self.read_script(script_name))    
@@ -743,8 +741,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_thread.start()
 
     def on_download_finished(self, download_folder, title):
-        self.terminate_download_thread()
-
         self.is_downloading = False
         self.update_download_buttons_state(self.is_downloading)
 
@@ -825,18 +821,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.current_url != previous_url:
             self.webview.load(QUrl(previous_url))
 
-    def terminate_download_thread(self):
-        if self.download_thread is not None:
-            if self.download_thread.isRunning():
-                self.download_thread.terminate()
-                self.download_thread.wait()
-        self.download_thread = None
-
     def close_info_bar(self, info_bar):
         if info_bar is not None:
             info_bar.removeEventFilter(info_bar)
             info_bar.close()
-        info_bar = None
 
     def mini_player(self):
         if self.video_state == "VideoPlaying" or "VideoPaused":
@@ -885,9 +873,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def send_notification(self):
         if self.track_change_notificator_setting  == 1 and self.tray_icon is not None:
-            title = f"{self.title}"
-            message = f"{self.author}"
-            self.tray_icon.showMessage(title, message, icon=QSystemTrayIcon.NoIcon)
+            if not self.notification_in_progress:
+                self.notification_in_progress = True
+
+                title = f"{self.title}"
+                message = f"{self.author}"
+                self.tray_icon.showMessage(title, message, icon=QSystemTrayIcon.NoIcon)
+
+                QTimer.singleShot(5000, self.reset_notification_flag)
+
+    def reset_notification_flag(self):
+        self.notification_in_progress = False
 
     def save_settings(self):
         if self.open_last_url_at_startup_setting == 1:
@@ -910,18 +906,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 self.show()
         self.activateWindow()
+
+    def stop_running_threads(self):
+        if self.hotkey_controller_thread is not None and self.hotkey_controller_thread.isRunning():
+            self.hotkey_controller_thread.stop()
+        
+        if hasattr(self, "download_thread") and self.download_thread.isRunning():
+            self.download_thread.stop()
+
+        if hasattr(self, "update_checker_thread") and self.update_checker_thread.isRunning():
+            self.update_checker_thread.stop()
         
     def closeEvent(self, event):
         self.save_settings()
-
-        if self.hotkey_controller_thread is not None:
-            if self.hotkey_controller_thread.isRunning():
-                self.hotkey_controller_thread.terminate()
-                self.hotkey_controller_thread.wait()
-        self.hotkey_controller_thread = None
-        
-        self.terminate_download_thread()
-        self.terminate_update_checker_thread()
 
         if self.tray_icon_setting == 1 and self.tray_icon is not None:
             if not self.force_exit:
@@ -944,6 +941,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.force_exit = False
                 event.ignore()
                 return
-        
+            
+        self.stop_running_threads()
         self.save_settings()
+        
         event.accept()

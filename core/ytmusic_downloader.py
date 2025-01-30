@@ -36,7 +36,7 @@ class DownloadThread(QThread):
             elif "playlist" in self.url:
                 self.download_playlist()
         except Exception as e:
-            logging.error(f"Error during download: {str(e)}")
+            logging.error(f"Download track/playlist failed: {str(e)}")
             self.download_failed.emit(self.url, self.download_folder, self.title, self.use_oauth)
         else:
             self.download_finished.emit(self.download_folder, self.title)
@@ -127,3 +127,7 @@ class DownloadThread(QThread):
             creationflags=subprocess.CREATE_NO_WINDOW
         )
         os.remove(input_file)
+
+    def stop(self):
+        self.terminate()
+        self.wait()

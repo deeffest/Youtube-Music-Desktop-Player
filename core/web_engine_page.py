@@ -40,12 +40,15 @@ class WebEnginePage(QWebEnginePage):
 
         for pattern in blocklist_patterns:
             if re.match(pattern, url_str):
+                logging.info(f"🚫 Blocked pattern: {pattern} - URL: {url_str}")
                 return False
 
         for pattern in whitelist_patterns:
             if re.match(pattern, url_str):
+                logging.info(f"✅ Allowed pattern: {pattern} - URL: {url_str}")
                 return True
 
+        logging.info(f"🌐 Opening URL: {url_str}")
         webbrowser.open_new_tab(url_str)
         return False
 
@@ -78,5 +81,9 @@ class WebEnginePage(QWebEnginePage):
             return (False, "")
         
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
-        if level == QWebEnginePage.ErrorMessageLevel:
+        if level == QWebEnginePage.InfoMessageLevel:
+            logging.info(f"JavaScript Console Info: {message} (Level: {level}, Line: {lineNumber}, Source: {sourceID})")
+        elif level == QWebEnginePage.WarningMessageLevel:
+            logging.warning(f"JavaScript Console Warning: {message} (Level: {level}, Line: {lineNumber}, Source: {sourceID})")
+        elif level == QWebEnginePage.ErrorMessageLevel:
             logging.error(f"JavaScript Console Error: {message} (Level: {level}, Line: {lineNumber}, Source: {sourceID})")

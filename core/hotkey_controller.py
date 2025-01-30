@@ -7,10 +7,13 @@ from PyQt5.QtCore import QThread, pyqtSignal
 if TYPE_CHECKING:
     from core.main_window import MainWindow
 
+
 class HotkeyController(QThread):
     play_pause = pyqtSignal()
-    skip_previous = pyqtSignal()
     skip_next = pyqtSignal()
+    skip_previous = pyqtSignal()
+    volume_up = pyqtSignal()
+    volume_down = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -18,6 +21,7 @@ class HotkeyController(QThread):
 
         self.ctrl_pressed = False
         self.shift_pressed = False
+        self.listener = None 
 
     def on_press(self, key):
         try:
@@ -28,11 +32,15 @@ class HotkeyController(QThread):
 
             if self.ctrl_pressed and self.shift_pressed:
                 if key == keyboard.Key.space:
-                    self.play_pause.emit()
-                elif key == keyboard.Key.left:
-                    self.skip_previous.emit()
+                    self.play_pause.emit()                
                 elif key == keyboard.Key.right:
                     self.skip_next.emit()
+                elif key == keyboard.Key.left:
+                    self.skip_previous.emit()
+                elif key == keyboard.Key.up:
+                    self.volume_up.emit()
+                elif key == keyboard.Key.down:
+                    self.volume_down.emit()
         except AttributeError as e:
             logging.error(f"Failed to handle hotkey: {str(e)}")
 
@@ -43,5 +51,12 @@ class HotkeyController(QThread):
             self.shift_pressed = False
 
     def run(self):
-        with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
-            listener.join()
+        self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+        self.listener.start()
+        self.listener.join()
+
+    def stop(self):
+        if self.listener:
+            self.listener.stop()
+        self.terminate()
+        self.wait()

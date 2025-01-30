@@ -9,6 +9,7 @@ from core.helpers import get_proxies
 if TYPE_CHECKING:
     from core.main_window import MainWindow
 
+
 class ThumbnailLoader(QThread):
     thumbnail_loaded = pyqtSignal(QPixmap)
 
@@ -43,3 +44,7 @@ class ThumbnailLoader(QThread):
         except Exception as e:
             logging.error(f"Error loading thumbnail: {str(e)}")
             self.thumbnail_loaded.emit(QPixmap())
+
+    def stop(self):
+        self.terminate()
+        self.wait()

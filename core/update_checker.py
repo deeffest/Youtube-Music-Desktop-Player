@@ -6,6 +6,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 class UpdateChecker(QThread):
     update_checked = pyqtSignal(str, str, str, str)
+    
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -25,3 +26,7 @@ class UpdateChecker(QThread):
             
         if response.status_code == 200:
             self.update_checked.emit(last_version, title, whats_new, last_release_url)
+
+    def stop(self):
+        self.terminate()
+        self.wait()

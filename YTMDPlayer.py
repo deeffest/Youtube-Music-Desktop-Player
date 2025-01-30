@@ -14,7 +14,7 @@ from core.main_window import MainWindow
 name = "Youtube-Music-Desktop-Player"
 author = "deeffest"
 website = "deeffest.pythonanywhere.com"
-version = "v1.17.0-rc1"
+version = "v1.17.0-rc2"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 if __name__ == '__main__':
@@ -32,13 +32,13 @@ if __name__ == '__main__':
     rotating_handler = RotatingFileHandler(
         log_file, maxBytes=5 * 1024 * 1024, backupCount=5, encoding="utf-8"
     )
-    rotating_handler.setLevel(logging.ERROR)
+    rotating_handler.setLevel(logging.INFO)
     rotating_handler.setFormatter(logging.Formatter(
         "[%(asctime)s] %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
     ))
 
     logging.basicConfig(
-        level=logging.ERROR,
+        level=logging.INFO,
         handlers=[
             rotating_handler,
             logging.StreamHandler()

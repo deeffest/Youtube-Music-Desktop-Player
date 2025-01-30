@@ -42,8 +42,8 @@ Turns the [Youtube Music](https://music.youtube.com) site into a desktop applica
    Open the extracted folder, then run the executable file to start the YTMDPlayer.
 
 ## See also
-- [deeffest/DEEF-Lite-Media-Player](https://github.com/deeffest/DEEF-Lite-Media-Player): Сross-platform media player. 
 - [deeffest/DEEF-Lite-Image-Viewer](https://github.com/deeffest/DEEF-Lite-Image-Viewer): Сross-platform image viewer.
+- [deeffest/DEEF-Lite-Media-Player](https://github.com/deeffest/DEEF-Lite-Media-Player): Сross-platform media player. 
 
 ## License
 The Youtube Music Desktop Player is distributed under the **GPLv3 license**.

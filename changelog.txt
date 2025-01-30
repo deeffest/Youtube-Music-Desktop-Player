@@ -1,3 +1,10 @@
+v1.17.0-rc2 is Here! (30.01.2025)
+- Fixed a bug with mini-player freezing and subsequent application crash.
+- Added 2 new hotkeys for `Hotkey Playback Control` plugin: `Ctrl + Shift + Up` - volume up, `Ctrl + Shift + Down` - volume down.
+- The log level is now INFO again, not ERROR.
+- Added a 5-second timer to prevent track change notification from being sent again within that time.
+- Other fixes and improvements.
+
 v1.17.0-rc1 is Here! (26.01.2025)
 - The `Hotkey Playback Control` plugin has been redesigned: now hotkeys work even when the YTMDPlayer window is hidden. Now this plugin is a kind of replacement for missing multimedia keys on the keyboard and supports such hotkeys as `Ctrl + Shift + Space` (Play/Pause), `Ctrl + Shift + Right` (Skip Next), `Ctrl + Shift + Left` (Skip Previous).
 - Some settings items now have a question mark, when you hover over it, a tooltip appears, for example, the list of supported shortcuts in `Hotkey Playback Control` plugin.

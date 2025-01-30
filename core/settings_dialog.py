@@ -130,7 +130,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.label_6.setToolTip(
             "• Ctrl + Shift + Space: Play/Pause.\n"
             "• Ctrl + Shift + Right: Skip Next.\n"
-            "• Ctrl + Shift + Left: Skip Previous."
+            "• Ctrl + Shift + Left: Skip Previous.\n"
+            "• Ctrl + Shift + Up: Volume Up.\n"
+            "• Ctrl + Shift + Down: Volume Down."
         )
         self.label_6.installEventFilter(ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP))
 
@@ -164,7 +166,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             msg_box.cancelButton.setText("Cancel")
         
         if not msg_box or msg_box.exec_():
+            self.window.stop_running_threads()
             self.window.save_settings()
+            
             self.save_settings()
             QApplication.quit()
             QProcess.startDetached(sys.executable, sys.argv)
