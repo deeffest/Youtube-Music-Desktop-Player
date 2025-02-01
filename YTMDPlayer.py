@@ -10,21 +10,24 @@ from PyQt5.QtWidgets import QApplication
 
 from core.main_window import MainWindow
 
+NAME = "Youtube-Music-Desktop-Player"
+AUTHOR = "deeffest"
+WEBSITE = "deeffest.pythonanywhere.com"
+VERSION = "v1.17.0"
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-name = "Youtube-Music-Desktop-Player"
-author = "deeffest"
-website = "deeffest.pythonanywhere.com"
-version = "v1.17.0"
-current_dir = os.path.dirname(os.path.abspath(__file__))
 
-if __name__ == "__main__":
-    app_settings = QSettings(author, name)
+def init_app_settings():
+    app_settings = QSettings(AUTHOR, NAME)
     if app_settings.value("opengl_enviroment") is None:
         app_settings.setValue("opengl_enviroment", "Auto")
+    return app_settings
 
+
+def init_logging():
     logging.getLogger().handlers.clear()
 
-    log_dir = os.path.join(os.path.expanduser("~"), name, "logs")
+    log_dir = os.path.join(os.path.expanduser("~"), NAME, "logs")
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
@@ -36,7 +39,7 @@ if __name__ == "__main__":
     rotating_handler.setFormatter(
         logging.Formatter(
             "[%(asctime)s] %(name)s - %(levelname)s - %(filename)s:"
-            + "%(lineno)d - %(message)s"
+            "%(lineno)d - %(message)s"
         )
     )
 
@@ -44,37 +47,70 @@ if __name__ == "__main__":
         level=logging.INFO, handlers=[rotating_handler, logging.StreamHandler()]
     )
 
-    opengl_enviroment_setting = app_settings.value("opengl_enviroment")
-    if opengl_enviroment_setting == "Desktop":
+    logging.info("Logging initialized")
+
+
+def setup_opengl_environment(app_settings):
+    setting = app_settings.value("opengl_enviroment")
+    if setting == "Desktop":
         os.environ["QT_OPENGL"] = "desktop"
-    elif opengl_enviroment_setting == "Angle":
+    elif setting == "Angle":
         os.environ["QT_OPENGL"] = "angle"
-    elif opengl_enviroment_setting == "Software":
+    elif setting == "Software":
         os.environ["QT_OPENGL"] = "software"
     else:
         os.environ.pop("QT_OPENGL", None)
+    return setting
 
-    app = QApplication(sys.argv)
-    app.setApplicationName(name)
-    app.setOrganizationName(author)
-    app.setOrganizationDomain(website)
-    app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
-    with open(f"{current_dir}/core/css/styles.css", "r") as file:
-        app.setStyleSheet(file.read())
+def load_stylesheet(app):
+    css_path = os.path.join(CURRENT_DIR, "core", "css", "styles.css")
+    try:
+        with open(css_path, "r") as file:
+            stylesheet = file.read()
+        app.setStyleSheet(stylesheet)
+        logging.info(f"Loaded stylesheet: {css_path}")
+    except Exception as e:
+        logging.error(f"Failed to load stylesheet: {str(e)}")
 
+
+def remove_service_worker_directory():
     username = getpass.getuser()
     sw_dir = (
-        f"C:/Users/{username}/AppData/Local/{author}/{name}/QtWebEngine/"
+        f"C:/Users/{username}/AppData/Local/{AUTHOR}/{NAME}/QtWebEngine/"
         "Default/Service Worker"
     )
     try:
         shutil.rmtree(sw_dir)
+        logging.info(f"Removed Service Worker directory: {sw_dir}")
     except Exception as e:
         logging.error(f"Failed to remove Service Worker directory: {str(e)}")
 
+
+def create_main_window(app_settings, opengl_setting):
     window = MainWindow(
-        app_settings, opengl_enviroment_setting, app_info=[name, version, current_dir]
+        app_settings, opengl_setting, app_info=[NAME, VERSION, CURRENT_DIR]
     )
     window.show()
+    return window
+
+
+def main():
+    init_logging()
+    app_settings = init_app_settings()
+    opengl_setting = setup_opengl_environment(app_settings)
+
+    app = QApplication(sys.argv)
+    app.setApplicationName(NAME)
+    app.setOrganizationName(AUTHOR)
+    app.setOrganizationDomain(WEBSITE)
+    app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
+
+    load_stylesheet(app)
+    remove_service_worker_directory()
+    create_main_window(app_settings, opengl_setting)
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()
