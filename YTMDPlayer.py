@@ -47,8 +47,6 @@ def init_logging():
         level=logging.INFO, handlers=[rotating_handler, logging.StreamHandler()]
     )
 
-    logging.info("Logging initialized")
-
 
 def setup_opengl_environment(app_settings):
     setting = app_settings.value("opengl_enviroment")
@@ -69,7 +67,6 @@ def load_stylesheet(app):
         with open(css_path, "r") as file:
             stylesheet = file.read()
         app.setStyleSheet(stylesheet)
-        logging.info(f"Loaded stylesheet: {css_path}")
     except Exception as e:
         logging.error(f"Failed to load stylesheet: {str(e)}")
 
@@ -82,7 +79,6 @@ def remove_service_worker_directory():
     )
     try:
         shutil.rmtree(sw_dir)
-        logging.info(f"Removed Service Worker directory: {sw_dir}")
     except Exception as e:
         logging.error(f"Failed to remove Service Worker directory: {str(e)}")
 
