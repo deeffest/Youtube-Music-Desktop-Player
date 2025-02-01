@@ -10,6 +10,7 @@ from pywinstyles import apply_style
 from core.thumbnail_loader import ThumbnailLoader
 from core.helpers import get_taskbar_position
 from core.ui.ui_mini_player_dialog import Ui_MiniPlayerDialog
+
 if TYPE_CHECKING:
     from core.main_window import MainWindow
 
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.window:"MainWindow" = parent
+        self.window: "MainWindow" = parent
 
         try:
             apply_style(self, "dark")
@@ -43,27 +44,44 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.setFixedSize(self.size())
 
         self.thumbnail = QPixmap()
-        
+
         self.previous_button.clicked.connect(self.window.skip_previous)
         self.play_pause_button.clicked.connect(self.window.play_pause)
         self.next_button.clicked.connect(self.window.skip_next)
         self.like_button.clicked.connect(self.window.like)
         self.dislike_button.clicked.connect(self.window.dislike)
 
-        self.previous_button.installEventFilter(ToolTipFilter(self.previous_button, 300, ToolTipPosition.TOP))
-        self.play_pause_button.installEventFilter(ToolTipFilter(self.play_pause_button, 300, ToolTipPosition.TOP))
-        self.next_button.installEventFilter(ToolTipFilter(self.next_button, 300, ToolTipPosition.TOP))
-        self.like_button.installEventFilter(ToolTipFilter(self.like_button, 300, ToolTipPosition.TOP))
-        self.dislike_button.installEventFilter(ToolTipFilter(self.dislike_button, 300, ToolTipPosition.TOP))
+        self.previous_button.installEventFilter(
+            ToolTipFilter(self.previous_button, 300, ToolTipPosition.TOP)
+        )
+        self.play_pause_button.installEventFilter(
+            ToolTipFilter(self.play_pause_button, 300, ToolTipPosition.TOP)
+        )
+        self.next_button.installEventFilter(
+            ToolTipFilter(self.next_button, 300, ToolTipPosition.TOP)
+        )
+        self.like_button.installEventFilter(
+            ToolTipFilter(self.like_button, 300, ToolTipPosition.TOP)
+        )
+        self.dislike_button.installEventFilter(
+            ToolTipFilter(self.dislike_button, 300, ToolTipPosition.TOP)
+        )
 
-        self.previous_button.setIcon(QIcon(f"{self.window.icon_folder}/previous-filled.png"))
-        self.play_pause_button.setIcon(QIcon(f"{self.window.icon_folder}/play-filled.png"))
+        self.previous_button.setIcon(
+            QIcon(f"{self.window.icon_folder}/previous-filled.png")
+        )
+        self.play_pause_button.setIcon(
+            QIcon(f"{self.window.icon_folder}/play-filled.png")
+        )
         self.next_button.setIcon(QIcon(f"{self.window.icon_folder}/next-filled.png"))
         self.like_button.setIcon(QIcon(f"{self.window.icon_folder}/like.png"))
         self.dislike_button.setIcon(QIcon(f"{self.window.icon_folder}/dislike.png"))
 
     def load_thumbnail(self, url):
-        if hasattr(self, "thumbnail_loader_thread") and self.thumbnail_loader_thread.isRunning():
+        if (
+            hasattr(self, "thumbnail_loader_thread")
+            and self.thumbnail_loader_thread.isRunning()
+        ):
             self.thumbnail_loader_thread.stop()
 
         self.thumbnail_loader_thread = ThumbnailLoader(url, self.window)
@@ -79,13 +97,18 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
             self.close()
         else:
             super().keyPressEvent(event)
-            
+
     def closeEvent(self, event):
         if self.window.save_last_pos_of_mp_setting == 1:
             self.window.geometry_of_mp_setting = self.geometry()
-            self.window.settings_.setValue("geometry_of_mp", self.window.geometry_of_mp_setting)
-        
-        if hasattr(self, "thumbnail_loader_thread") and self.thumbnail_loader_thread.isRunning():
+            self.window.settings_.setValue(
+                "geometry_of_mp", self.window.geometry_of_mp_setting
+            )
+
+        if (
+            hasattr(self, "thumbnail_loader_thread")
+            and self.thumbnail_loader_thread.isRunning()
+        ):
             self.thumbnail_loader_thread.stop()
 
         self.window.show()

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class WebChannelBackend(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.window:"MainWindow" = parent
+        self.window: "MainWindow" = parent
 
     @pyqtSlot(str)
     def like_status_changed(self, status):
@@ -26,7 +26,11 @@ class WebChannelBackend(QObject):
         self.window.author = author
         self.window.thumbnail_url = thumbnail_url
 
-        is_empty = not self.window.title or not self.window.author or not self.window.thumbnail_url
+        is_empty = (
+            not self.window.title
+            or not self.window.author
+            or not self.window.thumbnail_url
+        )
 
         if is_empty:
             window_title = "Youtube Music Desktop Player"
@@ -52,7 +56,10 @@ class WebChannelBackend(QObject):
     def video_state_changed(self, state):
         self.window.video_state = state
 
-        if self.window.video_state == "VideoPlaying" or self.window.video_state == "VideoPaused":
+        if (
+            self.window.video_state == "VideoPlaying"
+            or self.window.video_state == "VideoPaused"
+        ):
             self.window.mini_player_action.setEnabled(True)
             self.window.mini_player_tbutton.setEnabled(True)
             self.window.mini_player_shortcut.setEnabled(True)

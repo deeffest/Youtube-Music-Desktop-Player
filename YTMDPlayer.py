@@ -17,7 +17,7 @@ website = "deeffest.pythonanywhere.com"
 version = "v1.17.0"
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app_settings = QSettings(author, name)
     if app_settings.value("opengl_enviroment") is None:
         app_settings.setValue("opengl_enviroment", "Auto")
@@ -33,16 +33,15 @@ if __name__ == '__main__':
         log_file, maxBytes=5 * 1024 * 1024, backupCount=5, encoding="utf-8"
     )
     rotating_handler.setLevel(logging.INFO)
-    rotating_handler.setFormatter(logging.Formatter(
-        "[%(asctime)s] %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
-    ))
+    rotating_handler.setFormatter(
+        logging.Formatter(
+            "[%(asctime)s] %(name)s - %(levelname)s - %(filename)s:"
+            + "%(lineno)d - %(message)s"
+        )
+    )
 
     logging.basicConfig(
-        level=logging.INFO,
-        handlers=[
-            rotating_handler,
-            logging.StreamHandler()
-        ]
+        level=logging.INFO, handlers=[rotating_handler, logging.StreamHandler()]
     )
 
     opengl_enviroment_setting = app_settings.value("opengl_enviroment")
@@ -58,19 +57,24 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setApplicationName(name)
     app.setOrganizationName(author)
-    app.setOrganizationDomain(website)  
+    app.setOrganizationDomain(website)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
-    with open(f"{current_dir}/core/css/styles.css", 'r') as file:
+    with open(f"{current_dir}/core/css/styles.css", "r") as file:
         app.setStyleSheet(file.read())
 
     username = getpass.getuser()
-    sw_dir = f"C:/Users/{username}/AppData/Local/{author}/{name}/QtWebEngine/Default/Service Worker"
+    sw_dir = (
+        f"C:/Users/{username}/AppData/Local/{author}/{name}/QtWebEngine/"
+        "Default/Service Worker"
+    )
     try:
         shutil.rmtree(sw_dir)
     except Exception as e:
         logging.error(f"Failed to remove Service Worker directory: {str(e)}")
 
-    window = MainWindow(app_settings, opengl_enviroment_setting, app_info=[name, version, current_dir])
+    window = MainWindow(
+        app_settings, opengl_enviroment_setting, app_info=[name, version, current_dir]
+    )
     window.show()
     sys.exit(app.exec_())

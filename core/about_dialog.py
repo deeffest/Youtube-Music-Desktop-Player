@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QDialog
 from pywinstyles import apply_style
 
 from core.ui.ui_about_dialog import Ui_AboutDialog
+
 if TYPE_CHECKING:
     from core.main_window import MainWindow
 
@@ -15,8 +16,8 @@ if TYPE_CHECKING:
 class AboutDialog(QDialog, Ui_AboutDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.window:"MainWindow" = parent
-        
+        self.window: "MainWindow" = parent
+
         try:
             apply_style(self, "dark")
         except Exception as e:

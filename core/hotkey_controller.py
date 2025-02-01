@@ -21,7 +21,7 @@ class HotkeyController(QThread):
 
         self.ctrl_pressed = False
         self.shift_pressed = False
-        self.listener = None 
+        self.listener = None
 
     def on_press(self, key):
         try:
@@ -32,7 +32,7 @@ class HotkeyController(QThread):
 
             if self.ctrl_pressed and self.shift_pressed:
                 if key == keyboard.Key.space:
-                    self.play_pause.emit()                
+                    self.play_pause.emit()
                 elif key == keyboard.Key.right:
                     self.skip_next.emit()
                 elif key == keyboard.Key.left:
@@ -51,7 +51,9 @@ class HotkeyController(QThread):
             self.shift_pressed = False
 
     def run(self):
-        self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+        self.listener = keyboard.Listener(
+            on_press=self.on_press, on_release=self.on_release
+        )
         self.listener.start()
         self.listener.join()
 
