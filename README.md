@@ -1,4 +1,4 @@
-<img src="resources/icons/logo.png" width="128" height="128">
+<img src="resources/icons/logo.png" width="128" height="128" alt="logo">
 
 # Youtube Music Desktop Player
 Turns the [Youtube Music](https://music.youtube.com) site into a desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
@@ -6,7 +6,7 @@ Turns the [Youtube Music](https://music.youtube.com) site into a desktop applica
 <img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/> <img src="https://img.shields.io/badge/Python-3.12.3-blue.svg?color=00B16A" alt="Python 3.12.3"/> <img src="https://img.shields.io/badge/Platform-Win32-blue?color=00B16A" alt="Platform Win32"/>
 
 ## Screenshots
-![Screenshot_1](resources/images/main_window.png)
+![main_window](https://github.com/user-attachments/assets/934b443e-069b-40a5-a36c-a62a4f7de9c1)
 
 ## Quick Start
 ### Source Code

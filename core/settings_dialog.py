@@ -19,6 +19,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
+        self.configure_window()
+        self.configure_ui_elements()
+
+    def configure_window(self):
         try:
             apply_style(self, "dark")
         except Exception as e:
@@ -30,6 +34,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings.png"))
         self.setFixedSize(self.size())
 
+    def configure_ui_elements(self):
         self.PillPushButton.setChecked(True)
         regex = QRegExp(r"^[1-9][0-9]{0,4}$")
         regex_validator = QRegExpValidator(regex)
@@ -113,7 +118,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.label.setPixmap(QPixmap(f"{self.window.icon_folder}/adblock.png"))
         self.label_2.setPixmap(QPixmap(f"{self.window.icon_folder}/discord.png"))
         self.label_3.setPixmap(QPixmap(f"{self.window.icon_folder}/windows.png"))
-        self.label_4.setPixmap(QPixmap(f"{self.window.icon_folder}/logo@48x48.png"))
+        self.label_4.setPixmap(QPixmap(f"{self.window.icon_folder}/logo.png"))
         self.label_5.setPixmap(QPixmap(f"{self.window.icon_folder}/music-notify.png"))
         self.label_7.setPixmap(QPixmap(f"{self.window.icon_folder}/hotkeys.png"))
         self.label_9.setPixmap(QPixmap(f"{self.window.icon_folder}/audio.png"))

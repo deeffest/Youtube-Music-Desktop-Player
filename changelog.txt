@@ -1,3 +1,7 @@
+v1.17.1 is Here! (02.02.2025)
+- A refactoring of all the Python code in the application was performed.
+- Fixed track/playlist downloader in `Unauthorized` mode.
+
 v1.17.0 is Here! (31.01.2025)
 - The `Hotkey Playback Control` plugin has been redesigned: now hotkeys work even when the YTMDPlayer window is hidden. Now this plugin is a kind of replacement for missing multimedia keys on the keyboard and supports such hotkeys as `Ctrl + Shift + Space` (Play/Pause), `Ctrl + Shift + Right` (Skip Next), `Ctrl + Shift + Left` (Skip Previous).
 - Some settings items now have a question mark, when you hover over it, a tooltip appears, for example, the list of supported shortcuts in `Hotkey Playback Control` plugin.

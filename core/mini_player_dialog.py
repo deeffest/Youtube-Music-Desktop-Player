@@ -2,7 +2,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QDesktopWidget
 from qfluentwidgets import ToolTipFilter, ToolTipPosition
 from pywinstyles import apply_style
@@ -20,6 +20,10 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
+        self.configure_window()
+        self.configure_ui_elements()
+
+    def configure_window(self):
         try:
             apply_style(self, "dark")
         except Exception as e:
@@ -43,8 +47,7 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
             self.setGeometry(x, y, self.width(), self.height())
         self.setFixedSize(self.size())
 
-        self.thumbnail = QPixmap()
-
+    def configure_ui_elements(self):
         self.previous_button.clicked.connect(self.window.skip_previous)
         self.play_pause_button.clicked.connect(self.window.play_pause)
         self.next_button.clicked.connect(self.window.skip_next)
@@ -92,6 +95,20 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.thumbnail = pixmap
         self.thumbnail_label.setPixmap(self.thumbnail)
 
+    def save_geometry_of_mp(self):
+        if self.window.save_last_pos_of_mp_setting == 1:
+            self.window.geometry_of_mp_setting = self.geometry()
+            self.window.settings_.setValue(
+                "geometry_of_mp", self.window.geometry_of_mp_setting
+            )
+
+    def stop_running_threads(self):
+        if (
+            hasattr(self, "thumbnail_loader_thread")
+            and self.thumbnail_loader_thread.isRunning()
+        ):
+            self.thumbnail_loader_thread.stop()
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
@@ -99,17 +116,8 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
             super().keyPressEvent(event)
 
     def closeEvent(self, event):
-        if self.window.save_last_pos_of_mp_setting == 1:
-            self.window.geometry_of_mp_setting = self.geometry()
-            self.window.settings_.setValue(
-                "geometry_of_mp", self.window.geometry_of_mp_setting
-            )
-
-        if (
-            hasattr(self, "thumbnail_loader_thread")
-            and self.thumbnail_loader_thread.isRunning()
-        ):
-            self.thumbnail_loader_thread.stop()
+        self.save_geometry_of_mp()
+        self.stop_running_threads()
 
         self.window.show()
         self.window.show_tray_icon()

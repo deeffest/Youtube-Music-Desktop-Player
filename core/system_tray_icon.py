@@ -13,16 +13,18 @@ class SystemTrayIcon(QSystemTrayIcon):
         super().__init__(icon, parent)
         self.window: "MainWindow" = parent
 
-        self.menu = SystemTrayMenu(self)
+        self.connect_signals()
+        self.create_context_menu()
+
+    def connect_signals(self):
         self.activated.connect(self.on_tray_icon_activated)
         self.messageClicked.connect(self.window.show_window)
-        self.setup_tray_menu()
 
-    def setup_tray_menu(self):
-        self.tray_menu = SystemTrayMenu()
+    def create_context_menu(self):
+        self.tray_menu = SystemTrayMenu(self)
 
         self.show_action = Action("YTMDPlayer", self)
-        self.show_action.setIcon(QIcon(f"{self.window.icon_folder}/logo@48x48.png"))
+        self.show_action.setIcon(QIcon(f"{self.window.icon_folder}/logo.png"))
         self.show_action.triggered.connect(self.window.show_window)
         self.tray_menu.addAction(self.show_action)
 

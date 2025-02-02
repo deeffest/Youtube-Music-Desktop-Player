@@ -18,6 +18,10 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
+        self.configure_window()
+        self.configure_ui_elements()
+
+    def configure_window(self):
         try:
             apply_style(self, "dark")
         except Exception as e:
@@ -29,20 +33,23 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about.png"))
         self.setFixedSize(self.size())
 
-        self.BodyLabel_2.setText(self.window.version)
-
+    def configure_ui_elements(self):
         self.PrimaryPushButton.clicked.connect(self.close)
         self.PushButton.clicked.connect(self.github)
 
-        self.label.setPixmap(QPixmap(f"{self.window.icon_folder}/logo@128x128.png"))
+        self.BodyLabel_2.setText(self.window.version)
+        self.label.setPixmap(QPixmap(f"{self.window.icon_folder}/logo.png"))
         self.PushButton.setIcon(QIcon(f"{self.window.icon_folder}/github.png"))
 
     def github(self):
-        webbrowser.open("https://github.com/deeffest/Youtube-Music-Desktop-Player")
+        webbrowser.open(
+            f"https://github.com/{self.window.app_author}/{self.window.name}"
+        )
 
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Escape:
             self.close()
+        key_event.accept()
 
     def closeEvent(self, event):
         self.window.show()

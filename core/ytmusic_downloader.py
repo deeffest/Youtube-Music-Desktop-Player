@@ -26,12 +26,10 @@ class DownloadThread(QThread):
         self.download_folder = download_folder
         self.title = "Unknown"
         self.use_oauth = use_oauth
-        self.ffmpeg_path = os.path.join(
-            os.path.expanduser("~"), self.window.name, "bin", "ffmpeg.exe"
-        )
-        self.oauth_cache_path = os.path.join(
-            os.path.expanduser("~"), self.window.name, "__cache__", "tokens.json"
-        )
+
+        base_path = os.path.join(os.path.expanduser("~"), self.window.name)
+        self.oauth_cache_path = os.path.join(base_path, "__cache__", "tokens.json")
+        self.ffmpeg_path = os.path.join(base_path, "bin", "ffmpeg.exe")
 
     def run(self):
         try:
@@ -41,7 +39,7 @@ class DownloadThread(QThread):
             elif "playlist" in self.url:
                 self.download_playlist()
         except Exception as e:
-            logging.error(f"Download track/playlist failed: {str(e)}")
+            logging.error(f"Failed to download track/playlist: {str(e)}")
             self.download_failed.emit(
                 self.url, self.download_folder, self.title, self.use_oauth
             )
@@ -59,15 +57,15 @@ class DownloadThread(QThread):
             )
             return b"ffmpeg version" in result.stdout
         except Exception as e:
-            logging.error(f"FFmpeg validation failed: {str(e)}")
+            logging.error(f"Failed to validate ffmpeg: {str(e)}")
             return False
 
     def ensure_ffmpeg(self):
         if not os.path.exists(self.ffmpeg_path) or not self.is_ffmpeg_valid():
             os.makedirs(os.path.dirname(self.ffmpeg_path), exist_ok=True)
             ffmpeg_url = (
-                "https://github.com/deeffest/Youtube-Music-Desktop-Player/releases/"
-                "download/1.0/ffmpeg.exe"
+                f"https://github.com/{self.window.app_author}/{self.window.name}/"
+                "releases/download/1.0/ffmpeg.exe"
             )
             temp_ffmpeg_path = self.ffmpeg_path + ".tmp"
 

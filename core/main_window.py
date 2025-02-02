@@ -2,7 +2,6 @@ import logging
 import os
 import webbrowser
 
-import discordrpc
 from PyQt5.QtCore import QUrl, Qt, QSize, QRect, pyqtSignal, QTimer
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtNetwork import QNetworkProxy
@@ -36,6 +35,7 @@ from qfluentwidgets import (
 )
 from packaging import version as pkg_version
 from pywinstyles import apply_style
+from discordrpc import RPC
 
 from core.about_dialog import AboutDialog
 from core.mini_player_dialog import MiniPlayerDialog
@@ -58,25 +58,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
 
         self.name = app_info[0]
-        self.version = app_info[1]
-        self.current_dir = app_info[2]
+        self.app_author = app_info[1]
+        self.version = app_info[2]
+        self.current_dir = app_info[3]
         self.icon_folder = f"{self.current_dir}/resources/icons"
+
         self.title = "Unknown"
         self.author = "Unknown"
         self.thumbnail_url = None
-        self.video_state = None
-        self.mini_player_dialog = None
-        self.force_exit = False
-        self.is_downloading = False
-        self.is_video_or_playlist = False
-        self.current_url = None
         self.like_status = None
+        self.current_url = None
         self.current_time = "NaN"
         self.total_time = "NaN"
-        self.settings_ = app_settings
-        self.opengl_enviroment_setting = opengl_enviroment_setting
+        self.video_state = None
+        self.is_video_or_playlist = False
+
+        self.force_exit = False
+        self.is_downloading = False
         self.notification_in_progress = False
 
+        self.settings_ = app_settings
+        self.opengl_enviroment_setting = opengl_enviroment_setting
+
+        self.mini_player_dialog = None
+
+        self.load_settings()
+        self.configure_window()
+        self.set_application_proxy()
+        self.connect_shortcuts()
+        self.show_splash_screen()
+        self.setup_web_engine()
+        self.create_context_menu()
+        self.configure_ui_elements()
+        self.activate_plugins()
+
+    def load_settings(self):
         if self.settings_.value("ad_blocker") is None:
             self.settings_.setValue("ad_blocker", 1)
         if self.settings_.value("save_last_win_geometry") is None:
@@ -178,6 +194,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.only_audio_mode_setting = int(self.settings_.value("only_audio_mode"))
 
+    def configure_window(self):
         try:
             apply_style(self, "dark")
         except Exception as e:
@@ -193,6 +210,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.setGeometry(get_centered_geometry(1000, 560))
 
+    def set_application_proxy(self):
+        try:
+            proxy = QNetworkProxy()
+
+            if self.proxy_type_setting == "HttpProxy":
+                proxy.setType(QNetworkProxy.HttpProxy)
+            elif self.proxy_type_setting == "Socks5Proxy":
+                proxy.setType(QNetworkProxy.Socks5Proxy)
+            elif self.proxy_type_setting == "DefaultProxy":
+                proxy.setType(QNetworkProxy.DefaultProxy)
+                QNetworkProxy.setApplicationProxy(proxy)
+                return
+            elif self.proxy_type_setting == "NoProxy":
+                proxy.setType(QNetworkProxy.NoProxy)
+                QNetworkProxy.setApplicationProxy(proxy)
+                return
+
+            if self.proxy_host_name_setting:
+                proxy.setHostName(self.proxy_host_name_setting)
+            else:
+                raise ValueError("Proxy host name is not set.")
+
+            if self.proxy_port_setting:
+                if not (1 <= self.proxy_port_setting <= 65535):
+                    raise ValueError("Proxy port is out of range (1-65535).")
+                proxy.setPort(self.proxy_port_setting)
+            else:
+                raise ValueError("Proxy port is not set.")
+
+            if self.proxy_login_setting:
+                proxy.setUser(self.proxy_login_setting)
+            if self.proxy_password_setting:
+                proxy.setPassword(self.proxy_password_setting)
+
+            QNetworkProxy.setApplicationProxy(proxy)
+        except Exception as e:
+            logging.error(f"Failed to set application proxy: {str(e)}")
+
+    def connect_shortcuts(self):
         self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
         self.back_shortcut.activated.connect(self.back)
 
@@ -228,53 +284,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.settings_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
         self.settings_shortcut.activated.connect(self.settings)
 
+    def show_splash_screen(self):
         self.splash_screen = SplashScreen(self.windowIcon(), self)
         self.splash_screen.setIconSize(QSize(102, 102))
         self.splash_screen.titleBar.hide()
 
+    def setup_web_engine(self):
         self.webview = WebEngineView(self)
         self.webpage = WebEnginePage(self)
         self.websettings = QWebEngineSettings.globalSettings()
         self.webview.setPage(self.webpage)
-
-        try:
-            proxy_setup_success = False
-            proxy = QNetworkProxy()
-
-            if self.proxy_type_setting == "HttpProxy":
-                proxy.setType(QNetworkProxy.HttpProxy)
-            elif self.proxy_type_setting == "Socks5Proxy":
-                proxy.setType(QNetworkProxy.Socks5Proxy)
-            elif self.proxy_type_setting == "DefaultProxy":
-                proxy.setType(QNetworkProxy.DefaultProxy)
-                QNetworkProxy.setApplicationProxy(proxy)
-                proxy_setup_success = True
-            elif self.proxy_type_setting == "NoProxy":
-                proxy.setType(QNetworkProxy.NoProxy)
-                QNetworkProxy.setApplicationProxy(proxy)
-                proxy_setup_success = True
-
-            if not proxy_setup_success:
-                if self.proxy_host_name_setting:
-                    proxy.setHostName(self.proxy_host_name_setting)
-                else:
-                    raise ValueError("Proxy host name is not set.")
-
-                if self.proxy_port_setting:
-                    if not (1 <= self.proxy_port_setting <= 65535):
-                        raise ValueError("Proxy port is out of range (1-65535).")
-                    proxy.setPort(self.proxy_port_setting)
-                else:
-                    raise ValueError("Proxy port is not set.")
-
-                if self.proxy_login_setting:
-                    proxy.setUser(self.proxy_login_setting)
-                if self.proxy_password_setting:
-                    proxy.setPassword(self.proxy_password_setting)
-
-                QNetworkProxy.setApplicationProxy(proxy)
-        except Exception as e:
-            logging.error(f"Failed to set application proxy: {str(e)}")
 
         if self.open_last_url_at_startup_setting == 1:
             self.webview.load(QUrl(self.last_url_setting))
@@ -297,15 +316,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.save_last_zoom_factor_setting == 1:
             self.webview.setZoomFactor(self.last_zoom_factor_setting)
 
-        self.MainLayout.addWidget(self.webview)
-        self.webview.setFocus()
-
         self.webchannel_backend = WebChannelBackend(self)
 
         self.webchannel = QWebChannel()
         self.webpage.setWebChannel(self.webchannel)
         self.webchannel.registerObject("backend", self.webchannel_backend)
 
+        self.MainLayout.addWidget(self.webview)
+        self.webview.setFocus()
+
+    def create_context_menu(self):
         self.back_action = Action("Back", shortcut="Alt+Left")
         self.back_action.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_action.setEnabled(False)
@@ -373,17 +393,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.paste_action.setIcon(QIcon(f"{self.icon_folder}/paste.png"))
         self.paste_action.triggered.connect(self.paste)
 
-        self.main_menu = RoundMenu(self)
-
         self.download_menu = RoundMenu("Download...", self)
         self.download_menu.setIcon(QIcon(f"{self.icon_folder}/download.png"))
+        self.download_menu.addAction(self.download_with_oauth_action)
+        self.download_menu.addAction(self.download_as_unauthorized_action)
 
-        self.edit_menu = RoundMenu(self)
-
-        self.copy_menu = RoundMenu(self)
-
-        self.paste_menu = RoundMenu(self)
-
+        self.main_menu = RoundMenu(self)
         self.main_menu.addAction(self.back_action)
         self.main_menu.addAction(self.forward_action)
         self.main_menu.addAction(self.home_action)
@@ -397,17 +412,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.main_menu.addAction(self.bug_report_action)
         self.main_menu.addAction(self.about_action)
 
-        self.download_menu.addAction(self.download_with_oauth_action)
-        self.download_menu.addAction(self.download_as_unauthorized_action)
-
+        self.edit_menu = RoundMenu(self)
         self.edit_menu.addAction(self.cut_action)
         self.edit_menu.addAction(self.copy_action)
         self.edit_menu.addAction(self.paste_action)
 
+        self.copy_menu = RoundMenu(self)
         self.copy_menu.addAction(self.copy_action)
 
+        self.paste_menu = RoundMenu(self)
         self.paste_menu.addAction(self.paste_action)
 
+    def configure_ui_elements(self):
         self.back_tbutton.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_tbutton.setEnabled(False)
         self.back_tbutton.installEventFilter(
@@ -469,6 +485,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.about_tbutton.clicked.connect(self.about)
 
+    def activate_plugins(self):
         if self.ad_blocker_setting == 1:
             ad_blocker_plugin = QWebEngineScript()
             ad_blocker_plugin.setName("AdBlocker")
@@ -535,18 +552,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.webpage.profile().scripts().insert(only_audio_script)
 
     def load_progress(self, progress):
-        if progress > 80 and self.splash_screen:
+        if progress > 80 and self.splash_screen is not None:
             if self.isHidden():
                 self.showNormal()
                 self.activateWindow()
 
-            self.splash_screen.finish()
-            self.splash_screen = None
-
+            self.close_splash_screen()
             self.check_updates()
 
+    def close_splash_screen(self):
+        self.splash_screen.finish()
+        self.splash_screen = None
+
     def check_updates(self):
-        self.update_checker_thread = UpdateChecker()
+        self.update_checker_thread = UpdateChecker(self)
         self.update_checker_thread.update_checked.connect(self.handle_update_checked)
         self.update_checker_thread.start()
 
@@ -625,9 +644,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def run_discord_rpc(self):
         try:
-            self.discord_rpc = discordrpc.RPC(
-                app_id="1254202610781655050", output=False
-            )
+            self.discord_rpc = RPC(app_id="1254202610781655050", output=False)
         except Exception as e:
             logging.error(f"Failed to activate Discord RPC: {str(e)}")
             self.discord_rpc = None
@@ -1023,7 +1040,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def bug_report(self):
         webbrowser.open_new_tab(
-            "https://github.com/deeffest/Youtube-Music-Desktop-Player/issues/new/choose"
+            f"https://github.com/{self.app_author}/{self.name}/issues/new/choose"
         )
 
     def cut(self):

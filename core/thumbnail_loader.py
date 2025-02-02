@@ -34,8 +34,6 @@ class ThumbnailLoader(QThread):
                 timeout=10,
             )
             response.raise_for_status()
-            if response.status_code != 200:
-                raise Exception(f"Failed to load thumbnail: {response.status_code}")
 
             pixmap = QPixmap()
             pixmap.loadFromData(response.content)
@@ -45,7 +43,7 @@ class ThumbnailLoader(QThread):
 
             self.thumbnail_loaded.emit(resized_pixmap)
         except Exception as e:
-            logging.error(f"Error loading thumbnail: {str(e)}")
+            logging.error(f"Failed to load thumbnail: {str(e)}")
             self.thumbnail_loaded.emit(QPixmap())
 
     def stop(self):

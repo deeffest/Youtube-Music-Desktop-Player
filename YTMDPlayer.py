@@ -13,7 +13,7 @@ from core.main_window import MainWindow
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.17.0"
+VERSION = "v1.17.1"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -85,7 +85,7 @@ def remove_service_worker_directory():
 
 def create_main_window(app_settings, opengl_setting):
     window = MainWindow(
-        app_settings, opengl_setting, app_info=[NAME, VERSION, CURRENT_DIR]
+        app_settings, opengl_setting, app_info=[NAME, AUTHOR, VERSION, CURRENT_DIR]
     )
     window.show()
     return window
