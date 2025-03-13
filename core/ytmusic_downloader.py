@@ -84,7 +84,10 @@ class DownloadThread(QThread):
     def download_video(self, yt, output_folder):
         original_filename = sanitize_filename(f"{yt.title}.m4a")
         temp_file = yt.streams.get_audio_only().download(
-            output_path=output_folder, filename=original_filename
+            output_path=output_folder,
+            filename=original_filename,
+            timeout=10,
+            max_retries=3,
         )
         final_filename = sanitize_filename(f"{yt.title}.mp3")
         output_file = os.path.join(output_folder, final_filename)

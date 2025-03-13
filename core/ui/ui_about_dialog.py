@@ -107,7 +107,7 @@ class Ui_AboutDialog(object):
         AboutDialog.setWindowTitle(_translate("AboutDialog", "Dialog"))
         self.SubtitleLabel.setText(_translate("AboutDialog", "Youtube Music Desktop Player"))
         self.BodyLabel_2.setText(_translate("AboutDialog", "Unknown Version"))
-        self.BodyLabel.setText(_translate("AboutDialog", "<html><head/><body><p><span style=\" color:#d3d3d3;\">Displays Youtube Music site using QWebEngine to make your music listening experience even more convenient. </span></p><p><span style=\" color:#d3d3d3;\">This App is licensed under GNU GPLv3 and the source code is available on Github.</span></p><p><span style=\" color:#d3d3d3;\">Enjoy listening:)</span></p></body></html>"))
+        self.BodyLabel.setText(_translate("AboutDialog", "<html><head/><body><p><span style=\" color:#d3d3d3;\">Displays Youtube Music site using QtWebEngine to make your music listening experience even more convenient. </span></p><p><span style=\" color:#d3d3d3;\">This App is licensed under GNU GPLv3 and the source code is available on Github.</span></p><p><span style=\" color:#d3d3d3;\">Enjoy listening:)</span></p></body></html>"))
         self.BodyLabel_3.setText(_translate("AboutDialog", "Created with ❤️ by deeffest, 2024-2025"))
         self.BodyLabel_4.setText(_translate("AboutDialog", "Icons by"))
         self.HyperlinkLabel.setText(_translate("AboutDialog", "Icons8"))

@@ -1,4 +1,4 @@
-var style = document.createElement('style');
+var style = document.createElement("style");
 
 style.textContent = `
     ::-webkit-scrollbar {

@@ -1,3 +1,8 @@
+v1.17.2-rc1 is Here! (13.03.2025)
+- All JavaScript code in the application has been improved and made more optimized.
+- Now checking for updates also uses the proxy if it's enabled.
+- When downloading a track/playlist, there is now a timeout of 10 seconds and 3 retries if something doesn't work.
+
 v1.17.1 is Here! (02.02.2025)
 - A refactoring of all the Python code in the application was performed.
 - Fixed track/playlist downloader in `Unauthorized` mode.

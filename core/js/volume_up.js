@@ -1,4 +1,4 @@
-var volumeSlider = document.querySelector('.volume-slider');
+var volumeSlider = document.querySelector(".volume-slider");
 
 if (volumeSlider) {
     var currentSliderValue = volumeSlider.value;
@@ -6,6 +6,6 @@ if (volumeSlider) {
 
     volumeSlider.value = newSliderValue;
 
-    var event = new Event('change');
+    var event = new Event("change");
     volumeSlider.dispatchEvent(event);
 }
