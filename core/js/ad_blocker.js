@@ -34,7 +34,7 @@ const observer = new MutationObserver((mutations) => {
     let shouldUpdate = false;
 
     mutations.forEach((mutation) => {
-        if (mutation.target.closest(".ytmusic-player")) {
+        if (mutation.target.closest("ytmusic-player-page")) {
             shouldUpdate = true;
         }
     });
@@ -46,5 +46,4 @@ const observer = new MutationObserver((mutations) => {
 observer.observe(document.body, {
     childList: true,
     subtree: true,
-    attributes: true,
 });

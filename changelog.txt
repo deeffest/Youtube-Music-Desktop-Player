@@ -1,3 +1,8 @@
+v1.17.3-rc1 is Here! (24.03.2025)
+- Fixed absence of video clip information when opening it before interacting with the player.
+- The `Only Audio Mode` plugin now hides the start play button on video clips.
+- Added a ban on launching duplicate copies of the application, and when trying to launch, the application will simply focus on the open instance.
+
 v1.17.2 is Here! (14.03.2025)
 - All JavaScript code in the application has been improved and made more optimized.
 - Now checking for updates also uses the proxy if it's enabled.

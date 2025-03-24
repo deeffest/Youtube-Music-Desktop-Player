@@ -160,7 +160,7 @@ script.onload = function () {
             let shouldUpdate = false;
 
             mutations.forEach((mutation) => {
-                if (mutation.target.closest(".ytmusic-player")) {
+                if (mutation.target.closest("ytmusic-player-page")) {
                     shouldUpdate = true;
                 }
             });
