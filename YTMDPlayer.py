@@ -1,15 +1,17 @@
 import sys
 import os
 import logging
+
 from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtNetwork import QLocalServer, QLocalSocket
 from PyQt5.QtWidgets import QApplication
+
 from core.main_window import MainWindow
 
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.17.3-rc1"
+VERSION = "v1.17.3"
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 

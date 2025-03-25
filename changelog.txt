@@ -1,3 +1,9 @@
+v1.17.3 is Here! (25.03.2025)
+- Fixed absence of video clip information when opening it before interacting with the player.
+- The `Only Audio Mode` plugin now hides the start play button on video clips.
+- Added a ban on launching duplicate copies of the application, and when trying to launch, the application will simply focus on the open instance.
+- Fixed track/playlist downloader.
+
 v1.17.3-rc1 is Here! (24.03.2025)
 - Fixed absence of video clip information when opening it before interacting with the player.
 - The `Only Audio Mode` plugin now hides the start play button on video clips.
