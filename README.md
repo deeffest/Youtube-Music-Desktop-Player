@@ -41,6 +41,9 @@ Turns the [Youtube Music](https://music.youtube.com) site into a desktop applica
 3. **Run the Application**  
    Open the extracted folder, then run the executable file to start the YTMDPlayer.
 
+## See also
+- [deeffest/ytmdp-downloader](https://github.com/deeffest/ytmdp-downloader): Track/playlist downloader for Youtube Music Desktop Player.
+
 ## License
 The Youtube Music Desktop Player is distributed under the **GPLv3 license**.
 
