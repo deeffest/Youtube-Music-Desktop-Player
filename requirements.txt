@@ -2,7 +2,7 @@ packaging==24.2
 PyQt5==5.15.11
 PyQtWebEngine==5.15.7
 PyQt_Fluent_Widgets==1.7.4
-git+https://github.com/deeffest/ytmdp-downloader.git@01f54e65f0c27eb02cb04646f8f4cb14311b5742
+git+https://github.com/deeffest/pytubefix.git@v8.12.3
 pywinstyles==1.8
 Requests==2.32.3
 discord-rpc==5.1

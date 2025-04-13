@@ -1,17 +1,14 @@
-import sys
 import os
+import sys
 import logging
 
-from PyQt5.QtCore import Qt, QSettings
+from PyQt5.QtCore import Qt, QSettings, QCoreApplication
 from PyQt5.QtNetwork import QLocalServer, QLocalSocket
-from PyQt5.QtWidgets import QApplication
-
-from core.main_window import MainWindow
 
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.17.4"
+VERSION = "v1.17.5"
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -70,6 +67,8 @@ def load_stylesheet(app):
 
 
 def create_main_window(app_settings, opengl_setting):
+    from core.main_window import MainWindow
+
     window = MainWindow(
         app_settings, opengl_setting, app_info=[NAME, AUTHOR, VERSION, CURRENT_DIR]
     )
@@ -94,11 +93,7 @@ def handle_new_connection(server, main_window):
         if socket.waitForReadyRead(100):
             _ = socket.readAll().data().decode()
         socket.disconnectFromServer()
-        if main_window.mini_player_dialog is None:
-            main_window.show_window()
-        else:
-            if main_window.mini_player_dialog.isMinimized():
-                main_window.mini_player_dialog.showNormal()
+        main_window.show_window_or_mini_player()
 
 
 def send_message_to_existing_instance():
@@ -114,9 +109,15 @@ def send_message_to_existing_instance():
 
 
 def main():
+    QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    if send_message_to_existing_instance():
+        sys.exit(0)
+
     init_logging()
     app_settings = init_app_settings()
     opengl_setting = setup_opengl_environment(app_settings)
+
+    from PyQt5.QtWidgets import QApplication
 
     app = QApplication(sys.argv)
     app.setApplicationName(NAME)
@@ -125,9 +126,6 @@ def main():
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
     load_stylesheet(app)
-
-    if send_message_to_existing_instance():
-        sys.exit(0)
 
     main_window = create_main_window(app_settings, opengl_setting)
     local_server = start_local_server(main_window)  # noqa: F841

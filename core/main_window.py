@@ -1083,13 +1083,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
 
     def show_window(self):
+        if self.isMinimized() or self.isHidden():
+            if self.isMinimized():
+                self.showNormal()
+            else:
+                self.show()
+        self.activateWindow()
+
+    def show_window_or_mini_player(self):
         if self.mini_player_dialog is None:
-            if self.isMinimized() or self.isHidden():
-                if self.isMinimized():
-                    self.showNormal()
-                else:
-                    self.show()
-            self.activateWindow()
+            self.show_window()
+        else:
+            if self.mini_player_dialog.isMinimized():
+                self.mini_player_dialog.showNormal()
 
     def stop_running_threads(self):
         if (

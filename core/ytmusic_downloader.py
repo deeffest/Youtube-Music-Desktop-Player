@@ -64,8 +64,8 @@ class DownloadThread(QThread):
         if not os.path.exists(self.ffmpeg_path) or not self.is_ffmpeg_valid():
             os.makedirs(os.path.dirname(self.ffmpeg_path), exist_ok=True)
             ffmpeg_url = (
-                f"https://github.com/{self.window.app_author}/{self.window.name}/"
-                "releases/download/1.0/ffmpeg.exe"
+                "https://github.com/deeffest/ytmdp-downloader/"
+                "releases/download/v8.12.3/FFmpeg-Win32.exe"
             )
             temp_ffmpeg_path = self.ffmpeg_path + ".tmp"
 
@@ -147,9 +147,9 @@ class DownloadThread(QThread):
                 "192k",
                 output_file,
             ],
-            check=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            check=True,
             creationflags=subprocess.CREATE_NO_WINDOW,
         )
         os.remove(input_file)

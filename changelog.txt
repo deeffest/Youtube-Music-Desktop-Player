@@ -1,3 +1,6 @@
+v1.17.5 is Here! (13.04.2025)
+- Some fixes and improvements.
+
 v1.17.4 is Here! (27.03.2025)
 - Fixed track/playlist downloader.
 
