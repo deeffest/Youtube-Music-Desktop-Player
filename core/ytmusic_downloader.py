@@ -64,7 +64,7 @@ class DownloadThread(QThread):
         if not os.path.exists(self.ffmpeg_path) or not self.is_ffmpeg_valid():
             os.makedirs(os.path.dirname(self.ffmpeg_path), exist_ok=True)
             ffmpeg_url = (
-                "https://github.com/deeffest/ytmdp-downloader/"
+                "https://github.com/deeffest/pytubefix/"
                 "releases/download/v8.12.3/FFmpeg-Win32.exe"
             )
             temp_ffmpeg_path = self.ffmpeg_path + ".tmp"
