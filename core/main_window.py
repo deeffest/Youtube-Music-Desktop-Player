@@ -984,15 +984,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
         copy_btn = PushButton("Copy Code", icon=f"{self.icon_folder}/copy.png")
-        copy_btn.clicked.connect(lambda: self.copy_oauth_code(user_code))
+        copy_btn.clicked.connect(lambda: self.copy_to_clipboard(user_code))
         info_bar.addWidget(copy_btn)
 
         info_bar.addWidget(copy_btn)
         info_bar.show()
 
-    def copy_oauth_code(self, code):
+    def copy_to_clipboard(self, text):
         clipboard = QApplication.clipboard()
-        clipboard.setText(code)
+        clipboard.setText(text)
 
     def next_oauth_step(self, previous_url, info_bar):
         self.close_info_bar(info_bar)
@@ -1004,6 +1004,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if info_bar is not None:
             info_bar.removeEventFilter(info_bar)
             info_bar.close()
+            info_bar.setParent(None)
+            info_bar.deleteLater()
+            info_bar = None
 
     def mini_player(self):
         if self.video_state == "VideoPlaying" or "VideoPaused":
@@ -1040,7 +1043,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def bug_report(self):
         webbrowser.open_new_tab(
-            f"https://github.com/{self.app_author}/{self.name}/issues/new/choose"
+            f"https://github.com/{self.app_author}/{self.name}/issues"
         )
 
     def cut(self):
@@ -1096,6 +1099,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             if self.mini_player_dialog.isMinimized():
                 self.mini_player_dialog.showNormal()
+
+    def show_error(self, message):
+        msg_box = MessageBox(
+            "Unhandled exception occurred",
+            "The error message has been copied to the"
+            " clipboard and logs. Would you like to report it?",
+            self,
+        )
+        if msg_box.exec_():
+            self.copy_to_clipboard(message)
+            self.bug_report()
 
     def stop_running_threads(self):
         if (

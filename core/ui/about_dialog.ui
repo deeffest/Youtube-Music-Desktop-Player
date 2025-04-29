@@ -125,7 +125,7 @@
         <item>
          <widget class="BodyLabel" name="BodyLabel">
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Displays Youtube Music site using QtWebEngine to make your music listening experience even more convenient. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;This App is licensed under GNU GPLv3 and the source code is available on Github.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Enjoy listening:)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Displays Youtube Music site using QtWebEngine to make your music listening experience even more convenient. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;This app is licensed under GNU GPLv3 and the source code is available on GitHub.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#d3d3d3;&quot;&gt;Enjoy listening:)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -208,7 +208,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Visit Github</string>
+           <string>Visit GitHub</string>
           </property>
           <property name="iconSize">
            <size>

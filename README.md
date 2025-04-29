@@ -3,7 +3,7 @@
 # Youtube Music Desktop Player
 Turns the [Youtube Music](https://music.youtube.com) site into a desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
 
-<img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/> <img src="https://img.shields.io/badge/Python-3.10.11-blue.svg?color=00B16A" alt="Python 3.10.11"/> <img src="https://img.shields.io/badge/Platform-Win32-blue?color=00B16A" alt="Platform Win32"/>
+<img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/> <img src="https://img.shields.io/badge/Python-3.11.9-blue.svg?color=00B16A" alt="Python 3.11.9"/> <img src="https://img.shields.io/badge/Platform-Win32-blue?color=00B16A" alt="Platform Win32"/>
 
 ## Screenshots
 ![main_window](https://github.com/user-attachments/assets/934b443e-069b-40a5-a36c-a62a4f7de9c1)

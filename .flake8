@@ -1,0 +1,3 @@
+[flake8]
+exclude = ui_about_dialog.py, ui_main_window.py, ui_mini_player_dialog.py, ui_settings_dialog.py
+max-line-length = 88
