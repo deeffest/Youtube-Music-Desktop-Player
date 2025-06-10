@@ -1,3 +1,6 @@
+v1.17.8 is Here! (10.06.2025)
+- Fixed track/playlist downloader.
+
 v1.17.7 is Here! (22.05.2025)
 - Fixed track/playlist downloader.
 
