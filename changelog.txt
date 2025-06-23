@@ -1,3 +1,11 @@
+v1.18.0-rc1 is Here! (23.06.2025)
+- Reworked track/playlist downloader - now based on `yt-dlp`!
+- Improved proxy support — system proxy is now used not only in the web engine but also in the downloader and other network components.
+- To download tracks/playlists using your account (e.g., to bypass IP blocking when VPN is enabled), OAuth and manual login codes are no longer required — the downloader exports cookies directly from the web engine after you log into your YTM account.
+- Improved performance of `Only Audio Mode` plugin.
+- Fixed issues with logging in by adding `https://myaccount.google.com/accounts/SetOSID` and `https://gds.google.com/web/homeaddress` to the navigation whitelist.
+- Other fixes and improvements.
+
 v1.17.8 is Here! (10.06.2025)
 - Fixed track/playlist downloader.
 

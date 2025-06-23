@@ -1,8 +1,9 @@
-import logging
 import os
+import logging
+import tempfile
 import webbrowser
 
-from PyQt5.QtCore import QUrl, Qt, QSize, QRect, pyqtSignal, QTimer
+from PyQt5.QtCore import QUrl, Qt, QSize, QRect, QTimer
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.QtWebChannel import QWebChannel
@@ -21,10 +22,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 from qfluentwidgets import (
     Action,
-    InfoBar,
-    InfoBarPosition,
     MessageBox,
-    PushButton,
     RoundMenu,
     SplashScreen,
     ToolTipFilter,
@@ -46,14 +44,12 @@ from core.web_channel_backend import WebChannelBackend
 from core.web_engine_page import WebEnginePage
 from core.web_engine_view import WebEngineView
 from core.ytmusic_downloader import DownloadThread
-from core.helpers import get_centered_geometry
+from core.helpers import get_centered_geometry, is_file_used_by_cmd
 from core.ui.ui_main_window import Ui_MainWindow
 from core.hotkey_controller import HotkeyController
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    oauth_completed = pyqtSignal()
-
     def __init__(self, app_settings, opengl_enviroment_setting, app_info):
         super().__init__()
 
@@ -81,6 +77,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.opengl_enviroment_setting = opengl_enviroment_setting
 
         self.mini_player_dialog = None
+        self.download_thread = None
+        self.update_checker_thread = None
+        self.hotkey_controller_thread = None
 
         self.load_settings()
         self.configure_window()
@@ -266,7 +265,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.download_with_oauth_shortcut.setEnabled(False)
         self.download_with_oauth_shortcut.activated.connect(
-            lambda: self.download(use_oauth=True)
+            lambda: self.download(use_cookies=True)
         )
 
         self.download_as_unauthorized_shortcut = QShortcut(
@@ -274,7 +273,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.download_as_unauthorized_shortcut.setEnabled(False)
         self.download_as_unauthorized_shortcut.activated.connect(
-            lambda: self.download(use_oauth=False)
+            lambda: self.download(use_cookies=False)
         )
 
         self.mini_player_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_M), self)
@@ -344,24 +343,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reload_action.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
         self.reload_action.triggered.connect(self.webview.reload)
 
-        self.download_with_oauth_action = Action(
-            "with OAuth 2.0", shortcut="Ctrl+Shift+D"
+        self.download_with_oauth_action = Action("Signed In", shortcut="Ctrl+Shift+D")
+        self.download_with_oauth_action.setIcon(
+            QIcon(f"{self.icon_folder}/authorized.png")
         )
-        self.download_with_oauth_action.setIcon(QIcon(f"{self.icon_folder}/oauth.png"))
         self.download_with_oauth_action.setEnabled(True)
         self.download_with_oauth_action.triggered.connect(
-            lambda: self.download(use_oauth=True)
+            lambda: self.download(use_cookies=True)
         )
 
-        self.download_as_unauthorized_action = Action(
-            "as Unauthorized", shortcut="Ctrl+D"
-        )
+        self.download_as_unauthorized_action = Action("Guest Mode", shortcut="Ctrl+D")
         self.download_as_unauthorized_action.setIcon(
             QIcon(f"{self.icon_folder}/unauthorized.png")
         )
         self.download_as_unauthorized_action.setEnabled(False)
         self.download_as_unauthorized_action.triggered.connect(
-            lambda: self.download(use_oauth=False)
+            lambda: self.download(use_cookies=False)
         )
 
         self.mini_player_action = Action("Mini-Player", shortcut="Ctrl+M")
@@ -393,7 +390,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.paste_action.setIcon(QIcon(f"{self.icon_folder}/paste.png"))
         self.paste_action.triggered.connect(self.paste)
 
-        self.download_menu = RoundMenu("Download...", self)
+        self.download_menu = RoundMenu("Get Audio", self)
         self.download_menu.setIcon(QIcon(f"{self.icon_folder}/download.png"))
         self.download_menu.addAction(self.download_with_oauth_action)
         self.download_menu.addAction(self.download_as_unauthorized_action)
@@ -539,8 +536,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.hotkey_controller_thread.volume_up.connect(self.volume_up)
             self.hotkey_controller_thread.volume_down.connect(self.volume_down)
             self.hotkey_controller_thread.start()
-        else:
-            self.hotkey_controller_thread = None
 
         if self.only_audio_mode_setting == 1:
             only_audio_script = QWebEngineScript()
@@ -566,10 +561,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def check_updates(self):
         self.update_checker_thread = UpdateChecker(self)
-        self.update_checker_thread.update_checked.connect(self.handle_update_checked)
+        self.update_checker_thread.update_checked.connect(self.update_checked)
         self.update_checker_thread.start()
 
-    def handle_update_checked(self, last_version, title, whats_new, last_release_url):
+    def update_checked(self, last_version, title, whats_new, last_release_url):
+        self.update_checker_thread = None
+
         if pkg_version.parse(self.version) < pkg_version.parse(last_version):
             msg_box = MessageBox(title, whats_new, self)
             msg_box.yesButton.setText("Download")
@@ -592,6 +589,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def url_changed(self, url):
         self.current_url = url.toString()
         self.url_line_edit.setText(self.current_url)
+        self.url_line_edit.setCursorPosition(0)
 
         can_go_back = self.webview.history().canGoBack()
         can_go_forward = self.webview.history().canGoForward()
@@ -869,25 +867,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def reload(self):
         self.webview.reload()
 
-    def select_download_folder(self, title_suffix=""):
-        title = f"Select Download Folder {title_suffix}"
+    def select_download_folder(self):
+        title = "Select Download Folder"
         folder = QFileDialog.getExistingDirectory(
             self, title, self.last_download_folder_setting
         )
         return folder if folder else None
 
-    def download(
-        self, custom_url=None, download_folder=None, info_bar=None, use_oauth=False
-    ):
-        if self.is_downloading:
-            return
-
-        self.close_info_bar(info_bar)
-
-        url = custom_url or self.current_url
-
-        title_suffix = "[OAuth 2.0]" if use_oauth else "[Unauthorized]"
-        download_folder = download_folder or self.select_download_folder(title_suffix)
+    def download(self, use_cookies=False):
+        download_folder = self.select_download_folder()
         if not download_folder:
             return
 
@@ -898,115 +886,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_download_buttons_state(self.is_downloading)
 
         self.download_thread = DownloadThread(
-            url, download_folder, self, use_oauth=use_oauth
+            self.current_url, download_folder, self, use_cookies=use_cookies
         )
-        self.download_thread.download_finished.connect(self.on_download_finished)
-        self.download_thread.download_failed.connect(self.on_download_failed)
-        self.download_thread.oauth_required.connect(self.oauth_verifier)
+        self.download_thread.finished.connect(self.download_finished)
         self.download_thread.start()
 
-    def on_download_finished(self, download_folder, title):
+    def download_finished(self):
+        self.download_thread = None
+
         self.is_downloading = False
         self.update_download_buttons_state(self.is_downloading)
-
-        info_bar = InfoBar.success(
-            title=title,
-            content="successfully downloaded!",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM,
-            duration=-1,
-            parent=self,
-        )
-        open_download_folder_btn = PushButton(
-            "Open Folder", icon=f"{self.icon_folder}/open_folder.png"
-        )
-        open_download_folder_btn.clicked.connect(
-            lambda: self.open_download_folder(download_folder, info_bar)
-        )
-        info_bar.addWidget(open_download_folder_btn)
-        info_bar.show()
-
-    def on_download_failed(self, url, download_folder, title, use_oauth=False):
-        self.is_downloading = False
-        self.update_download_buttons_state(self.is_downloading)
-
-        info_bar = InfoBar.error(
-            title=title,
-            content="download failed!",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM,
-            duration=-1,
-            parent=self,
-        )
-        retry_download_btn = PushButton(
-            "Re-download", icon=f"{self.icon_folder}/restart.png"
-        )
-        retry_download_btn.clicked.connect(
-            lambda: self.download(url, download_folder, info_bar, use_oauth)
-        )
-        info_bar.addWidget(retry_download_btn)
-        info_bar.show()
 
     def update_download_buttons_state(self, is_downloading):
         self.download_with_oauth_action.setEnabled(not is_downloading)
         self.download_as_unauthorized_action.setEnabled(not is_downloading)
         self.download_with_oauth_shortcut.setEnabled(not is_downloading)
         self.download_as_unauthorized_shortcut.setEnabled(not is_downloading)
-
-    def open_download_folder(self, download_folder, info_bar):
-        self.close_info_bar(info_bar)
-        os.startfile(download_folder)
-
-    def oauth_verifier(self, verification_url, user_code):
-        previous_url = self.current_url
-        self.webview.load(QUrl(verification_url))
-
-        info_bar = InfoBar.info(
-            title=f"{user_code}",
-            content="Copy the code and paste it into the input field",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM,
-            duration=-1,
-            parent=self,
-        )
-        info_bar.closeButton.setIcon(QIcon(f"{self.icon_folder}/next_step.png"))
-        info_bar.closeButton.setToolTip(
-            "Click after all authentication steps have been completed."
-        )
-        info_bar.closeButton.installEventFilter(
-            ToolTipFilter(info_bar.closeButton, 300, ToolTipPosition.TOP)
-        )
-        info_bar.closeButton.clicked.connect(
-            lambda: self.next_oauth_step(previous_url, info_bar)
-        )
-
-        copy_btn = PushButton("Copy Code", icon=f"{self.icon_folder}/copy.png")
-        copy_btn.clicked.connect(lambda: self.copy_to_clipboard(user_code))
-        info_bar.addWidget(copy_btn)
-
-        info_bar.addWidget(copy_btn)
-        info_bar.show()
-
-    def copy_to_clipboard(self, text):
-        clipboard = QApplication.clipboard()
-        clipboard.setText(text)
-
-    def next_oauth_step(self, previous_url, info_bar):
-        self.close_info_bar(info_bar)
-        self.oauth_completed.emit()
-        if self.current_url != previous_url:
-            self.webview.load(QUrl(previous_url))
-
-    def close_info_bar(self, info_bar):
-        if info_bar is not None:
-            info_bar.removeEventFilter(info_bar)
-            info_bar.close()
-            info_bar.setParent(None)
-            info_bar.deleteLater()
-            info_bar = None
 
     def mini_player(self):
         if self.video_state == "VideoPlaying" or "VideoPaused":
@@ -1102,14 +997,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_error(self, message):
         msg_box = MessageBox(
-            "Unhandled exception occurred",
+            "⚠️ Unhandled exception occurred",
             "The error message has been copied to the"
-            " clipboard and logs. Would you like to report it?",
+            " clipboard and logs.\nWould you like to report it?",
             self,
         )
         if msg_box.exec_():
             self.copy_to_clipboard(message)
             self.bug_report()
+
+    def copy_to_clipboard(self, text):
+        clipboard = QApplication.clipboard()
+        clipboard.setText(text)
 
     def stop_running_threads(self):
         if (
@@ -1118,14 +1017,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ):
             self.hotkey_controller_thread.stop()
 
-        if hasattr(self, "download_thread") and self.download_thread.isRunning():
+        if self.download_thread is not None and self.download_thread.isRunning():
             self.download_thread.stop()
 
         if (
-            hasattr(self, "update_checker_thread")
+            self.update_checker_thread is not None
             and self.update_checker_thread.isRunning()
         ):
             self.update_checker_thread.stop()
+
+    def cleanup_temp_bat_files(self):
+        temp_dir = tempfile.gettempdir()
+        ytmdp_temp_folder = os.path.join(temp_dir, "ytmdp_temp")
+
+        if not os.path.exists(ytmdp_temp_folder):
+            return
+
+        for filename in os.listdir(ytmdp_temp_folder):
+            if filename.lower().endswith(".bat"):
+                path = os.path.join(ytmdp_temp_folder, filename)
+                if is_file_used_by_cmd(path):
+                    continue
+                try:
+                    os.remove(path)
+                except Exception as e:
+                    logging.error(f"Failed to delete {path}: {e}")
+
+    def app_quit(self):
+        self.cleanup_temp_bat_files()
+        self.stop_running_threads()
 
     def closeEvent(self, event):
         self.save_settings()
@@ -1155,8 +1075,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.force_exit = False
                 event.ignore()
                 return
-
-        self.stop_running_threads()
-        self.save_settings()
-
+            
         event.accept()

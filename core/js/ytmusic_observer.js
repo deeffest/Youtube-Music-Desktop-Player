@@ -1,3 +1,7 @@
+// ==UserScript==
+// @match        https://music.youtube.com/*
+// ==/UserScript==
+
 var script = document.createElement("script");
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
@@ -156,23 +160,12 @@ script.onload = function () {
             });
         }
 
-        const observer = new MutationObserver((mutations) => {
-            let shouldUpdate = false;
-
-            mutations.forEach((mutation) => {
-                if (mutation.target.closest("ytmusic-player-page")) {
-                    shouldUpdate = true;
-                }
-            });
-
-            if (shouldUpdate) {
-                updateVideoState();
-            }
-        });
-        observer.observe(document.body, {
+        const ytmusicObserver = new MutationObserver(updateVideoState);
+        ytmusicObserver.observe(document.querySelector("ytmusic-player-page"), {
             childList: true,
             subtree: true,
         });
+        
         updateVideoState();
     });
 };

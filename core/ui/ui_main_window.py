@@ -80,7 +80,7 @@ class Ui_MainWindow(object):
         self.home_tbutton.setToolTip(_translate("MainWindow", "Home"))
         self.reload_tbutton.setToolTip(_translate("MainWindow", "Reload"))
         self.url_line_edit.setPlaceholderText(_translate("MainWindow", "https://music.youtube.com/"))
-        self.download_ddtbutton.setToolTip(_translate("MainWindow", "Download..."))
+        self.download_ddtbutton.setToolTip(_translate("MainWindow", "Get Audio"))
         self.mini_player_tbutton.setToolTip(_translate("MainWindow", "Mini-Player"))
         self.settings_tbutton.setToolTip(_translate("MainWindow", "Settings"))
         self.bug_report_tbutton.setToolTip(_translate("MainWindow", "Bug Report"))

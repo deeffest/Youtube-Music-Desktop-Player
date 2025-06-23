@@ -1,3 +1,7 @@
+// ==UserScript==
+// @match        https://music.youtube.com/*
+// ==/UserScript==
+
 function skipAd() {
     const adShowing = document.querySelector(".ad-showing");
     const pieCountdown = document.querySelector(
@@ -30,20 +34,8 @@ function skipAd() {
     if (skipButton) skipButton.click();
 }
 
-const observer = new MutationObserver((mutations) => {
-    let shouldUpdate = false;
-
-    mutations.forEach((mutation) => {
-        if (mutation.target.closest("ytmusic-player-page")) {
-            shouldUpdate = true;
-        }
-    });
-
-    if (shouldUpdate) {
-        skipAd();
-    }
-});
-observer.observe(document.body, {
+const adBlockerObserver = new MutationObserver(skipAd);
+adBlockerObserver.observe(document.querySelector("ytmusic-player"), {
     childList: true,
     subtree: true,
 });

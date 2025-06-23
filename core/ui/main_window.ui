@@ -98,7 +98,7 @@
        <item>
         <widget class="DropDownToolButton" name="download_ddtbutton">
          <property name="toolTip">
-          <string>Download...</string>
+          <string>Get Audio</string>
          </property>
         </widget>
        </item>

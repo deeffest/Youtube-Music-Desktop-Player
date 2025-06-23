@@ -187,7 +187,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             msg_box.cancelButton.setText("Cancel")
 
         if not msg_box or msg_box.exec_():
-            self.window.stop_running_threads()
             self.window.save_settings()
 
             self.save_settings()

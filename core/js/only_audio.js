@@ -1,18 +1,22 @@
+// ==UserScript==
+// @match        https://music.youtube.com/*
+// ==/UserScript==
+
 (function () {
     let previousThumbnailUrl = null;
 
     function getThumbnailUrl() {
-        var fallbackElement = document.querySelector(
+        const thumbnailElement = document.querySelector(
             ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
         );
 
-        if (fallbackElement) {
-            const thumbnailUrl = fallbackElement.src;
-            if (thumbnailUrl !== previousThumbnailUrl) {
-                previousThumbnailUrl = thumbnailUrl;
-            }
-            return thumbnailUrl;
+        if (
+            thumbnailElement?.src &&
+            thumbnailElement.src.includes("i.ytimg.com")
+        ) {
+            return thumbnailElement.src;
         }
+
         return "";
     }
 
@@ -20,7 +24,10 @@
         const videoElement = document.querySelector("video");
         if (!videoElement) return;
 
-        const unnecessarySelectors = [
+        videoElement.style.opacity = "0";
+        videoElement.style.pointerEvents = "none";
+
+        [
             ".ytp-suggested-action",
             ".ytp-suggested-action-badge",
             ".ytp-playlist-menu-button",
@@ -33,45 +40,39 @@
             ".ytp-caption-window-container",
             ".ytp-spinner",
             ".ytp-large-play-button",
-        ];
-
-        unnecessarySelectors.forEach((selector) => {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach((element) => {
-                element.remove();
-            });
-        });
-
-        videoElement.style.opacity = "0";
-        videoElement.style.pointerEvents = "none";
+            ".ytp-iv-video-content",
+            ".ytp-iv-player-content",
+            ".iv-branding",
+            ".iv-click-target",
+        ].forEach((selector) => document.querySelector(selector)?.remove());
 
         const thumbnailUrl = getThumbnailUrl();
-        if (thumbnailUrl) {
-            const player = document.querySelector(".html5-video-player");
-            if (player) {
-                player.style.backgroundImage = `url(${thumbnailUrl})`;
-                player.style.backgroundSize = "contain";
-                player.style.backgroundRepeat = "no-repeat";
-                player.style.backgroundPosition = "center";
+        const player = document.querySelector(".html5-video-player");
+
+        if (!player) return;
+
+        if (!thumbnailUrl) {
+            if (previousThumbnailUrl !== null) {
+                previousThumbnailUrl = null;
+                player.style.backgroundImage = "";
                 player.style.backgroundColor = "black";
             }
+            return;
         }
+
+        if (thumbnailUrl === previousThumbnailUrl) return;
+
+        previousThumbnailUrl = thumbnailUrl;
+
+        player.style.backgroundImage = `url(${thumbnailUrl})`;
+        player.style.backgroundSize = "contain";
+        player.style.backgroundRepeat = "no-repeat";
+        player.style.backgroundPosition = "center";
+        player.style.backgroundColor = "black";
     }
 
-    const observer = new MutationObserver((mutations) => {
-        let shouldUpdate = false;
-
-        mutations.forEach((mutation) => {
-            if (mutation.target.closest("ytmusic-player-page")) {
-                shouldUpdate = true;
-            }
-        });
-
-        if (shouldUpdate) {
-            cutVideo();
-        }
-    });
-    observer.observe(document.body, {
+    const onlyAudioObserver = new MutationObserver(cutVideo);
+    onlyAudioObserver.observe(document.querySelector("ytmusic-player-page"), {
         childList: true,
         subtree: true,
     });

@@ -37,6 +37,8 @@ class WebEnginePage(QWebEnginePage):
             r"^https://www\.google\.com/recaptcha.*$",
             r"^https://www\.google\.com/tools/feedback/.*$",
             r"^https://www\.youtube\.com/signin.*action_handle_signin.*$",
+            r"^https://myaccount\.google\.com/accounts/SetOSID\?.*",
+            r"^https://gds\.google\.com/web/homeaddress.*$",
         ]
 
         for pattern in blocklist_patterns:

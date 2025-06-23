@@ -1,3 +1,7 @@
+// ==UserScript==
+// @match        https://music.youtube.com/*
+// ==/UserScript==
+
 var style = document.createElement("style");
 
 style.textContent = `
