@@ -54,9 +54,11 @@ class SingletonApplication(QApplication):
 
         socket.disconnectFromServer()
 
-    def exception_hook(self, exctype, value, tb):
-        logging.error("Unhandled exception", exc_info=(exctype, value, tb))
-        message = "\n".join(
-            ["".join(traceback.format_tb(tb)), f"{exctype.__name__}: {value}"]
+    def exception_hook(self, exc_type, exc_value, exc_traceback):
+        logging.error(
+            "Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback)
+        )
+        message = "".join(
+            traceback.format_exception(exc_type, exc_value, exc_traceback)
         )
         self.app_error_sig.emit(message)

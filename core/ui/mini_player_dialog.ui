@@ -232,7 +232,7 @@ FluentLabelBase{color:lightgray}</string>
       </spacer>
      </item>
      <item>
-      <widget class="TransparentToolButton" name="dislike_button">
+      <widget class="TransparentToolButton" name="volume_down_button">
        <property name="minimumSize">
         <size>
          <width>40</width>
@@ -246,7 +246,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Dislike</string>
+        <string>Volume Down</string>
        </property>
        <property name="iconSize">
         <size>
@@ -341,7 +341,7 @@ FluentLabelBase{color:lightgray}</string>
       </widget>
      </item>
      <item>
-      <widget class="TransparentToolButton" name="like_button">
+      <widget class="TransparentToolButton" name="volume_up_button">
        <property name="minimumSize">
         <size>
          <width>40</width>
@@ -355,7 +355,7 @@ FluentLabelBase{color:lightgray}</string>
         </size>
        </property>
        <property name="toolTip">
-        <string>Like</string>
+        <string>Volume Up</string>
        </property>
        <property name="iconSize">
         <size>

@@ -19,6 +19,7 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.window: "MainWindow" = parent
+        self.thumbnail_loader_thread = None
 
         self.configure_window()
         self.configure_ui_elements()
@@ -51,8 +52,8 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.previous_button.clicked.connect(self.window.skip_previous)
         self.play_pause_button.clicked.connect(self.window.play_pause)
         self.next_button.clicked.connect(self.window.skip_next)
-        self.like_button.clicked.connect(self.window.like)
-        self.dislike_button.clicked.connect(self.window.dislike)
+        self.volume_down_button.clicked.connect(self.window.volume_down)
+        self.volume_up_button.clicked.connect(self.window.volume_up)
 
         self.previous_button.installEventFilter(
             ToolTipFilter(self.previous_button, 300, ToolTipPosition.TOP)
@@ -63,11 +64,11 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.next_button.installEventFilter(
             ToolTipFilter(self.next_button, 300, ToolTipPosition.TOP)
         )
-        self.like_button.installEventFilter(
-            ToolTipFilter(self.like_button, 300, ToolTipPosition.TOP)
+        self.volume_down_button.installEventFilter(
+            ToolTipFilter(self.volume_down_button, 300, ToolTipPosition.TOP)
         )
-        self.dislike_button.installEventFilter(
-            ToolTipFilter(self.dislike_button, 300, ToolTipPosition.TOP)
+        self.volume_up_button.installEventFilter(
+            ToolTipFilter(self.volume_up_button, 300, ToolTipPosition.TOP)
         )
 
         self.previous_button.setIcon(
@@ -77,21 +78,21 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
             QIcon(f"{self.window.icon_folder}/play-filled.png")
         )
         self.next_button.setIcon(QIcon(f"{self.window.icon_folder}/next-filled.png"))
-        self.like_button.setIcon(QIcon(f"{self.window.icon_folder}/like.png"))
-        self.dislike_button.setIcon(QIcon(f"{self.window.icon_folder}/dislike.png"))
+        self.volume_down_button.setIcon(
+            QIcon(f"{self.window.icon_folder}/volume_down.png")
+        )
+        self.volume_up_button.setIcon(QIcon(f"{self.window.icon_folder}/volume_up.png"))
 
     def load_thumbnail(self, url):
-        if (
-            hasattr(self, "thumbnail_loader_thread")
-            and self.thumbnail_loader_thread.isRunning()
-        ):
-            self.thumbnail_loader_thread.stop()
+        self.stop_running_threads()
 
         self.thumbnail_loader_thread = ThumbnailLoader(url, self.window)
         self.thumbnail_loader_thread.thumbnail_loaded.connect(self.on_thumbnail_loaded)
         self.thumbnail_loader_thread.start()
 
     def on_thumbnail_loaded(self, pixmap):
+        self.thumbnail_loader_thread = None
+
         self.thumbnail = pixmap
         self.thumbnail_label.setPixmap(self.thumbnail)
 
@@ -104,7 +105,7 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
 
     def stop_running_threads(self):
         if (
-            hasattr(self, "thumbnail_loader_thread")
+            self.thumbnail_loader_thread is not None
             and self.thumbnail_loader_thread.isRunning()
         ):
             self.thumbnail_loader_thread.stop()

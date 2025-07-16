@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>530</width>
-    <height>340</height>
+    <height>415</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -158,24 +158,12 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-703</y>
+            <y>-1014</y>
             <width>394</width>
-            <height>964</height>
+            <height>1350</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_21">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_19">
            <item>
             <widget class="QFrame" name="frame">
              <property name="frameShape">
@@ -678,6 +666,16 @@ QLabel:hover {
                    </item>
                   </layout>
                  </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_33">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the window will be able to open the track in full screen mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -720,6 +718,16 @@ QLabel:hover {
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_34">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, scrolling on pages will become smooth.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -964,6 +972,16 @@ QLabel:hover {
                    </item>
                   </layout>
                  </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_19">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, all detected ads are immediately skipped. (useless with premium).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1028,6 +1046,16 @@ QLabel:hover {
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_26">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, your Discord profile shows the current track’s title, artist, and cover art. (Discord must be running.)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -1094,6 +1122,16 @@ QLabel:hover {
                    </item>
                   </layout>
                  </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_27">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, media controls (Volume, Back, Play/Pause, Forward) appear on the app thumbnail in the taskbar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1105,7 +1143,7 @@ QLabel:hover {
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_22">
+                <layout class="QVBoxLayout" name="verticalLayout_21">
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_14">
                    <item>
@@ -1159,6 +1197,16 @@ QLabel:hover {
                    </item>
                   </layout>
                  </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_28">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the app minimizes to a taskbar icon when closed and keeps playing in the background.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1170,7 +1218,7 @@ QLabel:hover {
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_23">
+                <layout class="QVBoxLayout" name="verticalLayout_22">
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_15">
                    <item>
@@ -1224,6 +1272,16 @@ QLabel:hover {
                    </item>
                   </layout>
                  </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_29">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, a notification with the track's title and artist appears on each track change.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1235,7 +1293,7 @@ QLabel:hover {
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_24">
+                <layout class="QVBoxLayout" name="verticalLayout_23">
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <property name="rightMargin">
@@ -1310,6 +1368,16 @@ QLabel:hover {
                    </item>
                   </layout>
                  </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_30">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, you can pause a track or play the next one without touching the mouse while in another application.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1321,7 +1389,7 @@ QLabel:hover {
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_25">
+                <layout class="QVBoxLayout" name="verticalLayout_24">
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_18">
                    <item>
@@ -1374,6 +1442,91 @@ QLabel:hover {
                     </widget>
                    </item>
                   </layout>
+                 </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_31">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, all video clips are hidden behind their thumbnails.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFrame" name="SettingBox16">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_25">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_20">
+                   <item>
+                    <widget class="QLabel" name="label_11">
+                     <property name="minimumSize">
+                      <size>
+                       <width>22</width>
+                       <height>22</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>22</width>
+                       <height>22</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="BodyLabel" name="BodyLabel_25">
+                     <property name="text">
+                      <string>Non-stop Music</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_17">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="SwitchButton" name="SwitchButton_16" native="true">
+                     <property name="layoutDirection">
+                      <enum>Qt::RightToLeft</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="BodyLabel" name="BodyLabel_32">
+                   <property name="text">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the “Video paused. Continue watching?” prompt is skipped.&lt;/span&gt;&lt;span style=&quot; color:#808080;&quot;&gt; (useless with premium)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>

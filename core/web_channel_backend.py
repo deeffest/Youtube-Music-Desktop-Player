@@ -11,15 +11,6 @@ class WebChannelBackend(QObject):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
-    @pyqtSlot(str)
-    def like_status_changed(self, status):
-        if status != "":
-            self.window.like_status = status
-        else:
-            self.window.like_status = None
-
-        self.window.update_mini_player_like_dislike_controls()
-
     @pyqtSlot(str, str, str)
     def track_info_changed(self, title, author, thumbnail_url):
         self.window.title = title

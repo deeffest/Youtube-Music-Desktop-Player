@@ -1,3 +1,11 @@
+v1.18.0-rc2 is Here! (16.07.2025)
+- Added the long-awaited `Non-stop Music` plugin — forget about the annoying "Video paused. Continue watching?" popup!
+- Replaced `Like` and `Dislike` buttons in the mini-player with `Volume Up` and `Volume Down`.
+- Added `Volume Up` and `Volume Down` buttons to the system tray app icon (see the `System Tray App Icon` plugin) and to the taskbar thumbnail (see the `Windows Thumbnail Buttons` plugin).
+- Now all URLs outside the explicitly allowed patterns are fully blocked instead of opening in your default browser.
+- Added missing descriptions for elements in the settings dialog.
+- Other fixes and improvements.
+
 v1.18.0-rc1 is Here! (23.06.2025)
 - Reworked track/playlist downloader - now based on `yt-dlp`!
 - Improved proxy support — system proxy is now used not only in the web engine but also in the downloader and other network components.

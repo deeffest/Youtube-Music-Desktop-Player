@@ -108,7 +108,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("save_last_pos_of_mp", 1)
         if self.settings_.value("last_win_geometry") is None:
             self.settings_.setValue(
-                "last_win_geometry", QRect(get_centered_geometry(1000, 580))
+                "last_win_geometry", QRect(get_centered_geometry(1000, 799))
             )
         if self.settings_.value("save_last_zoom_factor") is None:
             self.settings_.setValue("save_last_zoom_factor", 1)
@@ -144,6 +144,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("hotkey_playback_control", 0)
         if self.settings_.value("only_audio_mode") is None:
             self.settings_.setValue("only_audio_mode", 0)
+        if self.settings_.value("nonstop_music") is None:
+            self.settings_.setValue("nonstop_music", 1)
 
         if self.settings_.value("tray_icon") == 0:
             self.settings_.setValue("track_change_notificator", 0)
@@ -192,6 +194,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.value("hotkey_playback_control")
         )
         self.only_audio_mode_setting = int(self.settings_.value("only_audio_mode"))
+        self.nonstop_music_setting = int(self.settings_.value("nonstop_music"))
 
     def configure_window(self):
         try:
@@ -395,7 +398,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_menu.addAction(self.download_with_oauth_action)
         self.download_menu.addAction(self.download_as_unauthorized_action)
 
-        self.main_menu = RoundMenu(self)
+        self.main_menu = RoundMenu()
         self.main_menu.addAction(self.back_action)
         self.main_menu.addAction(self.forward_action)
         self.main_menu.addAction(self.home_action)
@@ -409,15 +412,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.main_menu.addAction(self.bug_report_action)
         self.main_menu.addAction(self.about_action)
 
-        self.edit_menu = RoundMenu(self)
+        self.edit_menu = RoundMenu()
         self.edit_menu.addAction(self.cut_action)
         self.edit_menu.addAction(self.copy_action)
         self.edit_menu.addAction(self.paste_action)
 
-        self.copy_menu = RoundMenu(self)
+        self.copy_menu = RoundMenu()
         self.copy_menu.addAction(self.copy_action)
 
-        self.paste_menu = RoundMenu(self)
+        self.paste_menu = RoundMenu()
         self.paste_menu.addAction(self.paste_action)
 
     def configure_ui_elements(self):
@@ -515,9 +518,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.win_thumbmail_buttons_setting == 1:
             self.win_thumbnail_toolbar = QWinThumbnailToolBar(self)
+            self.create_volume_down_button()
             self.create_previous_button()
             self.create_play_pause_button()
             self.create_next_button()
+            self.create_volume_up_button()
             self.win_thumbnail_toolbar.setWindow(self.windowHandle())
         else:
             self.win_thumbnail_toolbar = None
@@ -545,6 +550,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             only_audio_script.setWorldId(QWebEngineScript.MainWorld)
             only_audio_script.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(only_audio_script)
+
+        if self.nonstop_music_setting == 1:
+            nonstop_music_script = QWebEngineScript()
+            nonstop_music_script.setName("NonstopMusic")
+            nonstop_music_script.setSourceCode(self.read_script("nonstop_music.js"))
+            nonstop_music_script.setInjectionPoint(QWebEngineScript.Deferred)
+            nonstop_music_script.setWorldId(QWebEngineScript.MainWorld)
+            nonstop_music_script.setRunsOnSubFrames(False)
+            self.webpage.profile().scripts().insert(nonstop_music_script)
 
     def load_progress(self, progress):
         if progress > 80 and self.splash_screen is not None:
@@ -607,30 +621,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.download_as_unauthorized_action.setEnabled(self.is_video_or_playlist)
             self.download_with_oauth_shortcut.setEnabled(self.is_video_or_playlist)
             self.download_as_unauthorized_shortcut.setEnabled(self.is_video_or_playlist)
-
-    def update_mini_player_like_dislike_controls(self):
-        if self.mini_player_dialog:
-            if self.like_status == "Like":
-                self.mini_player_dialog.like_button.setIcon(
-                    QIcon(f"{self.icon_folder}/like-filled.png")
-                )
-                self.mini_player_dialog.dislike_button.setIcon(
-                    QIcon(f"{self.icon_folder}/dislike.png")
-                )
-            elif self.like_status == "Dislike":
-                self.mini_player_dialog.like_button.setIcon(
-                    QIcon(f"{self.icon_folder}/like.png")
-                )
-                self.mini_player_dialog.dislike_button.setIcon(
-                    QIcon(f"{self.icon_folder}/dislike-filled.png")
-                )
-            else:
-                self.mini_player_dialog.like_button.setIcon(
-                    QIcon(f"{self.icon_folder}/like.png")
-                )
-                self.mini_player_dialog.dislike_button.setIcon(
-                    QIcon(f"{self.icon_folder}/dislike.png")
-                )
 
     def update_mini_player_track_info(self):
         if self.mini_player_dialog:
@@ -704,30 +694,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_tray_icon_track_controls(self):
         if self.tray_icon_setting == 1 and self.tray_icon:
             if self.video_state == "VideoPlaying":
+                self.tray_icon.volume_down_action.setEnabled(True)
                 self.tray_icon.previous_action.setEnabled(True)
                 self.tray_icon.play_pause_action.setIcon(
                     QIcon(f"{self.icon_folder}/pause.png")
                 )
                 self.tray_icon.play_pause_action.setEnabled(True)
                 self.tray_icon.next_action.setEnabled(True)
+                self.tray_icon.volume_up_action.setEnabled(True)
             elif self.video_state == "VideoPaused":
+                self.tray_icon.volume_down_action.setEnabled(True)
                 self.tray_icon.previous_action.setEnabled(True)
                 self.tray_icon.play_pause_action.setIcon(
                     QIcon(f"{self.icon_folder}/play.png")
                 )
                 self.tray_icon.play_pause_action.setEnabled(True)
                 self.tray_icon.next_action.setEnabled(True)
+                self.tray_icon.volume_up_action.setEnabled(True)
             else:
+                self.tray_icon.volume_down_action.setEnabled(False)
                 self.tray_icon.previous_action.setEnabled(False)
                 self.tray_icon.play_pause_action.setIcon(
                     QIcon(f"{self.icon_folder}/play.png")
                 )
                 self.tray_icon.play_pause_action.setEnabled(False)
                 self.tray_icon.next_action.setEnabled(False)
+                self.tray_icon.volume_up_action.setEnabled(False)
 
     def update_win_thumbnail_buttons_track_controls(self):
         if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
             if self.video_state == "VideoPlaying":
+                self.tool_btn_volume_down.setIcon(
+                    QIcon(f"{self.icon_folder}/volume_down-filled-border.png")
+                )
                 self.tool_btn_previous.setIcon(
                     QIcon(f"{self.icon_folder}/previous-filled-border.png")
                 )
@@ -737,10 +736,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tool_btn_next.setIcon(
                     QIcon(f"{self.icon_folder}/next-filled-border.png")
                 )
+                self.tool_btn_volume_up.setIcon(
+                    QIcon(f"{self.icon_folder}/volume_up-filled-border.png")
+                )
+                self.tool_btn_volume_down.setEnabled(True)
                 self.tool_btn_previous.setEnabled(True)
                 self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setEnabled(True)
+                self.tool_btn_volume_up.setEnabled(True)
             elif self.video_state == "VideoPaused":
+                self.tool_btn_volume_down.setIcon(
+                    QIcon(f"{self.icon_folder}/volume_down-filled-border.png")
+                )
                 self.tool_btn_previous.setIcon(
                     QIcon(f"{self.icon_folder}/previous-filled-border.png")
                 )
@@ -750,10 +757,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tool_btn_next.setIcon(
                     QIcon(f"{self.icon_folder}/next-filled-border.png")
                 )
+                self.tool_btn_volume_up.setIcon(
+                    QIcon(f"{self.icon_folder}/volume_up-filled-border.png")
+                )
+                self.tool_btn_volume_down.setEnabled(True)
                 self.tool_btn_previous.setEnabled(True)
                 self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setEnabled(True)
+                self.tool_btn_volume_up.setEnabled(True)
             else:
+                self.tool_btn_volume_down.setIcon(
+                    QIcon(f"{self.icon_folder}/volume_down-filled-border-disabled.png")
+                )
                 self.tool_btn_previous.setIcon(
                     QIcon(f"{self.icon_folder}/previous-filled-border-disabled.png")
                 )
@@ -763,9 +778,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tool_btn_next.setIcon(
                     QIcon(f"{self.icon_folder}/next-filled-border-disabled.png")
                 )
+                self.tool_btn_volume_up.setIcon(
+                    QIcon(f"{self.icon_folder}/volume_up-filled-border-disabled.png")
+                )
+                self.tool_btn_volume_down.setEnabled(False)
                 self.tool_btn_previous.setEnabled(False)
                 self.tool_btn_play_pause.setEnabled(False)
                 self.tool_btn_next.setEnabled(False)
+                self.tool_btn_volume_up.setEnabled(False)
 
     def update_mini_player_track_controls(self):
         if self.mini_player_dialog:
@@ -776,17 +796,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 )
                 self.mini_player_dialog.play_pause_button.setEnabled(True)
                 self.mini_player_dialog.next_button.setEnabled(True)
-                self.mini_player_dialog.like_button.setEnabled(True)
-                self.mini_player_dialog.dislike_button.setEnabled(True)
+                self.mini_player_dialog.volume_up_button.setEnabled(True)
+                self.mini_player_dialog.volume_down_button.setEnabled(True)
             elif self.video_state == "VideoPaused":
+                self.mini_player_dialog.volume_down_button.setEnabled(True)
                 self.mini_player_dialog.previous_button.setEnabled(True)
                 self.mini_player_dialog.play_pause_button.setIcon(
                     QIcon(f"{self.icon_folder}/play-filled.png")
                 )
                 self.mini_player_dialog.play_pause_button.setEnabled(True)
                 self.mini_player_dialog.next_button.setEnabled(True)
-                self.mini_player_dialog.like_button.setEnabled(True)
-                self.mini_player_dialog.dislike_button.setEnabled(True)
+                self.mini_player_dialog.volume_up_button.setEnabled(True)
+                self.mini_player_dialog.volume_down_button.setEnabled(True)
             else:
                 self.mini_player_dialog.previous_button.setEnabled(False)
                 self.mini_player_dialog.play_pause_button.setIcon(
@@ -794,8 +815,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 )
                 self.mini_player_dialog.play_pause_button.setEnabled(False)
                 self.mini_player_dialog.next_button.setEnabled(False)
-                self.mini_player_dialog.like_button.setEnabled(False)
-                self.mini_player_dialog.dislike_button.setEnabled(False)
+                self.mini_player_dialog.volume_up_button.setEnabled(False)
+                self.mini_player_dialog.volume_down_button.setEnabled(False)
+
+    def create_volume_down_button(self):
+        self.tool_btn_volume_down = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
+        self.tool_btn_volume_down.setToolTip("Volume Down")
+        self.tool_btn_volume_down.setEnabled(False)
+        self.tool_btn_volume_down.setIcon(
+            QIcon(f"{self.icon_folder}/volume_down-filled-border-disabled.png")
+        )
+        self.tool_btn_volume_down.clicked.connect(self.volume_down)
+        self.win_thumbnail_toolbar.addButton(self.tool_btn_volume_down)
 
     def create_previous_button(self):
         self.tool_btn_previous = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
@@ -826,6 +857,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.tool_btn_next.clicked.connect(self.skip_next)
         self.win_thumbnail_toolbar.addButton(self.tool_btn_next)
+
+    def create_volume_up_button(self):
+        self.tool_btn_volume_up = QWinThumbnailToolButton(self.win_thumbnail_toolbar)
+        self.tool_btn_volume_up.setToolTip("Volume Up")
+        self.tool_btn_volume_up.setEnabled(False)
+        self.tool_btn_volume_up.setIcon(
+            QIcon(f"{self.icon_folder}/volume_up-filled-border-disabled.png")
+        )
+        self.tool_btn_volume_up.clicked.connect(self.volume_up)
+        self.win_thumbnail_toolbar.addButton(self.tool_btn_volume_up)
 
     def play_pause(self):
         self.run_js_script("play_pause.js")
@@ -912,7 +953,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def show_mini_player(self):
         self.mini_player_dialog = MiniPlayerDialog(self)
         self.update_mini_player_track_controls()
-        self.update_mini_player_like_dislike_controls()
         self.update_mini_player_track_info()
         self.update_mini_player_track_progress()
         self.mini_player_dialog.show()
@@ -1075,5 +1115,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.force_exit = False
                 event.ignore()
                 return
-            
+
         event.accept()

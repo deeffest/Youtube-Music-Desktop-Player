@@ -1,6 +1,5 @@
 import re
 import logging
-import webbrowser
 from typing import TYPE_CHECKING
 
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
@@ -20,50 +19,21 @@ class WebEnginePage(QWebEnginePage):
     def acceptNavigationRequest(self, url, type, isMainFrame):
         url_str = url.toString()
 
-        blocklist_patterns = [
-            r"^.*googlesyndication\.com.*$",
-            r"^.*googletagmanager\.com.*$",
-            r"^.*googleadservices\.com.*$",
-            r"^.*doubleclick\.net.*$",
-        ]
-
-        whitelist_patterns = [
+        patterns = [
             r"^https://music\.youtube\.com/.*$",
             r"^https://accounts\.google\..*/.*$",
-            r"^https://consent\.youtube\.com/.*$",
             r"^https://accounts\.youtube\.com/.*$",
-            r"^https://ogs\.google\.com/.*$",
-            r"^https://www\.google\.com/device.*$",
-            r"^https://www\.google\.com/recaptcha.*$",
-            r"^https://www\.google\.com/tools/feedback/.*$",
             r"^https://www\.youtube\.com/signin.*action_handle_signin.*$",
-            r"^https://myaccount\.google\.com/accounts/SetOSID\?.*",
-            r"^https://gds\.google\.com/web/homeaddress.*$",
+            r"^https://www\.google\.com/recaptcha.*$",
+            r"^https://consent\.youtube\.com/.*$",
+            r"^https://www\.google\.com/tools/feedback/.*$",
         ]
 
-        for pattern in blocklist_patterns:
+        for pattern in patterns:
             if re.match(pattern, url_str):
-                logging.info(f"🚫 Blocked pattern: {pattern} - URL: {url_str}")
-                return False
-
-        for pattern in whitelist_patterns:
-            if re.match(pattern, url_str):
-                logging.info(f"✅ Allowed pattern: {pattern} - URL: {url_str}")
                 return True
 
-        logging.info(f"🌐 Opening URL: {url_str}")
-        webbrowser.open_new_tab(url_str)
         return False
-
-    def createWindow(self, type):
-        temp_page = QWebEnginePage(self.profile(), self)
-
-        def handle_url_change(url):
-            self.window.load_url(url)
-            temp_page.deleteLater()
-
-        temp_page.urlChanged.connect(handle_url_change)
-        return temp_page
 
     def javaScriptAlert(self, securityOrigin, msg):
         w = MessageBox(
