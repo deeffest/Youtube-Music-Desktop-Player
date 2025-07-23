@@ -1,144 +1,132 @@
-// ==UserScript==
-// @match        https://music.youtube.com/*
-// ==/UserScript==
-
-var script = document.createElement("script");
-
-if (window.trustedTypes && window.trustedTypes.createPolicy) {
-    const policy = window.trustedTypes.createPolicy("default", {
-        createScriptURL: (url) => url,
-    });
-    script.src = policy.createScriptURL("qrc:///qtwebchannel/qwebchannel.js");
-} else {
-    script.src = "qrc:///qtwebchannel/qwebchannel.js";
-}
-
-script.onload = function () {
+if (typeof qt !== "undefined" && qt.webChannelTransport) {
     new QWebChannel(qt.webChannelTransport, function (channel) {
         window.backend = channel.objects.backend;
 
-        var lastState = "";
-        var lastTrackInfo = {
+        let lastState = "";
+        let lastTrackInfo = {
             title: "",
-            author: "",
+            artist: "",
             thumbnailUrl: "",
         };
-        var lastTrackProgress = {
+        let lastTrackProgress = {
             currentTime: "",
             totalTime: "",
         };
 
-        function updateVideoState() {
-            var player = document.getElementById("player");
-            var newState = "NoVideo";
-            if (player) {
-                var video = document.getElementsByTagName("video")[0];
-                if (video) {
-                    newState =
-                        video.readyState === 4
-                            ? video.paused
-                                ? "VideoPaused"
-                                : "VideoPlaying"
-                            : "NoVideo";
-                }
-            }
-            if (newState !== lastState) {
-                backend.video_state_changed(newState);
-                lastState = newState;
-            }
-            updateTrackInfo();
-        }
+        let debounceTimer = null;
+        const DEBOUNCE_DELAY = 200;
 
         function getThumbnailOrCoverUrl() {
-            var thumbnailElement = document.querySelector("#song-image #img");
-            if (thumbnailElement) {
-                if (
-                    thumbnailElement.src &&
-                    !thumbnailElement.src.startsWith("data:image/gif")
-                ) {
-                    return thumbnailElement.src;
-                }
+            const cover = document.querySelector("#song-image #img");
+            if (cover?.src.includes("lh3.googleusercontent.com")) {
+                return cover.src;
             }
 
-            var fallbackElement = document.querySelector(
+            const thumb = document.querySelector(
                 ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
             );
-            if (fallbackElement) {
-                return fallbackElement.src;
+            if (thumb?.src.includes("i.ytimg.com")) {
+                return thumb.src;
             }
 
             return "";
         }
 
         function updateTrackInfo() {
-            var titleElement = document.querySelector(
-                ".title.style-scope.ytmusic-player-bar",
-            );
-            var authorElement = document.querySelector(
-                ".byline.style-scope.ytmusic-player-bar",
-            );
-            var thumbnailUrl = getThumbnailOrCoverUrl();
-
-            var trackInfo = {
-                title: titleElement ? titleElement.textContent.trim() : "",
-                author: authorElement ? authorElement.textContent.trim() : "",
-                thumbnailUrl: thumbnailUrl || "",
-            };
-
-            if (
-                trackInfo.title !== lastTrackInfo.title ||
-                trackInfo.author !== lastTrackInfo.author ||
-                trackInfo.thumbnailUrl !== lastTrackInfo.thumbnailUrl
-            ) {
-                backend.track_info_changed(
-                    trackInfo.title,
-                    trackInfo.author,
-                    trackInfo.thumbnailUrl,
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const titleEl = document.querySelector(
+                    ".title.style-scope.ytmusic-player-bar",
                 );
-                lastTrackInfo = trackInfo;
+                const authorEl = document.querySelector(
+                    ".byline.style-scope.ytmusic-player-bar",
+                );
+
+                let title = titleEl?.textContent.trim() || "";
+                let author = authorEl?.textContent.trim() || "";
+                let thumbnailUrl = getThumbnailOrCoverUrl();
+
+                const allEmpty = !title && !author && !thumbnailUrl;
+                const allFilled = title && author && thumbnailUrl;
+
+                if (!(allEmpty || allFilled)) {
+                    return;
+                }
+
+                const changed =
+                    title !== lastTrackInfo.title ||
+                    author !== lastTrackInfo.author ||
+                    thumbnailUrl !== lastTrackInfo.thumbnailUrl;
+
+                if (changed) {
+                    backend.track_info_changed(title, author, thumbnailUrl);
+                    lastTrackInfo = { title, author, thumbnailUrl };
+                }
+            }, DEBOUNCE_DELAY);
+        }
+
+        function updateVideoState() {
+            const video = document.querySelector("video");
+            let newState = "NoVideo";
+
+            if (video && video.readyState === 4) {
+                newState = video.paused ? "VideoPaused" : "VideoPlaying";
+            }
+
+            if (newState !== lastState) {
+                backend.video_state_changed(newState);
+                lastState = newState;
             }
         }
 
         function updateTrackProgress() {
-            var timeInfoElement = document.querySelector(
+            const timeEl = document.querySelector(
                 ".time-info.style-scope.ytmusic-player-bar",
             );
-            if (timeInfoElement) {
-                var timeText = timeInfoElement.textContent.trim();
-                var timeParts = timeText.split("/");
-                if (timeParts.length === 2) {
-                    var currentTime = timeParts[0].trim();
-                    var totalTime = timeParts[1].trim();
+            const timeText = timeEl?.textContent.trim();
+            const parts = timeText?.split("/") ?? [];
 
-                    if (
-                        currentTime !== lastTrackProgress.currentTime ||
-                        totalTime !== lastTrackProgress.totalTime
-                    ) {
-                        backend.track_progress_changed(currentTime, totalTime);
-                        lastTrackProgress = { currentTime, totalTime };
-                    }
+            if (parts.length === 2) {
+                const [currentTime, totalTime] = parts.map((t) => t.trim());
+                if (
+                    currentTime !== lastTrackProgress.currentTime ||
+                    totalTime !== lastTrackProgress.totalTime
+                ) {
+                    backend.track_progress_changed(currentTime, totalTime);
+                    lastTrackProgress = { currentTime, totalTime };
                 }
             }
         }
 
-        var progressObserver = new MutationObserver(updateTrackProgress);
-        var timeInfoElement = document.querySelector(
+        const playerBar = document.querySelector(
+            ".middle-controls.style-scope.ytmusic-player-bar",
+        );
+        if (playerBar) {
+            new MutationObserver(updateTrackInfo).observe(playerBar, {
+                childList: true,
+                subtree: true,
+            });
+        }
+
+        const playerPage = document.querySelector("ytmusic-player-page");
+        if (playerPage) {
+            new MutationObserver(updateVideoState).observe(playerPage, {
+                childList: true,
+                subtree: true,
+            });
+        }
+
+        const progressEl = document.querySelector(
             ".time-info.style-scope.ytmusic-player-bar",
         );
-        if (timeInfoElement) {
-            progressObserver.observe(timeInfoElement, {
+        if (progressEl) {
+            new MutationObserver(updateTrackProgress).observe(progressEl, {
                 characterData: true,
                 subtree: true,
             });
         }
 
-        const ytmusicObserver = new MutationObserver(updateVideoState);
-        ytmusicObserver.observe(document.querySelector("ytmusic-player-page"), {
-            childList: true,
-            subtree: true,
-        });
-        
+        updateTrackInfo();
         updateVideoState();
     });
-};
-document.head.appendChild(script);
+}

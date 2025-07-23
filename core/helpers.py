@@ -4,6 +4,7 @@ import winreg
 import logging
 import win32api
 import win32gui
+from urllib.parse import urlparse
 
 from PyQt5.QtWidgets import QDesktopWidget
 from PyQt5.QtCore import QRect
@@ -88,3 +89,8 @@ def is_file_used_by_cmd(filepath):
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
     return False
+
+
+def is_valid_ytmusic_url(url):
+    parsed = urlparse(str(url))
+    return parsed.scheme == "https" and parsed.netloc == "music.youtube.com"

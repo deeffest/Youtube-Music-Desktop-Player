@@ -73,6 +73,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.SwitchButton_15.checkedChanged.connect(self.check_if_settings_changed)
         self.ComboBox_3.currentIndexChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_16.checkedChanged.connect(self.check_if_settings_changed)
+        self.checkBox.toggled.connect(self.check_if_settings_changed)
 
         self.configure_tabs()
 
@@ -105,11 +106,11 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.opengl_enviroments.index(self.window.opengl_enviroment_setting)
         )
         self.SwitchButton_16.setChecked(self.window.nonstop_music_setting)
+        self.checkBox.setChecked(self.window.block_video_setting)
 
-        self.check_track_change_notificator_dependency()
-        self.SwitchButton_12.checkedChanged.connect(
-            self.check_track_change_notificator_dependency
-        )
+        self.check_settings_dependency()
+        self.SwitchButton_12.checkedChanged.connect(self.check_settings_dependency)
+        self.SwitchButton_15.checkedChanged.connect(self.check_settings_dependency)
 
         self.check_if_settings_changed()
 
@@ -157,7 +158,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP)
         )
 
-    def check_track_change_notificator_dependency(self):
+    def check_settings_dependency(self):
         if not self.SwitchButton_12.isChecked():
             self.SwitchButton_13.setChecked(False)
             self.SettingBox12.setEnabled(False)
@@ -170,6 +171,11 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.SettingBox12.setEnabled(True)
             self.SettingBox12.setStyleSheet("")
             self.BodyLabel_21.setStyleSheet("color: white;")
+
+        if not self.SwitchButton_15.isChecked():
+            self.checkBox.setEnabled(False)
+        else:
+            self.checkBox.setEnabled(True)
 
         self.check_if_settings_changed()
 
@@ -191,10 +197,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
         if not msg_box or msg_box.exec_():
             self.window.save_settings()
-
             self.save_settings()
-            QApplication.quit()
+
             QProcess.startDetached(sys.executable, sys.argv)
+            QApplication.quit()
 
     def save_settings(self):
         self.window.save_last_win_geometry_setting = int(self.SwitchButton.isChecked())
@@ -231,6 +237,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.only_audio_mode_setting = int(self.SwitchButton_15.isChecked())
         self.window.opengl_enviroment_setting = self.ComboBox_3.currentText()
         self.window.nonstop_music_setting = int(self.SwitchButton_16.isChecked())
+        self.window.block_video_setting = int(self.checkBox.isChecked())
 
         self.window.settings_.setValue(
             "save_last_win_geometry", self.window.save_last_win_geometry_setting
@@ -277,6 +284,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.settings_.setValue(
             "opengl_enviroment", self.window.opengl_enviroment_setting
         )
+        self.window.settings_.setValue(
+            "nonstop_music", self.window.nonstop_music_setting
+        )
+        self.window.settings_.setValue("block_video", self.window.block_video_setting)
 
         self.check_if_settings_changed()
 
@@ -351,6 +362,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             or self.SwitchButton_15.isChecked() != self.window.only_audio_mode_setting
             or self.ComboBox_3.currentText() != self.window.opengl_enviroment_setting
             or self.SwitchButton_16.isChecked() != self.window.nonstop_music_setting
+            or self.checkBox.isChecked() != self.window.block_video_setting
         ):
 
             self.PrimaryPushButton.setEnabled(True)

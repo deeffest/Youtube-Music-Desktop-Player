@@ -35,7 +35,7 @@ function skipAd() {
 }
 
 const adBlockerObserver = new MutationObserver(skipAd);
-adBlockerObserver.observe(document.querySelector("ytmusic-player"), {
+adBlockerObserver.observe(document.querySelector("ytmusic-player-page"), {
     childList: true,
     subtree: true,
 });

@@ -3,7 +3,7 @@ import logging
 import tempfile
 import webbrowser
 
-from PyQt5.QtCore import QUrl, Qt, QSize, QRect, QTimer
+from PyQt5.QtCore import QUrl, Qt, QSize, QRect, QFile, QTextStream
 from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.QtWebChannel import QWebChannel
@@ -13,7 +13,6 @@ from PyQt5.QtWebEngineWidgets import (
     QWebEngineScript,
 )
 from PyQt5.QtWidgets import (
-    QApplication,
     QFileDialog,
     QMainWindow,
     QShortcut,
@@ -44,7 +43,11 @@ from core.web_channel_backend import WebChannelBackend
 from core.web_engine_page import WebEnginePage
 from core.web_engine_view import WebEngineView
 from core.ytmusic_downloader import DownloadThread
-from core.helpers import get_centered_geometry, is_file_used_by_cmd
+from core.helpers import (
+    get_centered_geometry,
+    is_file_used_by_cmd,
+    is_valid_ytmusic_url,
+)
 from core.ui.ui_main_window import Ui_MainWindow
 from core.hotkey_controller import HotkeyController
 
@@ -52,7 +55,6 @@ from core.hotkey_controller import HotkeyController
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, app_settings, opengl_enviroment_setting, app_info):
         super().__init__()
-
         self.name = app_info[0]
         self.app_author = app_info[1]
         self.version = app_info[2]
@@ -71,7 +73,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.force_exit = False
         self.is_downloading = False
-        self.notification_in_progress = False
 
         self.settings_ = app_settings
         self.opengl_enviroment_setting = opengl_enviroment_setting
@@ -146,6 +147,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("only_audio_mode", 0)
         if self.settings_.value("nonstop_music") is None:
             self.settings_.setValue("nonstop_music", 1)
+        if self.settings_.value("block_video") is None:
+            self.settings_.setValue("block_video", 1)
 
         if self.settings_.value("tray_icon") == 0:
             self.settings_.setValue("track_change_notificator", 0)
@@ -195,6 +198,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.only_audio_mode_setting = int(self.settings_.value("only_audio_mode"))
         self.nonstop_music_setting = int(self.settings_.value("nonstop_music"))
+        self.block_video_setting = int(self.settings_.value("block_video"))
 
     def configure_window(self):
         try:
@@ -210,7 +214,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.save_last_win_geometry_setting == 1:
             self.setGeometry(self.last_win_geometry_setting)
         else:
-            self.setGeometry(get_centered_geometry(1000, 560))
+            self.setGeometry(get_centered_geometry(1000, 799))
 
     def set_application_proxy(self):
         try:
@@ -252,23 +256,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def connect_shortcuts(self):
         self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
-        self.back_shortcut.activated.connect(self.back)
+        self.back_shortcut.activated.connect(self.go_back)
 
         self.forward_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Right), self)
-        self.forward_shortcut.activated.connect(self.forward)
+        self.forward_shortcut.activated.connect(self.go_forward)
 
         self.home_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_H), self)
-        self.home_shortcut.activated.connect(self.home)
+        self.home_shortcut.activated.connect(self.go_to_home)
 
         self.reload_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_R), self)
-        self.reload_shortcut.activated.connect(self.reload)
+        self.reload_shortcut.activated.connect(self.reload_page)
 
         self.download_with_oauth_shortcut = QShortcut(
             QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_D), self
         )
         self.download_with_oauth_shortcut.setEnabled(False)
         self.download_with_oauth_shortcut.activated.connect(
-            lambda: self.download(use_cookies=True)
+            lambda: self.start_download(use_cookies=True)
         )
 
         self.download_as_unauthorized_shortcut = QShortcut(
@@ -276,15 +280,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.download_as_unauthorized_shortcut.setEnabled(False)
         self.download_as_unauthorized_shortcut.activated.connect(
-            lambda: self.download(use_cookies=False)
+            lambda: self.start_download(use_cookies=False)
         )
 
         self.mini_player_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_M), self)
         self.mini_player_shortcut.setEnabled(False)
-        self.mini_player_shortcut.activated.connect(self.mini_player)
+        self.mini_player_shortcut.activated.connect(self.open_mini_player)
 
         self.settings_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
-        self.settings_shortcut.activated.connect(self.settings)
+        self.settings_shortcut.activated.connect(self.open_settings)
 
     def show_splash_screen(self):
         self.splash_screen = SplashScreen(self.windowIcon(), self)
@@ -297,14 +301,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.websettings = QWebEngineSettings.globalSettings()
         self.webview.setPage(self.webpage)
 
-        if self.open_last_url_at_startup_setting == 1:
+        if self.open_last_url_at_startup_setting == 1 and is_valid_ytmusic_url(
+            self.last_url_setting
+        ):
             self.webview.load(QUrl(self.last_url_setting))
         else:
             self.home()
 
-        self.webview.urlChanged.connect(self.url_changed)
-        self.webview.loadProgress.connect(self.load_progress)
-        self.webpage.fullScreenRequested.connect(self.handle_fullscreen)
+        self.webview.urlChanged.connect(self.on_url_changed)
+        self.webview.loadProgress.connect(self.on_load_progress)
+        self.webpage.fullScreenRequested.connect(self.on_fullscreen_requested)
 
         self.websettings.setAttribute(
             QWebEngineSettings.FullScreenSupportEnabled,
@@ -331,20 +337,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.back_action = Action("Back", shortcut="Alt+Left")
         self.back_action.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_action.setEnabled(False)
-        self.back_action.triggered.connect(self.webview.back)
+        self.back_action.triggered.connect(self.go_back)
 
         self.forward_action = Action("Forward", shortcut="Alt+Right")
         self.forward_action.setIcon(QIcon(f"{self.icon_folder}/right.png"))
         self.forward_action.setEnabled(False)
-        self.forward_action.triggered.connect(self.webview.forward)
+        self.forward_action.triggered.connect(self.go_forward)
 
         self.home_action = Action("Home", shortcut="Ctrl+H")
         self.home_action.setIcon(QIcon(f"{self.icon_folder}/home.png"))
-        self.home_action.triggered.connect(self.home)
+        self.home_action.triggered.connect(self.go_to_home)
 
         self.reload_action = Action("Reload", shortcut="Ctrl+R")
         self.reload_action.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
-        self.reload_action.triggered.connect(self.webview.reload)
+        self.reload_action.triggered.connect(self.reload_page)
 
         self.download_with_oauth_action = Action("Signed In", shortcut="Ctrl+Shift+D")
         self.download_with_oauth_action.setIcon(
@@ -352,7 +358,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.download_with_oauth_action.setEnabled(True)
         self.download_with_oauth_action.triggered.connect(
-            lambda: self.download(use_cookies=True)
+            lambda: self.start_download(use_cookies=True)
         )
 
         self.download_as_unauthorized_action = Action("Guest Mode", shortcut="Ctrl+D")
@@ -361,21 +367,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.download_as_unauthorized_action.setEnabled(False)
         self.download_as_unauthorized_action.triggered.connect(
-            lambda: self.download(use_cookies=False)
+            lambda: self.start_download(use_cookies=False)
         )
 
         self.mini_player_action = Action("Mini-Player", shortcut="Ctrl+M")
         self.mini_player_action.setIcon(QIcon(f"{self.icon_folder}/mini-player.png"))
         self.mini_player_action.setEnabled(False)
-        self.mini_player_action.triggered.connect(self.mini_player)
+        self.mini_player_action.triggered.connect(self.open_mini_player)
 
         self.settings_action = Action("Settings", shortcut="Ctrl+S")
         self.settings_action.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
-        self.settings_action.triggered.connect(self.settings)
+        self.settings_action.triggered.connect(self.open_settings)
 
         self.bug_report_action = Action("Bug Report")
         self.bug_report_action.setIcon(QIcon(f"{self.icon_folder}/bug.png"))
-        self.bug_report_action.triggered.connect(self.bug_report)
+        self.bug_report_action.triggered.connect(self.send_bug_report)
 
         self.about_action = Action("About")
         self.about_action.setIcon(QIcon(f"{self.icon_folder}/about.png"))
@@ -429,26 +435,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.back_tbutton.installEventFilter(
             ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP)
         )
-        self.back_tbutton.clicked.connect(self.webview.back)
+        self.back_tbutton.clicked.connect(self.go_back)
 
         self.forward_tbutton.setIcon(QIcon(f"{self.icon_folder}/right.png"))
         self.forward_tbutton.setEnabled(False)
         self.forward_tbutton.installEventFilter(
             ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.TOP)
         )
-        self.forward_tbutton.clicked.connect(self.webview.forward)
+        self.forward_tbutton.clicked.connect(self.go_forward)
 
         self.home_tbutton.setIcon(QIcon(f"{self.icon_folder}/home.png"))
         self.home_tbutton.installEventFilter(
             ToolTipFilter(self.home_tbutton, 300, ToolTipPosition.TOP)
         )
-        self.home_tbutton.clicked.connect(self.home)
+        self.home_tbutton.clicked.connect(self.go_to_home)
 
         self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
         self.reload_tbutton.installEventFilter(
             ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
         )
-        self.reload_tbutton.clicked.connect(self.webview.reload)
+        self.reload_tbutton.clicked.connect(self.reload_page)
 
         self.url_line_edit.returnPressed.connect(
             lambda: self.load_url(self.url_line_edit.text())
@@ -465,19 +471,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mini_player_tbutton.installEventFilter(
             ToolTipFilter(self.mini_player_tbutton, 300, ToolTipPosition.TOP)
         )
-        self.mini_player_tbutton.clicked.connect(self.mini_player)
+        self.mini_player_tbutton.clicked.connect(self.open_mini_player)
 
         self.settings_tbutton.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
         self.settings_tbutton.installEventFilter(
             ToolTipFilter(self.settings_tbutton, 300, ToolTipPosition.TOP)
         )
-        self.settings_tbutton.clicked.connect(self.settings)
+        self.settings_tbutton.clicked.connect(self.open_settings)
 
         self.bug_report_tbutton.setIcon(QIcon(f"{self.icon_folder}/bug.png"))
         self.bug_report_tbutton.installEventFilter(
             ToolTipFilter(self.bug_report_tbutton, 300, ToolTipPosition.TOP)
         )
-        self.bug_report_tbutton.clicked.connect(self.bug_report)
+        self.bug_report_tbutton.clicked.connect(self.send_bug_report)
 
         self.about_tbutton.setIcon(QIcon(f"{self.icon_folder}/about.png"))
         self.about_tbutton.installEventFilter(
@@ -486,6 +492,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.about_tbutton.clicked.connect(self.about)
 
     def activate_plugins(self):
+        qtwebchannel = QWebEngineScript()
+        file = QFile(":/qtwebchannel/qwebchannel.js")
+        if file.open(QFile.ReadOnly | QFile.Text):
+            stream = QTextStream(file)
+            script_code = stream.readAll()
+            qtwebchannel.setSourceCode(script_code)
+            file.close()
+        qtwebchannel.setInjectionPoint(QWebEngineScript.DocumentReady)
+        qtwebchannel.setWorldId(QWebEngineScript.MainWorld)
+        qtwebchannel.setRunsOnSubFrames(False)
+        self.webpage.profile().scripts().insert(qtwebchannel)
+
         if self.ad_blocker_setting == 1:
             ad_blocker_plugin = QWebEngineScript()
             ad_blocker_plugin.setName("AdBlocker")
@@ -551,6 +569,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             only_audio_script.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(only_audio_script)
 
+            if self.block_video_setting == 1:
+                block_video_script = QWebEngineScript()
+                block_video_script.setName("BlockVideo")
+                block_video_script.setSourceCode(self.read_script("block_video.js"))
+                block_video_script.setInjectionPoint(QWebEngineScript.DocumentCreation)
+                block_video_script.setWorldId(QWebEngineScript.MainWorld)
+                block_video_script.setRunsOnSubFrames(False)
+                self.webpage.profile().scripts().insert(block_video_script)
+
         if self.nonstop_music_setting == 1:
             nonstop_music_script = QWebEngineScript()
             nonstop_music_script.setName("NonstopMusic")
@@ -560,7 +587,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             nonstop_music_script.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(nonstop_music_script)
 
-    def load_progress(self, progress):
+    def on_load_progress(self, progress):
         if progress > 80 and self.splash_screen is not None:
             if self.isHidden():
                 self.showNormal()
@@ -575,10 +602,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def check_updates(self):
         self.update_checker_thread = UpdateChecker(self)
-        self.update_checker_thread.update_checked.connect(self.update_checked)
+        self.update_checker_thread.update_checked.connect(self.on_update_checked)
         self.update_checker_thread.start()
 
-    def update_checked(self, last_version, title, whats_new, last_release_url):
+    def on_update_checked(self, last_version, title, whats_new, last_release_url):
         self.update_checker_thread = None
 
         if pkg_version.parse(self.version) < pkg_version.parse(last_version):
@@ -590,7 +617,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.force_exit = True
                 self.close()
 
-    def handle_fullscreen(self, request):
+    def on_fullscreen_requested(self, request):
         if not self.isFullScreen():
             self.ToolBar.hide()
             self.showFullScreen()
@@ -600,7 +627,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         request.accept()
 
-    def url_changed(self, url):
+    def on_url_changed(self, url):
         self.current_url = url.toString()
         self.url_line_edit.setText(self.current_url)
         self.url_line_edit.setCursorPosition(0)
@@ -615,7 +642,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.is_video_or_playlist = (
             "watch" in self.current_url or "playlist" in self.current_url
         )
-
         if not self.is_downloading:
             self.download_with_oauth_action.setEnabled(self.is_video_or_playlist)
             self.download_as_unauthorized_action.setEnabled(self.is_video_or_playlist)
@@ -896,16 +922,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open(f"{self.current_dir}/core/js/{filename}", "r", encoding="utf-8") as f:
             return f.read()
 
-    def back(self):
+    def go_back(self):
         self.webview.back()
 
-    def forward(self):
+    def go_forward(self):
         self.webview.forward()
 
-    def home(self):
+    def go_to_home(self):
         self.webview.load(QUrl("https://music.youtube.com/"))
 
-    def reload(self):
+    def reload_page(self):
         self.webview.reload()
 
     def select_download_folder(self):
@@ -915,7 +941,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         return folder if folder else None
 
-    def download(self, use_cookies=False):
+    def start_download(self, use_cookies=False):
         download_folder = self.select_download_folder()
         if not download_folder:
             return
@@ -929,10 +955,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_thread = DownloadThread(
             self.current_url, download_folder, self, use_cookies=use_cookies
         )
-        self.download_thread.finished.connect(self.download_finished)
+        self.download_thread.finished.connect(self.on_download_finished)
         self.download_thread.start()
 
-    def download_finished(self):
+    def on_download_finished(self):
         self.download_thread = None
 
         self.is_downloading = False
@@ -944,7 +970,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_with_oauth_shortcut.setEnabled(not is_downloading)
         self.download_as_unauthorized_shortcut.setEnabled(not is_downloading)
 
-    def mini_player(self):
+    def open_mini_player(self):
         if self.video_state == "VideoPlaying" or "VideoPaused":
             self.show_mini_player()
             self.hide()
@@ -968,7 +994,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def load_url(self, url):
         self.webview.load(QUrl(url))
 
-    def settings(self):
+    def open_settings(self):
         settings_dialog = SettingsDialog(self)
         settings_dialog.exec()
 
@@ -976,7 +1002,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         about_dialog = AboutDialog(self)
         about_dialog.exec()
 
-    def bug_report(self):
+    def send_bug_report(self):
         webbrowser.open_new_tab(
             f"https://github.com/{self.app_author}/{self.name}/issues"
         )
@@ -992,20 +1018,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def send_notification(self):
         if self.track_change_notificator_setting == 1 and self.tray_icon is not None:
-            if not self.notification_in_progress:
-                self.notification_in_progress = True
-
-                title = f"{self.title}"
-                message = f"{self.author}"
-                self.tray_icon.showMessage(title, message, icon=QSystemTrayIcon.NoIcon)
-
-                QTimer.singleShot(5000, self.reset_notification_flag)
-
-    def reset_notification_flag(self):
-        self.notification_in_progress = False
+            title = f"{self.title}"
+            message = f"{self.author}"
+            self.tray_icon.showMessage(title, message, icon=QSystemTrayIcon.NoIcon)
 
     def save_settings(self):
-        if self.open_last_url_at_startup_setting == 1:
+        if self.open_last_url_at_startup_setting == 1 and is_valid_ytmusic_url(
+            self.current_url
+        ):
             self.last_url_setting = self.current_url
             self.settings_.setValue("last_url", self.last_url_setting)
 
@@ -1034,21 +1054,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             if self.mini_player_dialog.isMinimized():
                 self.mini_player_dialog.showNormal()
-
-    def show_error(self, message):
-        msg_box = MessageBox(
-            "⚠️ Unhandled exception occurred",
-            "The error message has been copied to the"
-            " clipboard and logs.\nWould you like to report it?",
-            self,
-        )
-        if msg_box.exec_():
-            self.copy_to_clipboard(message)
-            self.bug_report()
-
-    def copy_to_clipboard(self, text):
-        clipboard = QApplication.clipboard()
-        clipboard.setText(text)
 
     def stop_running_threads(self):
         if (

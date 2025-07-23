@@ -1,3 +1,12 @@
+v1.18.0-rc3 is Here! (24.07.2025)
+- Fixed reload issues - duplicate applications no longer appear and the application restarts correctly.
+- Removed the message box that appeared when an unhandled error occurred in the app (now the error text is simply recorded in the log).
+- Saving and opening the last URL now only works with YouTube Music URLs.
+- Fixed issues with the `Ad Blocker (Skipper)` plugin and the ytmusic observer script.
+- The `Only Audio Mode` plugin can now block video streams from loading at the network level, significantly reducing traffic consumption! (Enabled by default, can be disabled as follows: `Settings` > `Plugins` > `Only Audio Mode` > uncheck `Block video`.)
+- Improved code base.
+- Other fixes and improvements.
+
 v1.18.0-rc2 is Here! (16.07.2025)
 - Added the long-awaited `Non-stop Music` plugin — forget about the annoying "Video paused. Continue watching?" popup!
 - Replaced `Like` and `Dislike` buttons in the mini-player with `Volume Up` and `Volume Down`.

@@ -160,7 +160,7 @@
             <x>0</x>
             <y>-1014</y>
             <width>394</width>
-            <height>1350</height>
+            <height>1373</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -1453,6 +1453,13 @@ QLabel:hover {
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="CheckBox" name="checkBox">
+                   <property name="text">
+                    <string>Block video</string>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1710,6 +1717,11 @@ QLabel:hover {
   <customwidget>
    <class>PillPushButton</class>
    <extends>ToggleButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>CheckBox</class>
+   <extends>QCheckBox</extends>
    <header>qfluentwidgets</header>
   </customwidget>
  </customwidgets>

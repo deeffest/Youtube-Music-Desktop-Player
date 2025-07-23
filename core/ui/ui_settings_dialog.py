@@ -61,7 +61,7 @@ class Ui_SettingsDialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.ScrollArea.setObjectName("ScrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -1014, 394, 1350))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -1014, 394, 1373))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_19 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_19.setContentsMargins(0, 0, 0, 0)
@@ -598,6 +598,9 @@ class Ui_SettingsDialog(object):
         self.BodyLabel_31.setWordWrap(True)
         self.BodyLabel_31.setObjectName("BodyLabel_31")
         self.verticalLayout_24.addWidget(self.BodyLabel_31)
+        self.checkBox = CheckBox(self.SettingBox14)
+        self.checkBox.setObjectName("checkBox")
+        self.verticalLayout_24.addWidget(self.checkBox)
         self.verticalLayout_16.addWidget(self.SettingBox14)
         self.SettingBox16 = QtWidgets.QFrame(self.frame_4)
         self.SettingBox16.setFrameShape(QtWidgets.QFrame.NoFrame)
@@ -724,9 +727,20 @@ class Ui_SettingsDialog(object):
         self.BodyLabel_30.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, you can pause a track or play the next one without touching the mouse while in another application.</span></p></body></html>"))
         self.BodyLabel_24.setText(_translate("SettingsDialog", "Only Audio Mode"))
         self.BodyLabel_31.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, all video clips are hidden behind their thumbnails.</span></p></body></html>"))
+        self.checkBox.setText(_translate("SettingsDialog", "Block video"))
         self.BodyLabel_25.setText(_translate("SettingsDialog", "Non-stop Music"))
         self.BodyLabel_32.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, the “Video paused. Continue watching?” prompt is skipped.</span><span style=\" color:#808080;\"> (useless with premium)</span></p></body></html>"))
         self.PushButton_2.setText(_translate("SettingsDialog", "Restart"))
         self.PrimaryPushButton.setText(_translate("SettingsDialog", "Save"))
         self.PushButton.setText(_translate("SettingsDialog", "Cancel"))
-from qfluentwidgets import BodyLabel, ComboBox, HorizontalSeparator, LineEdit, PasswordLineEdit, PillPushButton, PrimaryPushButton, PushButton, ScrollArea, SwitchButton
+from qfluentwidgets import BodyLabel, CheckBox, ComboBox, HorizontalSeparator, LineEdit, PasswordLineEdit, PillPushButton, PrimaryPushButton, PushButton, ScrollArea, SwitchButton
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    SettingsDialog = QtWidgets.QDialog()
+    ui = Ui_SettingsDialog()
+    ui.setupUi(SettingsDialog)
+    SettingsDialog.show()
+    sys.exit(app.exec_())

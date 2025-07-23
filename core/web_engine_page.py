@@ -50,10 +50,10 @@ class WebEnginePage(QWebEnginePage):
 
     def javaScriptPrompt(self, securityOrigin, msg, defaultValue):
         w = InputMessageBox(self.window)
-        w.titleLabel.setText(msg)
-        w.lineEdit.setText(defaultValue)
+        w.title_label.setText(msg)
+        w.line_edit.setText(defaultValue)
         if w.exec_():
-            return (True, w.lineEdit.text())
+            return (True, w.line_edit.text())
         else:
             return (False, "")
 

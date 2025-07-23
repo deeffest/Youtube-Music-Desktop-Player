@@ -17,7 +17,6 @@ class ThumbnailLoader(QThread):
     def __init__(self, url, parent=None):
         super().__init__(parent)
         self.window: "MainWindow" = parent
-
         self.url = url
 
     def run(self):
