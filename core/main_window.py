@@ -1,10 +1,9 @@
-import os
 import logging
-import tempfile
 import webbrowser
+import platform
 
-from PyQt5.QtCore import QUrl, Qt, QSize, QRect, QFile, QTextStream
-from PyQt5.QtGui import QIcon, QKeySequence
+from PyQt5.QtCore import QUrl, Qt, QSize, QRect, QFile, QTextStream, QPoint, QTimer
+from PyQt5.QtGui import QIcon, QKeySequence, QDesktopServices
 from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import (
@@ -16,9 +15,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QMainWindow,
     QShortcut,
-    QSystemTrayIcon,
 )
-from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
 from qfluentwidgets import (
     Action,
     MessageBox,
@@ -27,11 +24,14 @@ from qfluentwidgets import (
     ToolTipFilter,
     ToolTipPosition,
     Theme,
+    InfoBar,
+    InfoBarPosition,
+    StateToolTip,
+    PushButton,
     setTheme,
     setThemeColor,
 )
 from packaging import version as pkg_version
-from pywinstyles import apply_style
 from discordrpc import RPC
 
 from core.about_dialog import AboutDialog
@@ -45,11 +45,15 @@ from core.web_engine_view import WebEngineView
 from core.ytmusic_downloader import DownloadThread
 from core.helpers import (
     get_centered_geometry,
-    is_file_used_by_cmd,
     is_valid_ytmusic_url,
 )
 from core.ui.ui_main_window import Ui_MainWindow
 from core.hotkey_controller import HotkeyController
+from core.text_view_dialog import TextViewDialog
+
+if platform.system() == "Windows":
+    from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
+    from pywinstyles import apply_style
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -70,6 +74,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.total_time = "NaN"
         self.video_state = None
         self.is_video_or_playlist = False
+        self.proxy_error_message = None
 
         self.force_exit = False
         self.is_downloading = False
@@ -81,6 +86,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_thread = None
         self.update_checker_thread = None
         self.hotkey_controller_thread = None
+        self.downloading_state_tool_tip = None
 
         self.load_settings()
         self.configure_window()
@@ -139,8 +145,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("proxy_login", "")
         if self.settings_.value("proxy_password") is None:
             self.settings_.setValue("proxy_password", "")
-        if self.settings_.value("track_change_notificator") is None:
-            self.settings_.setValue("track_change_notificator", 0)
         if self.settings_.value("hotkey_playback_control") is None:
             self.settings_.setValue("hotkey_playback_control", 0)
         if self.settings_.value("only_audio_mode") is None:
@@ -149,9 +153,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("nonstop_music", 1)
         if self.settings_.value("block_video") is None:
             self.settings_.setValue("block_video", 1)
-
-        if self.settings_.value("tray_icon") == 0:
-            self.settings_.setValue("track_change_notificator", 0)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(
@@ -190,9 +191,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.proxy_port_setting = self.settings_.value("proxy_port")
         self.proxy_login_setting = self.settings_.value("proxy_login")
         self.proxy_password_setting = self.settings_.value("proxy_password")
-        self.track_change_notificator_setting = int(
-            self.settings_.value("track_change_notificator")
-        )
         self.hotkey_playback_control_setting = int(
             self.settings_.value("hotkey_playback_control")
         )
@@ -201,10 +199,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.block_video_setting = int(self.settings_.value("block_video"))
 
     def configure_window(self):
-        try:
-            apply_style(self, "dark")
-        except Exception as e:
-            logging.error(f"Failed to apply dark style: + {str(e)}")
+        if platform.system() == "Windows":
+            try:
+                apply_style(self, "dark")
+            except Exception as e:
+                logging.error(f"Failed to apply dark style: + {str(e)}")
         setTheme(Theme.DARK)
         setThemeColor("red")
 
@@ -252,7 +251,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             QNetworkProxy.setApplicationProxy(proxy)
         except Exception as e:
-            logging.error(f"Failed to set application proxy: {str(e)}")
+            err = str(e)
+            logging.error(f"Failed to set application proxy: {err}")
+            self.proxy_error_message = (
+                f"Failed to apply proxy server configuration:\n{err}"
+            )
 
     def connect_shortcuts(self):
         self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
@@ -534,7 +537,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ytmusic_observer_plugin.setRunsOnSubFrames(False)
         self.webpage.profile().scripts().insert(ytmusic_observer_plugin)
 
-        if self.win_thumbmail_buttons_setting == 1:
+        if self.win_thumbmail_buttons_setting == 1 and platform.system() == "Windows":
             self.win_thumbnail_toolbar = QWinThumbnailToolBar(self)
             self.create_volume_down_button()
             self.create_previous_button()
@@ -589,12 +592,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def on_load_progress(self, progress):
         if progress > 80 and self.splash_screen is not None:
-            if self.isHidden():
-                self.showNormal()
-                self.activateWindow()
-
             self.close_splash_screen()
             self.check_updates()
+
+            if self.proxy_error_message is not None:
+                msg_box = MessageBox(
+                    "Proxy Error",
+                    self.proxy_error_message,
+                    self,
+                )
+                msg_box.setContentCopyable(True)
+                msg_box.exec_()
+
+                self.proxy_error_message = None
 
     def close_splash_screen(self):
         self.splash_screen.finish()
@@ -610,8 +620,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if pkg_version.parse(self.version) < pkg_version.parse(last_version):
             msg_box = MessageBox(title, whats_new, self)
-            msg_box.yesButton.setText("Download")
-            msg_box.cancelButton.setText("Later")
             if msg_box.exec_():
                 webbrowser.open_new_tab(last_release_url)
                 self.force_exit = True
@@ -664,6 +672,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.discord_rpc = None
 
     def update_discord_rpc(self):
+        if not self.discord_rpc:
+            self.run_discord_rpc()
+
         if self.discord_rpc:
             details = self.title[:128]
             state = self.author[:128]
@@ -679,7 +690,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     act_type=2,
                 )
             except Exception as e:
-                if "[Errno 22]" in str(e):
+                if "[Errno 22]" in str(e) or "[Errno 32]" in str(e):
                     self.reconnect_discord_rpc("update_discord_rpc")
                 else:
                     logging.error(
@@ -689,13 +700,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         self.discord_rpc.disconnect()
 
     def clear_discord_rpc(self):
+        if not self.discord_rpc:
+            self.run_discord_rpc()
+
         if self.discord_rpc:
             try:
                 self.discord_rpc.set_activity(
                     details="Nothing's playing yet", act_type=2
                 )
             except Exception as e:
-                if "[Errno 22]" in str(e):
+                if "[Errno 22]" in str(e) or "[Errno 32]" in str(e):
                     self.reconnect_discord_rpc("clear_discord_rpc")
                 else:
                     logging.error(
@@ -935,7 +949,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webview.reload()
 
     def select_download_folder(self):
-        title = "Select Download Folder"
+        title = "Select Folder"
         folder = QFileDialog.getExistingDirectory(
             self, title, self.last_download_folder_setting
         )
@@ -955,8 +969,161 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_thread = DownloadThread(
             self.current_url, download_folder, self, use_cookies=use_cookies
         )
+        self.download_thread.downloading_ffmpeg.connect(self.on_downloading_ffmpeg)
+        self.download_thread.downloading_ffmpeg_error.connect(
+            self.on_downloading_ffmpeg_error
+        )
+        self.download_thread.downloading_ffmpeg_success.connect(
+            self.on_downloading_ffmpeg_success
+        )
+
+        self.download_thread.downloading_ytdlp.connect(self.on_downloading_ytdlp)
+        self.download_thread.downloading_ytdlp_error.connect(
+            self.on_downloading_ytdlp_error
+        )
+        self.download_thread.downloading_ytdlp_success.connect(
+            self.on_downloading_ytdlp_success
+        )
+
+        self.download_thread.downloading_audio.connect(self.on_downloading_audio)
+        self.download_thread.downloading_audio_error.connect(
+            self.on_downloading_audio_error
+        )
+        self.download_thread.downloading_audio_success.connect(
+            self.on_downloading_audio_success
+        )
+
         self.download_thread.finished.connect(self.on_download_finished)
         self.download_thread.start()
+
+    def show_state_tooltip(self, title, content):
+        def calculate_tooltip_pos(
+            parent_widget, tooltip_widget, margin=20, top_offset=63
+        ):
+            parent_width = parent_widget.width()
+            parent_height = parent_widget.height()
+
+            tooltip_width = tooltip_widget.width()
+            tooltip_height = tooltip_widget.height()
+
+            x = parent_width - tooltip_width - margin
+            y = top_offset
+
+            if x < 0:
+                x = 0
+            if y < 0:
+                y = 0
+            if x + tooltip_width > parent_width:
+                x = parent_width - tooltip_width
+            if y + tooltip_height > parent_height:
+                y = parent_height - tooltip_height
+
+            return QPoint(x, y)
+
+        self.downloading_state_tool_tip = StateToolTip(title, content, self)
+        pos = calculate_tooltip_pos(self, self.downloading_state_tool_tip)
+        self.downloading_state_tool_tip.move(pos)
+        self.downloading_state_tool_tip.show()
+
+    def hide_state_tooltip(self):
+        if self.downloading_state_tool_tip is not None:
+            self.downloading_state_tool_tip.setState(True)
+            self.downloading_state_tool_tip = None
+
+    def on_downloading_ffmpeg(self):
+        self.show_state_tooltip("Downloading ffmpeg", "Please wait...")
+
+    def on_downloading_ffmpeg_error(self, msg):
+        self.hide_state_tooltip()
+
+        InfoBar.error(
+            title="",
+            content=f"{msg}",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self,
+        )
+
+    def on_downloading_ffmpeg_success(self):
+        self.hide_state_tooltip()
+
+    def on_downloading_ytdlp(self):
+        self.show_state_tooltip("Downloading yt-dlp", "Please wait...")
+
+    def on_downloading_ytdlp_error(self, msg):
+        self.hide_state_tooltip()
+
+        InfoBar.error(
+            title="",
+            content=f"{msg}",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self,
+        )
+
+    def on_downloading_ytdlp_success(self):
+        self.hide_state_tooltip()
+
+    def on_downloading_audio(self):
+        self.show_state_tooltip("Downloading audio", "Please wait...")
+
+    def on_downloading_audio_error(self, msg, title):
+        self.hide_state_tooltip()
+
+        info_bar = InfoBar.error(
+            title=f"{title}",
+            content="downloaded failed!",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self,
+        )
+
+        button = PushButton(QIcon(f"{self.icon_folder}/show.png"), "Show Error", self)
+        button.clicked.connect(lambda: self.show_download_error(msg, info_bar))
+        info_bar.addWidget(button)
+
+    def show_download_error(self, msg, info_bar):
+        info_bar.close()
+
+        def show_dialog():
+            text_view_dialog = TextViewDialog(self)
+            text_view_dialog.title_label.setText("yt-dlp Error")
+            text_view_dialog.text_edit.setText(msg)
+            text_view_dialog.exec_()
+
+        QTimer.singleShot(0, show_dialog)
+
+    def on_downloading_audio_success(self, folder, title):
+        self.hide_state_tooltip()
+
+        info_bar = InfoBar.success(
+            title=f"{title}",
+            content="downloaded successfully!",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self,
+        )
+
+        button = PushButton(
+            QIcon(f"{self.icon_folder}/open_folder.png"), "Open Folder", self
+        )
+        button.clicked.connect(lambda: self.open_download_folder(folder, info_bar))
+        info_bar.addWidget(button)
+
+    def open_download_folder(self, folder, info_bar):
+        if info_bar:
+            info_bar.close()
+
+        url = QUrl.fromLocalFile(folder)
+        QDesktopServices.openUrl(url)
 
     def on_download_finished(self):
         self.download_thread = None
@@ -1016,12 +1183,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def paste(self):
         self.webpage.triggerAction(QWebEnginePage.Paste)
 
-    def send_notification(self):
-        if self.track_change_notificator_setting == 1 and self.tray_icon is not None:
-            title = f"{self.title}"
-            message = f"{self.author}"
-            self.tray_icon.showMessage(title, message, icon=QSystemTrayIcon.NoIcon)
-
     def save_settings(self):
         if self.open_last_url_at_startup_setting == 1 and is_valid_ytmusic_url(
             self.current_url
@@ -1071,25 +1232,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ):
             self.update_checker_thread.stop()
 
-    def cleanup_temp_bat_files(self):
-        temp_dir = tempfile.gettempdir()
-        ytmdp_temp_folder = os.path.join(temp_dir, "ytmdp_temp")
-
-        if not os.path.exists(ytmdp_temp_folder):
-            return
-
-        for filename in os.listdir(ytmdp_temp_folder):
-            if filename.lower().endswith(".bat"):
-                path = os.path.join(ytmdp_temp_folder, filename)
-                if is_file_used_by_cmd(path):
-                    continue
-                try:
-                    os.remove(path)
-                except Exception as e:
-                    logging.error(f"Failed to delete {path}: {e}")
-
     def app_quit(self):
-        self.cleanup_temp_bat_files()
         self.stop_running_threads()
 
     def closeEvent(self, event):
@@ -1113,8 +1256,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ),
                 self,
             )
-            msg_box.yesButton.setText("Exit")
-            msg_box.cancelButton.setText("Cancel")
 
             if not msg_box.exec_():
                 self.force_exit = False

@@ -1,11 +1,13 @@
 import os
-import requests
-import subprocess
+import json
 import sqlite3
-import tempfile
-import uuid
+import logging
+import requests
+import platform
+import subprocess
+
 from typing import TYPE_CHECKING
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, pyqtSignal
 
 from core.helpers import get_proxies
 
@@ -14,6 +16,18 @@ if TYPE_CHECKING:
 
 
 class DownloadThread(QThread):
+    downloading_ffmpeg = pyqtSignal()
+    downloading_ffmpeg_error = pyqtSignal(str)
+    downloading_ffmpeg_success = pyqtSignal()
+
+    downloading_ytdlp = pyqtSignal()
+    downloading_ytdlp_error = pyqtSignal(str)
+    downloading_ytdlp_success = pyqtSignal()
+
+    downloading_audio = pyqtSignal()
+    downloading_audio_error = pyqtSignal(str, str)
+    downloading_audio_success = pyqtSignal(str, str)
+
     def __init__(self, url, download_folder, parent=None, use_cookies=False):
         super().__init__(parent)
         self.window: "MainWindow" = parent
@@ -24,62 +38,95 @@ class DownloadThread(QThread):
 
         base_path = os.path.join(os.path.expanduser("~"), self.window.name)
         self.bin_folder = os.path.join(base_path, "bin")
-        self.ytdlp_path = os.path.join(self.bin_folder, "yt-dlp.exe")
-        self.ffmpeg_path = os.path.join(self.bin_folder, "ffmpeg.exe")
+
+        if platform.system() == "Windows":
+            self.ffmpeg_url = (
+                "https://github.com/deeffest/pytubefix/"
+                "releases/download/v8.12.3/FFmpeg-Win32.exe"
+            )
+            self.ytdlp_url = (
+                "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+            )
+            self.ffmpeg_path = os.path.join(self.bin_folder, "ffmpeg.exe")
+            self.ytdlp_path = os.path.join(self.bin_folder, "yt-dlp.exe")
+        else:
+            self.ffmpeg_url = (
+                "https://github.com/deeffest/pytubefix/"
+                "releases/download/v8.12.3/FFmpeg-Linux"
+            )
+            self.ytdlp_url = (
+                "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp"
+            )
+            self.ffmpeg_path = os.path.join(self.bin_folder, "ffmpeg")
+            self.ytdlp_path = os.path.join(self.bin_folder, "yt-dlp")
+
         self.cookies_txt = os.path.join(base_path, "__cache__", "cookies.txt")
         self.cookies_sqlite = os.path.join(
             self.window.webview.page().profile().persistentStoragePath(), "Cookies"
         )
 
     def run(self):
-        self.ensure_tools()
+        if not self.ensure_tools():
+            return
         if self.use_cookies:
             self.export_cookies()
-        self.spawn_ytdlp()
+        self.emit_command()
 
     def ensure_tools(self):
+        def download_binary(url, dst_path):
+            tmp_path = dst_path + ".tmp"
+            r = requests.get(
+                url,
+                proxies=get_proxies(
+                    self.window.proxy_type_setting,
+                    self.window.proxy_host_name_setting,
+                    self.window.proxy_port_setting,
+                    self.window.proxy_login_setting,
+                    self.window.proxy_password_setting,
+                ),
+                stream=True,
+                timeout=10,
+            )
+            r.raise_for_status()
+            with open(tmp_path, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+            os.rename(tmp_path, dst_path)
+            if platform.system() != "Windows":
+                os.chmod(dst_path, 0o755)
+
         os.makedirs(self.bin_folder, exist_ok=True)
-
         if not os.path.exists(self.ffmpeg_path):
-            url = (
-                "https://github.com/deeffest/pytubefix/"
-                "releases/download/v8.12.3/FFmpeg-Win32.exe"
-            )
-            tmp_path = self.ffmpeg_path + ".tmp"
-            r = requests.get(url, stream=True)
-            with open(tmp_path, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-            os.rename(tmp_path, self.ffmpeg_path)
-            os.chmod(self.ffmpeg_path, 0o755)
-
+            self.downloading_ffmpeg.emit()
+            try:
+                download_binary(self.ffmpeg_url, self.ffmpeg_path)
+                self.downloading_ffmpeg_success.emit()
+            except Exception as e:
+                logging.error(e)
+                self.downloading_ffmpeg_error.emit(str(e))
+                return False
         if not os.path.exists(self.ytdlp_path):
-            url = (
-                "https://github.com/yt-dlp/yt-dlp/"
-                "releases/latest/download/yt-dlp.exe"
-            )
-            tmp_path = self.ytdlp_path + ".tmp"
-            r = requests.get(url, stream=True)
-            with open(tmp_path, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    if chunk:
-                        f.write(chunk)
-            os.rename(tmp_path, self.ytdlp_path)
-            os.chmod(self.ytdlp_path, 0o755)
+            self.downloading_ytdlp.emit()
+            try:
+                download_binary(self.ytdlp_url, self.ytdlp_path)
+                self.downloading_ytdlp_success.emit()
+            except Exception as e:
+                logging.error(e)
+                self.downloading_ytdlp_error.emit(str(e))
+                return False
+
+        return True
 
     def export_cookies(self):
         if not os.path.exists(self.cookies_sqlite):
             return
-
         os.makedirs(os.path.dirname(self.cookies_txt), exist_ok=True)
         conn = sqlite3.connect(self.cookies_sqlite)
         cursor = conn.cursor()
 
         def chrome_time_to_unix(chrome_time):
-            if not chrome_time:
-                return 0
-            return int(chrome_time / 1_000_000 - 11644473600)
+            return int(chrome_time / 1_000_000 - 11644473600) if chrome_time else 0
 
         with open(self.cookies_txt, "w", encoding="utf-8") as f:
             f.write("# Netscape HTTP Cookie File\n")
@@ -88,27 +135,23 @@ class DownloadThread(QThread):
                 "FROM cookies"
             ):
                 domain, path, is_secure, expires_utc, name, value = row
-
                 include_subdomains = "TRUE" if domain.startswith(".") else "FALSE"
                 expires = chrome_time_to_unix(expires_utc)
                 secure_flag = "TRUE" if is_secure else "FALSE"
-
                 f.write(
                     f"{domain}\t{include_subdomains}\t{path}\t{secure_flag}\t"
                     f"{expires}\t{name}\t{value}\n"
                 )
-
         conn.close()
 
-    def spawn_ytdlp(self):
+    def emit_command(self):
         url = self.url.replace("music.youtube.com", "www.youtube.com")
 
-        if "list=" in url and "watch" not in url:
-            output_template = "%(playlist_title)s/%(title)s.%(ext)s"
-        else:
-            output_template = "%(title)s.%(ext)s"
-
-        output_template_escaped = output_template.replace("%", "%%")
+        output_template = (
+            "%(playlist_title)s/%(title)s.%(ext)s"
+            if "list=" in url and "watch" not in url
+            else "%(title)s.%(ext)s"
+        )
 
         command = [
             self.ytdlp_path,
@@ -117,9 +160,12 @@ class DownloadThread(QThread):
             "--audio-format",
             "mp3",
             "--ffmpeg-location",
-            os.path.join(self.bin_folder, "ffmpeg.exe"),
+            self.ffmpeg_path,
             "-o",
-            output_template_escaped,
+            output_template,
+            "--print-json",
+            "--socket-timeout",
+            "10",
         ]
 
         if "watch" in url and "list=" in url:
@@ -147,44 +193,51 @@ class DownloadThread(QThread):
             command += ["--proxy", proxies["https"]]
 
         command.append(url)
+        self.start_ytdlp(command)
 
-        cmd_line = " ".join(
-            (
-                f'"{arg}"'
-                if (" " in arg or "&" in arg or "(" in arg or ")" in arg)
-                else arg
-            )
-            for arg in command
-        )
+    def start_ytdlp(self, command):
+        self.downloading_audio.emit()
 
-        temp_dir = tempfile.gettempdir()
-        ytmdp_temp_folder = os.path.join(temp_dir, "ytmdp_temp")
-        os.makedirs(ytmdp_temp_folder, exist_ok=True)
-
-        batch_file_name = f"ytmdp_{uuid.uuid4().hex}.bat"
-        batch_file_path = os.path.join(ytmdp_temp_folder, batch_file_name)
-
-        batch_content = f"""
-            @echo off
-            title yt-dlp Download
-            echo Starting download...
-            {cmd_line}
-            if %errorlevel% == 0 (
-                echo Download completed successfully.
-            ) else (
-                echo Download failed with error code %errorlevel%.
-            )
-            pause
-        """
-
-        with open(batch_file_path, "w", encoding="utf-8") as batch_file:
-            batch_file.write(batch_content)
-
-        subprocess.Popen(
-            ["cmd.exe", "/c", batch_file_path],
+        kwargs = dict(
             cwd=self.download_folder,
-            creationflags=subprocess.CREATE_NEW_CONSOLE,
+            capture_output=True,
+            text=False,
         )
+
+        if platform.system() == "Windows":
+            kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+
+        result = subprocess.run(command, **kwargs)
+
+        stdout_decoded = (
+            result.stdout.decode("utf-8", errors="ignore") if result.stdout else ""
+        )
+        stderr_decoded = (
+            result.stderr.decode("utf-8", errors="ignore") if result.stderr else ""
+        )
+
+        lines = stdout_decoded.strip().splitlines()
+        titles = []
+        playlist_title = None
+        for line in lines:
+            try:
+                data = json.loads(line)
+                titles.append(data.get("title", "Unknown"))
+                if not playlist_title and "playlist_title" in data:
+                    playlist_title = data["playlist_title"]
+            except Exception:
+                titles.append("Unknown")
+
+        title = (
+            playlist_title if playlist_title else (titles[0] if titles else "Unknown")
+        )
+
+        if result.returncode == 0:
+            self.downloading_audio_success.emit(self.download_folder, title)
+        else:
+            e = stderr_decoded.strip()
+            logging.error(e)
+            self.downloading_audio_error.emit(e, title)
 
     def stop(self):
         self.terminate()

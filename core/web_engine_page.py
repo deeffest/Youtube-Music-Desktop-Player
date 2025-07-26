@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from qfluentwidgets import MessageBox
 
-from core.input_message_box import InputMessageBox
+from core.input_dialog import InputDialog
 
 if TYPE_CHECKING:
     from core.main_window import MainWindow
@@ -36,24 +36,23 @@ class WebEnginePage(QWebEnginePage):
         return False
 
     def javaScriptAlert(self, securityOrigin, msg):
-        w = MessageBox(
+        msg_box = MessageBox(
             f"JavaScript Alert - {securityOrigin.toString()}", msg, self.window
         )
-        w.cancelButton.hide()
-        w.exec_()
+        msg_box.exec_()
 
     def javaScriptConfirm(self, securityOrigin, msg):
-        w = MessageBox(
+        msg_box = MessageBox(
             f"JavaScript Confirm - {securityOrigin.toString()}", msg, self.window
         )
-        return w.exec_()
+        return msg_box.exec_()
 
     def javaScriptPrompt(self, securityOrigin, msg, defaultValue):
-        w = InputMessageBox(self.window)
-        w.title_label.setText(msg)
-        w.line_edit.setText(defaultValue)
-        if w.exec_():
-            return (True, w.line_edit.text())
+        input_dialog = InputDialog(self.window)
+        input_dialog.title_label.setText(msg)
+        input_dialog.line_edit.setText(defaultValue)
+        if input_dialog.exec_():
+            return (True, input_dialog.line_edit.text())
         else:
             return (False, "")
 

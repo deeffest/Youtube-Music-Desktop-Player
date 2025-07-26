@@ -30,7 +30,6 @@ class WebChannelBackend(QObject):
             window_title = f"{self.window.title} - Youtube Music Desktop Player"
             self.window.update_mini_player_track_info()
             self.window.update_discord_rpc()
-            self.window.send_notification()
 
         self.window.setWindowTitle(window_title)
         if self.window.tray_icon is not None:

@@ -1,11 +1,11 @@
 import logging
+import platform
 from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QDesktopWidget
 from qfluentwidgets import ToolTipFilter, ToolTipPosition
-from pywinstyles import apply_style
 
 from core.thumbnail_loader import ThumbnailLoader
 from core.helpers import get_taskbar_position
@@ -25,10 +25,13 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.configure_ui_elements()
 
     def configure_window(self):
-        try:
-            apply_style(self, "dark")
-        except Exception as e:
-            logging.error(f"Failed to apply dark style: + {str(e)}")
+        if platform.system() == "Windows":
+            from pywinstyles import apply_style
+
+            try:
+                apply_style(self, "dark")
+            except Exception as e:
+                logging.error(f"Failed to apply dark style: + {str(e)}")
 
         self.setupUi(self)
         self.setWindowTitle("Mini-Player")

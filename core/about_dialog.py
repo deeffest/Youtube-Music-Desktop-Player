@@ -1,11 +1,11 @@
 import logging
+import platform
 import webbrowser
 from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog
-from pywinstyles import apply_style
 
 from core.ui.ui_about_dialog import Ui_AboutDialog
 
@@ -22,10 +22,13 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         self.configure_ui_elements()
 
     def configure_window(self):
-        try:
-            apply_style(self, "dark")
-        except Exception as e:
-            logging.error(f"Failed to apply dark style: + {str(e)}")
+        if platform.system() == "Windows":
+            from pywinstyles import apply_style
+
+            try:
+                apply_style(self, "dark")
+            except Exception as e:
+                logging.error(f"Failed to apply dark style: + {str(e)}")
 
         self.setupUi(self)
         self.setWindowTitle("About")

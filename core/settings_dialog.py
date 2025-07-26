@@ -1,12 +1,12 @@
 import sys
 import logging
+import platform
 from typing import TYPE_CHECKING
 
 from PyQt5.QtCore import Qt, QProcess, QRegExp
 from PyQt5.QtGui import QIcon, QPixmap, QRegExpValidator
 from PyQt5.QtWidgets import QDialog, QApplication
 from qfluentwidgets import MessageBox, ToolTipFilter, ToolTipPosition
-from pywinstyles import apply_style
 
 from core.ui.ui_settings_dialog import Ui_SettingsDialog
 
@@ -23,10 +23,13 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.configure_ui_elements()
 
     def configure_window(self):
-        try:
-            apply_style(self, "dark")
-        except Exception as e:
-            logging.error(f"Failed to apply dark style: + {str(e)}")
+        if platform.system() == "Windows":
+            from pywinstyles import apply_style
+
+            try:
+                apply_style(self, "dark")
+            except Exception as e:
+                logging.error(f"Failed to apply dark style: + {str(e)}")
 
         self.setupUi(self)
         self.setWindowTitle("Settings")
@@ -68,7 +71,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.LineEdit_2.textChanged.connect(self.check_if_settings_changed)
         self.LineEdit_3.textChanged.connect(self.check_if_settings_changed)
         self.PasswordLineEdit.textChanged.connect(self.check_if_settings_changed)
-        self.SwitchButton_13.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_14.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_15.checkedChanged.connect(self.check_if_settings_changed)
         self.ComboBox_3.currentIndexChanged.connect(self.check_if_settings_changed)
@@ -99,7 +101,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.LineEdit_3.setText(self.window.proxy_login_setting)
         if self.window.proxy_password_setting is not None:
             self.PasswordLineEdit.setText(self.window.proxy_password_setting)
-        self.SwitchButton_13.setChecked(self.window.track_change_notificator_setting)
         self.SwitchButton_14.setChecked(self.window.hotkey_playback_control_setting)
         self.SwitchButton_15.setChecked(self.window.only_audio_mode_setting)
         self.ComboBox_3.setCurrentIndex(
@@ -122,7 +123,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.label_2.setPixmap(QPixmap(f"{self.window.icon_folder}/discord.png"))
         self.label_3.setPixmap(QPixmap(f"{self.window.icon_folder}/windows.png"))
         self.label_4.setPixmap(QPixmap(f"{self.window.icon_folder}/logo.png"))
-        self.label_5.setPixmap(QPixmap(f"{self.window.icon_folder}/music-notify.png"))
         self.label_7.setPixmap(QPixmap(f"{self.window.icon_folder}/hotkeys.png"))
         self.label_9.setPixmap(QPixmap(f"{self.window.icon_folder}/audio.png"))
         self.label_11.setPixmap(QPixmap(f"{self.window.icon_folder}/nonstop-music.png"))
@@ -158,20 +158,11 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP)
         )
 
-    def check_settings_dependency(self):
-        if not self.SwitchButton_12.isChecked():
-            self.SwitchButton_13.setChecked(False)
-            self.SettingBox12.setEnabled(False)
-            self.SettingBox12.setStyleSheet("background-color: rgb(45,45,45);")
-            self.BodyLabel_21.setStyleSheet("color: gray;")
-        else:
-            self.SwitchButton_13.setChecked(
-                self.window.track_change_notificator_setting
-            )
-            self.SettingBox12.setEnabled(True)
-            self.SettingBox12.setStyleSheet("")
-            self.BodyLabel_21.setStyleSheet("color: white;")
+        if platform.system() != "Windows":
+            self.SettingBox9.setParent(None)
+            self.SettingBox9.deleteLater()
 
+    def check_settings_dependency(self):
         if not self.SwitchButton_15.isChecked():
             self.checkBox.setEnabled(False)
         else:
@@ -228,9 +219,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
         self.window.proxy_login_setting = self.LineEdit_3.text()
         self.window.proxy_password_setting = self.PasswordLineEdit.text()
-        self.window.track_change_notificator_setting = int(
-            self.SwitchButton_13.isChecked()
-        )
         self.window.hotkey_playback_control_setting = int(
             self.SwitchButton_14.isChecked()
         )
@@ -271,9 +259,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.settings_.setValue("proxy_login", self.window.proxy_login_setting)
         self.window.settings_.setValue(
             "proxy_password", self.window.proxy_password_setting
-        )
-        self.window.settings_.setValue(
-            "track_change_notificator", self.window.track_change_notificator_setting
         )
         self.window.settings_.setValue(
             "hotkey_playback_control", self.window.hotkey_playback_control_setting
@@ -355,8 +340,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             )
             or self.LineEdit_3.text() != self.window.proxy_login_setting
             or self.PasswordLineEdit.text() != self.window.proxy_password_setting
-            or self.SwitchButton_13.isChecked()
-            != self.window.track_change_notificator_setting
             or self.SwitchButton_14.isChecked()
             != self.window.hotkey_playback_control_setting
             or self.SwitchButton_15.isChecked() != self.window.only_audio_mode_setting

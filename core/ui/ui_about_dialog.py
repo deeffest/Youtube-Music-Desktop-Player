@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'about_dialog.ui'
+# Form implementation generated from reading ui file 'core/ui/about_dialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -21,23 +21,25 @@ class Ui_AboutDialog(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.frame = QtWidgets.QFrame(AboutDialog)
-        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.frame)
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setContentsMargins(6, 9, -1, -1)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setContentsMargins(6, 9, -1, -1)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.label = QtWidgets.QLabel(self.frame)
         self.label.setMinimumSize(QtCore.QSize(72, 72))
         self.label.setMaximumSize(QtCore.QSize(72, 72))
         self.label.setText("")
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label, 0, QtCore.Qt.AlignTop)
-        self.horizontalLayout_4.addLayout(self.horizontalLayout)
+        self.verticalLayout_4.addWidget(self.label)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem)
+        self.horizontalLayout_4.addLayout(self.verticalLayout_4)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setContentsMargins(3, 6, 9, 14)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -74,8 +76,8 @@ class Ui_AboutDialog(object):
         self.HyperlinkLabel.setProperty("url", QtCore.QUrl("https://icons8.com"))
         self.HyperlinkLabel.setObjectName("HyperlinkLabel")
         self.horizontalLayout_5.addWidget(self.HyperlinkLabel)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem1)
         self.PushButton = PushButton(self.ButtonBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
