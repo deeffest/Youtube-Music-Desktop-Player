@@ -920,12 +920,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def skip_previous(self):
         self.run_js_script("skip_previous.js")
 
-    def like(self):
-        self.run_js_script("like.js")
-
-    def dislike(self):
-        self.run_js_script("dislike.js")
-
     def volume_up(self):
         self.run_js_script("volume_up.js")
 

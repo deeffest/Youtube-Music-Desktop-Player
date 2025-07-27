@@ -1,3 +1,6 @@
+v1.18.1 is Here! (28.07.2025)
+- Fixed a bug in the track/playlist downloader - `[Errno 36] File name too long`.
+
 v1.18.0 is Here! (27.07.2025)
 - Long-awaited Linux support added!
 - Reworked track/playlist downloader - now based on `yt-dlp`!

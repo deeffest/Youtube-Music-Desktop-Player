@@ -148,9 +148,9 @@ class DownloadThread(QThread):
         url = self.url.replace("music.youtube.com", "www.youtube.com")
 
         output_template = (
-            "%(playlist_title)s/%(title)s.%(ext)s"
+            "%(playlist_title).80B/%(title).150B.%(ext)s"
             if "list=" in url and "watch" not in url
-            else "%(title)s.%(ext)s"
+            else "%(title).150B.%(ext)s"
         )
 
         command = [
