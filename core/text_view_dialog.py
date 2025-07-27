@@ -2,10 +2,13 @@ from qfluentwidgets import MessageBoxBase, SubtitleLabel, TextEdit
 
 
 class TextViewDialog(MessageBoxBase):
-    def __init__(self, parent=None):
+    def __init__(self, msg, text, parent=None):
         super().__init__(parent)
         self.title_label = SubtitleLabel(self)
+        self.title_label.setText(msg)
+
         self.text_edit = TextEdit(self)
+        self.text_edit.setText(text)
         self.text_edit.setReadOnly(True)
 
         self.viewLayout.addWidget(self.title_label)

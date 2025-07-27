@@ -601,6 +601,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.proxy_error_message,
                     self,
                 )
+                msg_box.cancelButton.hide()
                 msg_box.setContentCopyable(True)
                 msg_box.exec_()
 
@@ -620,6 +621,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if pkg_version.parse(self.version) < pkg_version.parse(last_version):
             msg_box = MessageBox(title, whats_new, self)
+            msg_box.yesButton.setText("Download")
+            msg_box.cancelButton.setText("Later")
             if msg_box.exec_():
                 webbrowser.open_new_tab(last_release_url)
                 self.force_exit = True
@@ -1076,7 +1079,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         info_bar = InfoBar.error(
             title=f"{title}",
-            content="downloaded failed!",
+            content="Audio downloaded failed!",
             orient=Qt.Horizontal,
             isClosable=True,
             position=InfoBarPosition.BOTTOM,
@@ -1092,9 +1095,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         info_bar.close()
 
         def show_dialog():
-            text_view_dialog = TextViewDialog(self)
-            text_view_dialog.title_label.setText("yt-dlp Error")
-            text_view_dialog.text_edit.setText(msg)
+            text_view_dialog = TextViewDialog("yt-dlp Error", msg, self)
+            text_view_dialog.cancelButton.hide()
             text_view_dialog.exec_()
 
         QTimer.singleShot(0, show_dialog)
@@ -1104,7 +1106,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         info_bar = InfoBar.success(
             title=f"{title}",
-            content="downloaded successfully!",
+            content="Audio downloaded successfully!",
             orient=Qt.Horizontal,
             isClosable=True,
             position=InfoBarPosition.BOTTOM,
@@ -1256,7 +1258,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ),
                 self,
             )
-
+            msg_box.yesButton.setText("Exit")
             if not msg_box.exec_():
                 self.force_exit = False
                 event.ignore()

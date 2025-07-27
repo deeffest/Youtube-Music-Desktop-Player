@@ -3,9 +3,11 @@ from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit
 
 
 class InputDialog(MessageBoxBase):
-    def __init__(self, parent=None):
+    def __init__(self, msg, text=None, parent=None):
         super().__init__(parent)
         self.title_label = SubtitleLabel(self)
+        self.title_label.setText(msg)
+
         self.line_edit = LineEdit(self)
         self.line_edit.setClearButtonEnabled(True)
 
@@ -23,6 +25,8 @@ class InputDialog(MessageBoxBase):
 
         self.widget.setMinimumWidth(400)
         self.yesButton.setDisabled(True)
+        if text:
+            self.line_edit.setText(text)
 
     def on_text_changed(self, text):
         self.yesButton.setEnabled(bool(text))

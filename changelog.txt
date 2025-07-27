@@ -1,3 +1,21 @@
+v1.18.0 is Here! (27.07.2025)
+- Long-awaited Linux support added!
+- Reworked track/playlist downloader - now based on `yt-dlp`!
+- Added the long-awaited `Non-stop Music` plugin — forget about the annoying "Video paused. Continue watching?" popup!
+- Removed the `Track Change Notificator` plugin.
+- Replaced `Like` and `Dislike` buttons in the mini-player with `Volume Up` and `Volume Down`.
+- Added `Volume Up` and `Volume Down` buttons to the system tray app icon (see the `System Tray App Icon` plugin) and to the taskbar thumbnail (see the `Windows Thumbnail Buttons` plugin).
+- Now all URLs outside the explicitly allowed patterns are fully blocked instead of opening in your default browser.
+- Changed the scrollbar styles on the yt music page to make them more appealing!
+- Fixed reload issues - duplicate applications no longer appear and the application restarts correctly.
+- Removed the message box that appeared when an unhandled error occurred in the app (now the error text is simply recorded in the log).
+- Saving and opening the last URL now only works with YouTube Music URLs.
+- If there is an error in the proxy server configuration, the application will now display an error message box when launched.
+- Fixed issues with the `Ad Blocker (Skipper)` plugin and the ytmusic observer script.
+- The `Only Audio Mode` plugin can now block video streams from loading at the network level, significantly reducing traffic consumption! (Enabled by default, can be disabled as follows: `Settings` > `Plugins` > `Only Audio Mode` > uncheck `Block video`.)
+- Improved code base.
+- Other fixes and improvements.
+
 v1.18.0-rc4 is Here! (26.07.2025)
 - Long-awaited Linux support added!
 - Removed the `Track Change Notificator` plugin.

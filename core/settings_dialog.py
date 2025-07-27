@@ -184,8 +184,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
                 self,
             )
             msg_box.yesButton.setText("Restart")
-            msg_box.cancelButton.setText("Cancel")
-
         if not msg_box or msg_box.exec_():
             self.window.save_settings()
             self.save_settings()

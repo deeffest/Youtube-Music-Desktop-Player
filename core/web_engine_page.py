@@ -39,6 +39,7 @@ class WebEnginePage(QWebEnginePage):
         msg_box = MessageBox(
             f"JavaScript Alert - {securityOrigin.toString()}", msg, self.window
         )
+        msg_box.cancelButton.hide()
         msg_box.exec_()
 
     def javaScriptConfirm(self, securityOrigin, msg):
@@ -48,9 +49,7 @@ class WebEnginePage(QWebEnginePage):
         return msg_box.exec_()
 
     def javaScriptPrompt(self, securityOrigin, msg, defaultValue):
-        input_dialog = InputDialog(self.window)
-        input_dialog.title_label.setText(msg)
-        input_dialog.line_edit.setText(defaultValue)
+        input_dialog = InputDialog(msg, defaultValue, self.window)
         if input_dialog.exec_():
             return (True, input_dialog.line_edit.text())
         else:
