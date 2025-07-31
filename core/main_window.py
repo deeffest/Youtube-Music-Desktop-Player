@@ -15,6 +15,8 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QMainWindow,
     QShortcut,
+    QLineEdit,
+    QAction,
 )
 from qfluentwidgets import (
     Action,
@@ -458,7 +460,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
         )
         self.reload_tbutton.clicked.connect(self.reload_page)
-
+       
+        url_action = QAction(self)
+        url_action.setIcon(QIcon(f"{self.icon_folder}/url.png"))
+        url_action.triggered.connect(self.url_line_edit.selectAll)
+        self.url_line_edit.addAction(url_action, QLineEdit.LeadingPosition)
+        for button in self.url_line_edit.leftButtons:
+            if button.action() == url_action:
+                button.setIconSize(QSize(16, 16))
+                break
         self.url_line_edit.returnPressed.connect(
             lambda: self.load_url(self.url_line_edit.text())
         )
