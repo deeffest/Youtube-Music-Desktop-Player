@@ -1,7 +1,7 @@
 <img src="resources/icons/logo.png" width="128" height="128" alt="logo"/>
 
 # Youtube Music Desktop Player
-Turns the [Youtube Music](https://music.youtube.com) site into a desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
+Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
 
 <img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/> <img src="https://img.shields.io/badge/Python-3.11.9-blue.svg?color=00B16A" alt="Python 3.11.9"/> <img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux-blue?color=00B16A" alt="Platform Win32 | Linux"/>
 
@@ -60,12 +60,12 @@ sudo dnf install openssl
 cd Youtube-Music-Desktop-Player/bin
 ```
 
-2. **Rename the original binary yt-dlp**
+3. **Rename the original binary yt-dlp**
 ```bash
 mv yt-dlp yt-dlp_
 ```
 
-3. **Create a shim wrapper (new yt-dlp)**
+4. **Create a shim wrapper (new yt-dlp)**
 ```bash
 cat > yt-dlp << 'EOF'
 #!/bin/bash
@@ -74,7 +74,7 @@ exec "$(dirname "$0")/yt-dlp_" "$@"
 EOF
 ```
 
-4. **Make the script executable**
+5. **Make the script executable**
 ```bash
 chmod +x yt-dlp
 ```

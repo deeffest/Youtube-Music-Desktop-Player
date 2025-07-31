@@ -5,8 +5,6 @@
 (function () {
     "use strict";
 
-    const video = document.querySelector('video');
-
     const origAddSourceBuffer = MediaSource.prototype.addSourceBuffer;
     MediaSource.prototype.addSourceBuffer = function (mime) {
         if (mime.includes("video")) {
