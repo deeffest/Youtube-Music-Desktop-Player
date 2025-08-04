@@ -17,11 +17,9 @@ if TYPE_CHECKING:
 
 class DownloadThread(QThread):
     downloading_ffmpeg = pyqtSignal()
-    downloading_ffmpeg_error = pyqtSignal(str)
     downloading_ffmpeg_success = pyqtSignal()
 
     downloading_ytdlp = pyqtSignal()
-    downloading_ytdlp_error = pyqtSignal(str)
     downloading_ytdlp_success = pyqtSignal()
 
     downloading_audio = pyqtSignal()
@@ -66,8 +64,7 @@ class DownloadThread(QThread):
         )
 
     def run(self):
-        if not self.ensure_tools():
-            return
+        self.ensure_tools()
         if self.use_cookies:
             self.export_cookies()
         self.emit_command()
@@ -99,24 +96,12 @@ class DownloadThread(QThread):
         os.makedirs(self.bin_folder, exist_ok=True)
         if not os.path.exists(self.ffmpeg_path):
             self.downloading_ffmpeg.emit()
-            try:
-                download_binary(self.ffmpeg_url, self.ffmpeg_path)
-                self.downloading_ffmpeg_success.emit()
-            except Exception as e:
-                logging.error(e)
-                self.downloading_ffmpeg_error.emit(str(e))
-                return False
+            download_binary(self.ffmpeg_url, self.ffmpeg_path)
+            self.downloading_ffmpeg_success.emit()
         if not os.path.exists(self.ytdlp_path):
             self.downloading_ytdlp.emit()
-            try:
-                download_binary(self.ytdlp_url, self.ytdlp_path)
-                self.downloading_ytdlp_success.emit()
-            except Exception as e:
-                logging.error(e)
-                self.downloading_ytdlp_error.emit(str(e))
-                return False
-
-        return True
+            download_binary(self.ytdlp_url, self.ytdlp_path)
+            self.downloading_ytdlp_success.emit()
 
     def export_cookies(self):
         if not os.path.exists(self.cookies_sqlite):

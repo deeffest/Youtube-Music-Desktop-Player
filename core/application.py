@@ -1,15 +1,16 @@
 import sys
 import logging
+import traceback
 from typing import List
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QSharedMemory, QIODevice, pyqtSignal
+from PyQt5.QtCore import QSharedMemory, QIODevice
 from PyQt5.QtNetwork import QLocalServer, QLocalSocket
+
+from core.signal_bus import signal_bus
 
 
 class SingletonApplication(QApplication):
-    show_window_sig = pyqtSignal()
-
     def __init__(self, argv: List[str], key):
         super().__init__(argv)
         self.key = key
@@ -38,7 +39,7 @@ class SingletonApplication(QApplication):
 
     def on_new_connection(self):
         socket = self.server.nextPendingConnection()
-        self.show_window_sig.emit()
+        signal_bus.show_window_sig.emit()
         socket.disconnectFromServer()
 
     def show_existing_instance(self):
@@ -56,6 +57,8 @@ class SingletonApplication(QApplication):
 
 def exception_hook(exc_type, exc_value, exc_traceback):
     logging.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
+    error_msg = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+    signal_bus.app_error_sig.emit(error_msg)
 
 
 sys.excepthook = exception_hook

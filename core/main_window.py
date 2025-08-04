@@ -1,6 +1,7 @@
 import logging
-import webbrowser
 import platform
+import traceback
+import webbrowser
 
 from PyQt5.QtCore import QUrl, Qt, QSize, QRect, QFile, QTextStream, QPoint, QTimer
 from PyQt5.QtGui import QIcon, QKeySequence, QDesktopServices
@@ -52,6 +53,7 @@ from core.helpers import (
 from core.ui.ui_main_window import Ui_MainWindow
 from core.hotkey_controller import HotkeyController
 from core.text_view_dialog import TextViewDialog
+from core.signal_bus import signal_bus
 
 if platform.system() == "Windows":
     from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
@@ -92,6 +94,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.load_settings()
         self.configure_window()
+        self.connect_signals()
         self.set_application_proxy()
         self.connect_shortcuts()
         self.show_splash_screen()
@@ -217,6 +220,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.setGeometry(get_centered_geometry(1000, 799))
 
+    def connect_signals(self):
+        signal_bus.show_window_sig.connect(self.show_window_or_mini_player)
+        signal_bus.app_error_sig.connect(self.show_error_message)
+
+    def show_error_message(self, msg, title=None):
+        text_view_dialog = TextViewDialog(
+            f"{title}" if title else "Unhandled exception", msg, self
+        )
+        text_view_dialog.cancelButton.hide()
+        text_view_dialog.exec_()
+
     def set_application_proxy(self):
         try:
             proxy = QNetworkProxy()
@@ -236,15 +250,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if self.proxy_host_name_setting:
                 proxy.setHostName(self.proxy_host_name_setting)
-            else:
-                raise ValueError("Proxy host name is not set.")
-
             if self.proxy_port_setting:
-                if not (1 <= self.proxy_port_setting <= 65535):
-                    raise ValueError("Proxy port is out of range (1-65535).")
                 proxy.setPort(self.proxy_port_setting)
-            else:
-                raise ValueError("Proxy port is not set.")
 
             if self.proxy_login_setting:
                 proxy.setUser(self.proxy_login_setting)
@@ -253,11 +260,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             QNetworkProxy.setApplicationProxy(proxy)
         except Exception as e:
-            err = str(e)
-            logging.error(f"Failed to set application proxy: {err}")
-            self.proxy_error_message = (
-                f"Failed to apply proxy server configuration:\n{err}"
-            )
+            logging.error(f"Failed to set application proxy: {e}")
+            self.proxy_error_message = traceback.format_exc()
 
     def connect_shortcuts(self):
         self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
@@ -460,7 +464,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
         )
         self.reload_tbutton.clicked.connect(self.reload_page)
-       
+
         url_action = QAction(self)
         url_action.setIcon(QIcon(f"{self.icon_folder}/url.png"))
         url_action.triggered.connect(self.url_line_edit.selectAll)
@@ -606,15 +610,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.check_updates()
 
             if self.proxy_error_message is not None:
-                msg_box = MessageBox(
-                    "Proxy Error",
-                    self.proxy_error_message,
-                    self,
-                )
-                msg_box.cancelButton.hide()
-                msg_box.setContentCopyable(True)
-                msg_box.exec_()
-
+                self.show_error_message(self.proxy_error_message, "Proxy Error")
                 self.proxy_error_message = None
 
     def close_splash_screen(self):
@@ -977,17 +973,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.current_url, download_folder, self, use_cookies=use_cookies
         )
         self.download_thread.downloading_ffmpeg.connect(self.on_downloading_ffmpeg)
-        self.download_thread.downloading_ffmpeg_error.connect(
-            self.on_downloading_ffmpeg_error
-        )
         self.download_thread.downloading_ffmpeg_success.connect(
             self.on_downloading_ffmpeg_success
         )
 
         self.download_thread.downloading_ytdlp.connect(self.on_downloading_ytdlp)
-        self.download_thread.downloading_ytdlp_error.connect(
-            self.on_downloading_ytdlp_error
-        )
         self.download_thread.downloading_ytdlp_success.connect(
             self.on_downloading_ytdlp_success
         )
@@ -1003,7 +993,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_thread.finished.connect(self.on_download_finished)
         self.download_thread.start()
 
-    def show_state_tooltip(self, title, content):
+    def show_downloading_state_tooltip(self, title, content):
         def calculate_tooltip_pos(
             parent_widget, tooltip_widget, margin=20, top_offset=63
         ):
@@ -1032,54 +1022,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.downloading_state_tool_tip.move(pos)
         self.downloading_state_tool_tip.show()
 
-    def hide_state_tooltip(self):
+    def hide_downloading_state_tooltip(self):
         if self.downloading_state_tool_tip is not None:
             self.downloading_state_tool_tip.setState(True)
             self.downloading_state_tool_tip = None
 
     def on_downloading_ffmpeg(self):
-        self.show_state_tooltip("Downloading ffmpeg", "Please wait...")
-
-    def on_downloading_ffmpeg_error(self, msg):
-        self.hide_state_tooltip()
-
-        InfoBar.error(
-            title="",
-            content=f"{msg}",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM,
-            duration=-1,
-            parent=self,
-        )
+        self.show_downloading_state_tooltip("Downloading ffmpeg", "Please wait...")
 
     def on_downloading_ffmpeg_success(self):
-        self.hide_state_tooltip()
+        self.hide_downloading_state_tooltip()
 
     def on_downloading_ytdlp(self):
-        self.show_state_tooltip("Downloading yt-dlp", "Please wait...")
-
-    def on_downloading_ytdlp_error(self, msg):
-        self.hide_state_tooltip()
-
-        InfoBar.error(
-            title="",
-            content=f"{msg}",
-            orient=Qt.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.BOTTOM,
-            duration=-1,
-            parent=self,
-        )
+        self.show_downloading_state_tooltip("Downloading yt-dlp", "Please wait...")
 
     def on_downloading_ytdlp_success(self):
-        self.hide_state_tooltip()
+        self.hide_downloading_state_tooltip()
 
     def on_downloading_audio(self):
-        self.show_state_tooltip("Downloading audio", "Please wait...")
+        self.show_downloading_state_tooltip("Downloading audio", "Please wait...")
 
     def on_downloading_audio_error(self, msg, title):
-        self.hide_state_tooltip()
+        self.hide_downloading_state_tooltip()
 
         info_bar = InfoBar.error(
             title=f"{title}",
@@ -1098,15 +1062,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def show_download_error(self, msg, info_bar):
         info_bar.close()
 
-        def show_dialog():
-            text_view_dialog = TextViewDialog("yt-dlp Error", msg, self)
-            text_view_dialog.cancelButton.hide()
-            text_view_dialog.exec_()
-
-        QTimer.singleShot(0, show_dialog)
+        QTimer.singleShot(0, lambda: self.show_error_message(msg, "yt-dlp Error"))
 
     def on_downloading_audio_success(self, folder, title):
-        self.hide_state_tooltip()
+        self.hide_downloading_state_tooltip()
 
         info_bar = InfoBar.success(
             title=f"{title}",
@@ -1133,6 +1092,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def on_download_finished(self):
         self.download_thread = None
+        self.hide_downloading_state_tooltip()
 
         self.is_downloading = False
         self.update_download_buttons_state(self.is_downloading)

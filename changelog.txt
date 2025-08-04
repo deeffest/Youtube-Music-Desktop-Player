@@ -1,3 +1,10 @@
+v1.19.0 is Here! (05.08.2025)
+- Returned the message box that appeared when an unhandled error occurred in the app.
+- Added URL icon to address bar.
+- Now you cannot save an empty host or port exceeding 65535 in `HttpProxy` and `Socks5Proxy` in the settings dialog.
+- Improved code base and exception handling in the application.
+- Other fixes and improvements.
+
 v1.18.1 is Here! (28.07.2025)
 - Fixed a bug in the track/playlist downloader - `[Errno 36] File name too long`.
 

@@ -10,7 +10,7 @@ from core.main_window import MainWindow
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.18.1"
+VERSION = "v1.19.0"
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -86,7 +86,6 @@ def main():
         opengl_setting,
         app_info=[NAME, AUTHOR, VERSION, CURRENT_DIR],
     )
-    app.show_window_sig.connect(window.show_window_or_mini_player)
     app.aboutToQuit.connect(window.app_quit)
     window.show()
 

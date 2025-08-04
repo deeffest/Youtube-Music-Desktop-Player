@@ -186,12 +186,35 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             msg_box.yesButton.setText("Restart")
         if not msg_box or msg_box.exec_():
             self.window.save_settings()
-            self.save_settings()
+            if self.PrimaryPushButton.isEnabled():
+                if not self.save_settings():
+                    return
 
             QProcess.startDetached(sys.executable, sys.argv)
             QApplication.quit()
 
     def save_settings(self):
+        proxy_type = self.ComboBox.currentText()
+        proxy_host = self.LineEdit.text().strip()
+
+        port_text_raw = self.LineEdit_2.text()
+        port_text = port_text_raw.strip()
+        port_is_valid_number = port_text.isdigit()
+
+        error_message = None
+
+        if proxy_type in ["HttpProxy", "Socks5Proxy"]:
+            if not proxy_host:
+                error_message = "Proxy host cannot be empty. Enter a valid host."
+            elif port_is_valid_number and int(port_text) > 65535:
+                error_message = "Proxy port must be between 0 and 65535."
+
+        if error_message:
+            msg_box = MessageBox("Invalid Proxy Configuration", error_message, self)
+            msg_box.cancelButton.hide()
+            msg_box.exec_()
+            return False
+
         self.window.save_last_win_geometry_setting = int(self.SwitchButton.isChecked())
         self.window.open_last_url_at_startup_setting = int(
             self.SwitchButton_4.isChecked()
@@ -210,10 +233,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.SwitchButton_11.isChecked()
         )
         self.window.tray_icon_setting = int(self.SwitchButton_12.isChecked())
-        self.window.proxy_type_setting = self.ComboBox.currentText()
-        self.window.proxy_host_name_setting = self.LineEdit.text()
+        self.window.proxy_type_setting = proxy_type
+        self.window.proxy_host_name_setting = proxy_host
         self.window.proxy_port_setting = (
-            int(self.LineEdit_2.text()) if self.LineEdit_2.text().isdigit() else None
+            int(port_text) if port_is_valid_number else None
         )
         self.window.proxy_login_setting = self.LineEdit_3.text()
         self.window.proxy_password_setting = self.PasswordLineEdit.text()
@@ -273,6 +296,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.settings_.setValue("block_video", self.window.block_video_setting)
 
         self.check_if_settings_changed()
+        return True
 
     def configure_tabs(self):
         self.frame.hide()
