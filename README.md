@@ -50,22 +50,17 @@ Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform 
 
 How to fix? 👇
 
-1. **Install openssl to check SSL connections**
-```bash
-sudo dnf install openssl
-```
-
-2. **Navigate to the yt-dlp binary directory**
+1. **Navigate to the yt-dlp binary directory**
 ```bash
 cd Youtube-Music-Desktop-Player/bin
 ```
 
-3. **Rename the original binary yt-dlp**
+2. **Rename the original binary yt-dlp**
 ```bash
 mv yt-dlp yt-dlp_
 ```
 
-4. **Create a shim wrapper (new yt-dlp)**
+3. **Create a shim wrapper (new yt-dlp)**
 ```bash
 cat > yt-dlp << 'EOF'
 #!/bin/bash
@@ -74,7 +69,7 @@ exec "$(dirname "$0")/yt-dlp_" "$@"
 EOF
 ```
 
-5. **Make the script executable**
+4. **Make the script executable**
 ```bash
 chmod +x yt-dlp
 ```
