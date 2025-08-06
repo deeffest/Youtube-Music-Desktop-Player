@@ -158,9 +158,9 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-800</y>
+            <y>0</y>
             <width>394</width>
-            <height>1293</height>
+            <height>1286</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -199,7 +199,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel">
                      <property name="text">
-                      <string>Save and restore window geometry</string>
+                      <string>Remember window size</string>
                      </property>
                     </widget>
                    </item>
@@ -231,7 +231,7 @@
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_4">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the application remembers the window geometry for your next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, remembers the last window size and position for the next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -255,7 +255,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_7">
                      <property name="text">
-                      <string>Save and restore last URL</string>
+                      <string>Remember last opened URL</string>
                      </property>
                     </widget>
                    </item>
@@ -287,7 +287,7 @@
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_8">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the application remembers the last URL for your next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, remembers the last opened YouTube Music URL for the next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -513,6 +513,18 @@ QLabel:hover {
                   </layout>
                  </item>
                  <item>
+                  <widget class="QLabel" name="label_5">
+                   <property name="styleSheet">
+                    <string notr="true">QLabel {
+	color: red;
+}</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
                   <widget class="BodyLabel" name="BodyLabel_15">
                    <property name="text">
                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;Using a proxy server helps when YouTube Music is unavailable in your country.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -669,7 +681,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_33">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the window will be able to open the track in full screen mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, allows the window to enter fullscreen mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -746,7 +758,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_13">
                      <property name="text">
-                      <string>Save and restore zoom factor</string>
+                      <string>Remember last zoom factor</string>
                      </property>
                     </widget>
                    </item>
@@ -775,7 +787,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_22">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the application remembers the last zoom factor for your next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, remembers the last zoom factor for your next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -823,7 +835,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_2">
                      <property name="text">
-                      <string>Save and restore mini-player position</string>
+                      <string>Remember mini-player position</string>
                      </property>
                     </widget>
                    </item>
@@ -975,7 +987,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_19">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, all detected ads are immediately skipped. (useless with premium).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, all detected video ads are immediately skipped. (useless with premium)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1050,7 +1062,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_26">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, your Discord profile shows the current track’s title, artist, and cover art. (Discord must be running.)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, share what you're listening to on your Discord profile. (Discord must be running)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1125,7 +1137,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_27">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, media controls (Volume, Back, Play/Pause, Forward) appear on the app thumbnail in the taskbar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, playback controls are accessible directly from the app thumbnail in the taskbar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1200,7 +1212,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_28">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the app minimizes to a taskbar icon when closed and keeps playing in the background.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, playback controls are accessible from the tray icon in the taskbar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1296,7 +1308,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_30">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, you can pause a track or play the next one without touching the mouse while in another application.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, adds global hotkey support for playback control from any application.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>

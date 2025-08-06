@@ -6,7 +6,11 @@ from typing import TYPE_CHECKING
 from PyQt5.QtCore import Qt, QProcess, QRegExp
 from PyQt5.QtGui import QIcon, QPixmap, QRegExpValidator
 from PyQt5.QtWidgets import QDialog, QApplication
-from qfluentwidgets import MessageBox, ToolTipFilter, ToolTipPosition
+from qfluentwidgets import (
+    MessageBox,
+    ToolTipFilter,
+    ToolTipPosition,
+)
 
 from core.ui.ui_settings_dialog import Ui_SettingsDialog
 
@@ -162,6 +166,8 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.SettingBox9.setParent(None)
             self.SettingBox9.deleteLater()
 
+        self.label_5.hide()
+
     def check_settings_dependency(self):
         if not self.SwitchButton_15.isChecked():
             self.checkBox.setEnabled(False)
@@ -205,15 +211,16 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
         if proxy_type in ["HttpProxy", "Socks5Proxy"]:
             if not proxy_host:
-                error_message = "Proxy host cannot be empty. Enter a valid host."
+                error_message = "Proxy host cannot be empty."
             elif port_is_valid_number and int(port_text) > 65535:
-                error_message = "Proxy port must be between 0 and 65535."
+                error_message = "Proxy port cannot exceed 65535."
 
         if error_message:
-            msg_box = MessageBox("Invalid Proxy Configuration", error_message, self)
-            msg_box.cancelButton.hide()
-            msg_box.exec_()
+            self.label_5.setText(error_message)
+            self.label_5.show()
             return False
+        else:
+            self.label_5.hide()
 
         self.window.save_last_win_geometry_setting = int(self.SwitchButton.isChecked())
         self.window.open_last_url_at_startup_setting = int(
@@ -333,6 +340,8 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.LineEdit_3.setVisible(should_show)
         self.BodyLabel_17.setVisible(should_show)
         self.PasswordLineEdit.setVisible(should_show)
+
+        self.label_5.hide()
 
     def check_if_settings_changed(self):
         if (
