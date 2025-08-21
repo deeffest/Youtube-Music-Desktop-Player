@@ -9,14 +9,12 @@
         const thumbnailElement = document.querySelector(
             ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
         );
-
         if (
             thumbnailElement?.src &&
             thumbnailElement.src.includes("i.ytimg.com")
         ) {
             return thumbnailElement.src;
         }
-
         return "";
     }
 
@@ -24,51 +22,29 @@
         const videoElement = document.querySelector("video");
         if (!videoElement) return;
 
-        videoElement.style.opacity = "0";
-        videoElement.style.pointerEvents = "none";
-
         [
-            ".ytp-suggested-action",
-            ".ytp-suggested-action-badge",
-            ".ytp-playlist-menu-button",
-            ".ytp-chrome-top",
-            ".ytp-title-channel",
-            ".ytp-title-channel-logo",
-            ".ytp-paid-content-overlay",
-            ".ytp-cards-teaser",
-            ".ytp-player-content",
-            ".ytp-caption-window-container",
+            ".iv-branding",
             ".ytp-spinner",
             ".ytp-large-play-button",
-            ".ytp-iv-video-content",
-            ".ytp-iv-player-content",
-            ".iv-branding",
-            ".iv-click-target",
+            ".ytp-cards-button",
+            ".ytp-cards-teaser",
         ].forEach((selector) => document.querySelector(selector)?.remove());
 
-        const thumbnailUrl = getThumbnailUrl();
         const player = document.querySelector(".html5-video-player");
-
         if (!player) return;
 
+        const thumbnailUrl = getThumbnailUrl();
         if (!thumbnailUrl) {
             if (previousThumbnailUrl !== null) {
                 previousThumbnailUrl = null;
                 player.style.backgroundImage = "";
-                player.style.backgroundColor = "black";
             }
             return;
         }
 
         if (thumbnailUrl === previousThumbnailUrl) return;
-
         previousThumbnailUrl = thumbnailUrl;
-
-        player.style.backgroundImage = `url(${thumbnailUrl})`;
-        player.style.backgroundSize = "contain";
-        player.style.backgroundRepeat = "no-repeat";
-        player.style.backgroundPosition = "center";
-        player.style.backgroundColor = "black";
+        player.style.background = `center/contain no-repeat url(${thumbnailUrl})`;
     }
 
     const onlyAudioObserver = new MutationObserver(cutVideo);

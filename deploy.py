@@ -4,7 +4,7 @@ import shutil
 import subprocess
 
 SHORT_NAME = "YTMDPlayer"
-VERSION = "v1.19.0"
+VERSION = "v1.20.0-rc1"
 
 
 def main():

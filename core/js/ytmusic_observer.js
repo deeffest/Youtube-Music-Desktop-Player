@@ -5,8 +5,9 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
         let lastState = "";
         let lastTrackInfo = {
             title: "",
-            artist: "",
+            author: "",
             thumbnailUrl: "",
+            videoId: "",
         };
         let lastTrackProgress = {
             currentTime: "",
@@ -32,6 +33,15 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
             return "";
         }
 
+        function getVideoId() {
+            const link = document.querySelector(".ytp-title-link");
+            if (link && link.href) {
+                const url = new URL(link.href);
+                return url.searchParams.get("v") || "";
+            }
+            return "";
+        }
+
         function updateTrackInfo() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
@@ -42,26 +52,31 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     ".byline.style-scope.ytmusic-player-bar",
                 );
 
-                let title = titleEl?.textContent.trim() || "";
-                let author = authorEl?.textContent.trim() || "";
-                let thumbnailUrl = getThumbnailOrCoverUrl();
+                const title = titleEl?.textContent.trim() || "";
+                const author = authorEl?.textContent.trim() || "";
+                const thumbnailUrl = getThumbnailOrCoverUrl();
+                const videoId = getVideoId();
 
-                const allEmpty = !title && !author && !thumbnailUrl;
-                const allFilled = title && author && thumbnailUrl;
-
-                if (!(allEmpty || allFilled)) {
-                    return;
-                }
+                const trackEmpty =
+                    !title && !author && !thumbnailUrl && !videoId;
 
                 const changed =
+                    trackEmpty ||
                     title !== lastTrackInfo.title ||
                     author !== lastTrackInfo.author ||
-                    thumbnailUrl !== lastTrackInfo.thumbnailUrl;
+                    thumbnailUrl !== lastTrackInfo.thumbnailUrl ||
+                    videoId !== lastTrackInfo.videoId;
 
-                if (changed) {
-                    backend.track_info_changed(title, author, thumbnailUrl);
-                    lastTrackInfo = { title, author, thumbnailUrl };
-                }
+                if (!changed) return;
+
+                backend.track_info_changed(
+                    title,
+                    author,
+                    thumbnailUrl,
+                    videoId,
+                );
+
+                lastTrackInfo = { title, author, thumbnailUrl, videoId };
             }, DEBOUNCE_DELAY);
         }
 

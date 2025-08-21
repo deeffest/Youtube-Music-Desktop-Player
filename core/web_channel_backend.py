@@ -11,16 +11,18 @@ class WebChannelBackend(QObject):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
-    @pyqtSlot(str, str, str)
-    def track_info_changed(self, title, author, thumbnail_url):
+    @pyqtSlot(str, str, str, str)
+    def track_info_changed(self, title, author, thumbnail_url, video_id):
         self.window.title = title
         self.window.author = author
         self.window.thumbnail_url = thumbnail_url
+        self.window.video_id = video_id
 
         is_empty = (
             not self.window.title
             or not self.window.author
             or not self.window.thumbnail_url
+            or not self.window.video_id
         )
 
         if is_empty:

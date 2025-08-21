@@ -20,8 +20,8 @@
                     length: 1,
                     start: () => 0,
                     end: () => {
-                        const video = document.querySelector('video');
-                        return video ? video.duration : 0;
+                        const video = document.querySelector("video");
+                        return video ? video.duration : 43200;
                     },
                 },
                 addEventListener() {},

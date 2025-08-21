@@ -3,13 +3,12 @@
 # Youtube Music Desktop Player
 Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform desktop application using [QtWebEngine](https://wiki.qt.io/QtWebEngine).
 
-<img src="https://img.shields.io/badge/PyQt-5.15.11-blue?color=00B16A" alt="PyQt 5.15.11"/> <img src="https://img.shields.io/badge/Python-3.11.9-blue.svg?color=00B16A" alt="Python 3.11.9"/> <img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux-blue?color=00B16A" alt="Platform Win32 | Linux"/>
+<img src="https://img.shields.io/badge/PyQt-5.15.11-00B16A"/> <img src="https://img.shields.io/badge/Python-3.11.9-00B16A"/> <img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux-00B16A"/>
 
 ## Screenshots
-<p>
-  <img src="resources/images/screenshots/windows10.png" width="49%" alt="main_window_on_windows"/>
-  <img src="resources/images/screenshots/fedora40.png" width="49%" alt="main_window_on_fedora"/>
-</p>
+| Windows 10 | Pop!_OS 22.04 |
+|------------|-----------|
+| <img src="resources/images/windows10.png" width="100%"/> | <img src="resources/images/pop_os2204.png" width="100%"/> |
 
 ## Quick Start
 ### Source Code

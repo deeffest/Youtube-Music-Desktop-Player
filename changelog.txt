@@ -1,3 +1,12 @@
+v1.20.0-rc1 is Here! (21.08.2025)
+- Removed the `Windows Thumbnail Buttons` plugin - its functionality no longer depends on settings and is always enabled.  
+- Significantly improved the `Ad Blocker (Skipper)` plugin.  
+- Added support for `Play in Browser` and `Get App on GitHub` buttons in the `Discord Rich Presence` plugin.  
+- Added the ability to stop a page reload in progress.  
+- Fixed an issue where the `Discord Rich Presence` plugin continued working even when disabled.
+- Improved settings dialog - namely descriptions of some settings items and messages about invalid proxy configuration.
+- Other fixes and improvements.
+
 v1.19.0 is Here! (05.08.2025)
 - Returned the message box that appeared when an unhandled error occurred in the app.
 - Added URL icon to address bar.

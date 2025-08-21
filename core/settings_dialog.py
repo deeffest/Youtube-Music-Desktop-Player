@@ -68,7 +68,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.SwitchButton_2.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_8.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_7.checkedChanged.connect(self.check_if_settings_changed)
-        self.SwitchButton_11.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_12.checkedChanged.connect(self.check_if_settings_changed)
         self.ComboBox.currentIndexChanged.connect(self.check_if_settings_changed)
         self.LineEdit.textChanged.connect(self.check_if_settings_changed)
@@ -91,7 +90,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.SwitchButton_2.setChecked(self.window.save_last_pos_of_mp_setting)
         self.SwitchButton_8.setChecked(self.window.save_last_zoom_factor_setting)
         self.SwitchButton_7.setChecked(self.window.discord_rpc_setting)
-        self.SwitchButton_11.setChecked(self.window.win_thumbmail_buttons_setting)
         self.SwitchButton_12.setChecked(self.window.tray_icon_setting)
         self.ComboBox.setCurrentIndex(
             self.proxy_types.index(self.window.proxy_type_setting)
@@ -125,7 +123,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
         self.label.setPixmap(QPixmap(f"{self.window.icon_folder}/adblock.png"))
         self.label_2.setPixmap(QPixmap(f"{self.window.icon_folder}/discord.png"))
-        self.label_3.setPixmap(QPixmap(f"{self.window.icon_folder}/windows.png"))
         self.label_4.setPixmap(QPixmap(f"{self.window.icon_folder}/logo.png"))
         self.label_7.setPixmap(QPixmap(f"{self.window.icon_folder}/hotkeys.png"))
         self.label_9.setPixmap(QPixmap(f"{self.window.icon_folder}/audio.png"))
@@ -161,10 +158,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.label_6.installEventFilter(
             ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP)
         )
-
-        if platform.system() != "Windows":
-            self.SettingBox9.setParent(None)
-            self.SettingBox9.deleteLater()
 
         self.label_5.hide()
 
@@ -236,9 +229,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.save_last_pos_of_mp_setting = int(self.SwitchButton_2.isChecked())
         self.window.save_last_zoom_factor_setting = int(self.SwitchButton_8.isChecked())
         self.window.discord_rpc_setting = int(self.SwitchButton_7.isChecked())
-        self.window.win_thumbmail_buttons_setting = int(
-            self.SwitchButton_11.isChecked()
-        )
         self.window.tray_icon_setting = int(self.SwitchButton_12.isChecked())
         self.window.proxy_type_setting = proxy_type
         self.window.proxy_host_name_setting = proxy_host
@@ -275,9 +265,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             "save_last_zoom_factor", self.window.save_last_zoom_factor_setting
         )
         self.window.settings_.setValue("discord_rpc", self.window.discord_rpc_setting)
-        self.window.settings_.setValue(
-            "win_thumbmail_buttons", self.window.win_thumbmail_buttons_setting
-        )
         self.window.settings_.setValue("tray_icon", self.window.tray_icon_setting)
         self.window.settings_.setValue("proxy_type", self.window.proxy_type_setting)
         self.window.settings_.setValue(
@@ -358,8 +345,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             or self.SwitchButton_8.isChecked()
             != self.window.save_last_zoom_factor_setting
             or self.SwitchButton_7.isChecked() != self.window.discord_rpc_setting
-            or self.SwitchButton_11.isChecked()
-            != self.window.win_thumbmail_buttons_setting
             or self.SwitchButton_12.isChecked() != self.window.tray_icon_setting
             or self.ComboBox.currentText() != self.window.proxy_type_setting
             or self.LineEdit.text() != self.window.proxy_host_name_setting

@@ -35,7 +35,7 @@ from qfluentwidgets import (
     setThemeColor,
 )
 from packaging import version as pkg_version
-from discordrpc import RPC
+from discordrpc import RPC, Button
 
 from core.about_dialog import AboutDialog
 from core.mini_player_dialog import MiniPlayerDialog
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.title = "Unknown"
         self.author = "Unknown"
         self.thumbnail_url = None
-        self.like_status = None
+        self.video_id = None
         self.current_url = None
         self.current_time = "NaN"
         self.total_time = "NaN"
@@ -136,8 +136,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue(
                 "geometry_of_mp", QRect(get_centered_geometry(360, 150))
             )
-        if self.settings_.value("win_thumbmail_buttons") is None:
-            self.settings_.setValue("win_thumbmail_buttons", 1)
         if self.settings_.value("tray_icon") is None:
             self.settings_.setValue("tray_icon", 1)
         if self.settings_.value("proxy_type") is None:
@@ -187,9 +185,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.value("save_geometry_of_mp")
         )
         self.geometry_of_mp_setting = self.settings_.value("geometry_of_mp")
-        self.win_thumbmail_buttons_setting = int(
-            self.settings_.value("win_thumbmail_buttons")
-        )
         self.tray_icon_setting = int(self.settings_.value("tray_icon"))
         self.proxy_type_setting = self.settings_.value("proxy_type")
         self.proxy_host_name_setting = self.settings_.value("proxy_host_name")
@@ -276,6 +271,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reload_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_R), self)
         self.reload_shortcut.activated.connect(self.reload_page)
 
+        self.stop_shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self)
+        self.stop_shortcut.setEnabled(False)
+        self.stop_shortcut.activated.connect(self.stop)
+
         self.download_with_oauth_shortcut = QShortcut(
             QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_D), self
         )
@@ -319,6 +318,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.webview.urlChanged.connect(self.on_url_changed)
         self.webview.loadProgress.connect(self.on_load_progress)
+        self.webview.loadStarted.connect(self.on_load_started)
         self.webpage.fullScreenRequested.connect(self.on_fullscreen_requested)
 
         self.websettings.setAttribute(
@@ -538,10 +538,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         scrollbar_styles_plugin.setRunsOnSubFrames(False)
         self.webpage.profile().scripts().insert(scrollbar_styles_plugin)
 
-        if self.discord_rpc_setting == 1:
-            self.run_discord_rpc()
-        else:
-            self.discord_rpc = None
+        self.run_discord_rpc()
 
         ytmusic_observer_plugin = QWebEngineScript()
         ytmusic_observer_plugin.setName("YtMusicObserver")
@@ -551,7 +548,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ytmusic_observer_plugin.setRunsOnSubFrames(False)
         self.webpage.profile().scripts().insert(ytmusic_observer_plugin)
 
-        if self.win_thumbmail_buttons_setting == 1 and platform.system() == "Windows":
+        if platform.system() == "Windows":
             self.win_thumbnail_toolbar = QWinThumbnailToolBar(self)
             self.create_volume_down_button()
             self.create_previous_button()
@@ -605,13 +602,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.webpage.profile().scripts().insert(nonstop_music_script)
 
     def on_load_progress(self, progress):
-        if progress > 80 and self.splash_screen is not None:
-            self.close_splash_screen()
-            self.check_updates()
+        if progress > 80:
+            self.reload_tbutton.setToolTip("Reload")
+            self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
+            self.reload_tbutton.clicked.disconnect()
+            self.reload_tbutton.clicked.connect(self.reload_page)
 
-            if self.proxy_error_message is not None:
-                self.show_error_message(self.proxy_error_message, "Proxy Error")
-                self.proxy_error_message = None
+            self.reload_action.setText("Reload")
+            self.reload_action.setShortcut("Ctrl+R")
+            self.reload_action.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
+            self.reload_action.triggered.disconnect()
+            self.reload_action.triggered.connect(self.reload_page)
+
+            self.stop_shortcut.setEnabled(False)
+
+            if self.splash_screen is not None:
+                self.close_splash_screen()
+                self.check_updates()
+
+                if self.proxy_error_message is not None:
+                    self.show_error_message(self.proxy_error_message, "Proxy Error")
+                    self.proxy_error_message = None
+
+    def on_load_started(self):
+        self.reload_tbutton.setToolTip("Stop")
+        self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/close.png"))
+        self.reload_tbutton.clicked.disconnect()
+        self.reload_tbutton.clicked.connect(self.stop)
+
+        self.reload_action.setText("Stop")
+        self.reload_action.setShortcut("Esc")
+        self.reload_action.setIcon(QIcon(f"{self.icon_folder}/close.png"))
+        self.reload_action.triggered.disconnect()
+        self.reload_action.triggered.connect(self.reload_page)
+
+        self.stop_shortcut.setEnabled(True)
 
     def close_splash_screen(self):
         self.splash_screen.finish()
@@ -674,11 +699,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.mini_player_dialog.load_thumbnail(self.thumbnail_url)
 
     def run_discord_rpc(self):
+        self.discord_rpc = None
         try:
-            self.discord_rpc = RPC(app_id="1254202610781655050", output=False)
+            if self.discord_rpc_setting == 1:
+                self.discord_rpc = RPC(app_id="1254202610781655050", output=False)
         except Exception as e:
             logging.error(f"Failed to activate Discord RPC: {str(e)}")
-            self.discord_rpc = None
 
     def update_discord_rpc(self):
         if not self.discord_rpc:
@@ -688,7 +714,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             details = self.title[:128]
             state = self.author[:128]
             large_image = self.thumbnail_url
-            small_image = "https://music.youtube.com/img/favicon_48.png"
+            small_image = (
+                "https://cdn.discordapp.com/app-icons/1254202610781655050/"
+                "b4ede41d663f6caa7e45c6a042e447c9.png?size=32"
+            )
+            project_url = f"https://github.com/{self.app_author}/{self.name}"
+            video_url = f"https://music.youtube.com/watch?v={self.video_id}"
+            buttons = Button(
+                button_one_label="Play in Browser",
+                button_one_url=video_url,
+                button_two_label="Get App on GitHub",
+                button_two_url=project_url,
+            )
 
             try:
                 self.discord_rpc.set_activity(
@@ -697,6 +734,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     large_image=large_image,
                     small_image=small_image,
                     act_type=2,
+                    buttons=buttons,
                 )
             except Exception as e:
                 if "[Errno 22]" in str(e) or "[Errno 32]" in str(e):
@@ -771,7 +809,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tray_icon.volume_up_action.setEnabled(False)
 
     def update_win_thumbnail_buttons_track_controls(self):
-        if self.win_thumbmail_buttons_setting == 1 and self.win_thumbnail_toolbar:
+        if self.win_thumbnail_toolbar:
             if self.video_state == "VideoPlaying":
                 self.tool_btn_volume_down.setIcon(
                     QIcon(f"{self.icon_folder}/volume_down-filled-border.png")
@@ -950,6 +988,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def reload_page(self):
         self.webview.reload()
+
+    def stop(self):
+        self.webview.stop()
 
     def select_download_folder(self):
         title = "Select Folder"

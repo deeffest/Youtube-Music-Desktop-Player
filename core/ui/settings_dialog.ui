@@ -158,9 +158,9 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-240</y>
             <width>394</width>
-            <height>1286</height>
+            <height>1206</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -199,7 +199,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel">
                      <property name="text">
-                      <string>Remember window size</string>
+                      <string>Remember last size &amp; pos</string>
                      </property>
                     </widget>
                    </item>
@@ -298,7 +298,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="SettingBox11">
+               <widget class="QFrame" name="SettingBox10">
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>
@@ -538,7 +538,7 @@ QLabel:hover {
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="SettingBox15">
+               <widget class="QFrame" name="SettingBox14">
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>
@@ -1080,81 +1080,6 @@ QLabel:hover {
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QVBoxLayout" name="verticalLayout_20">
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_13">
-                   <item>
-                    <widget class="QLabel" name="label_3">
-                     <property name="minimumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>22</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="scaledContents">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="BodyLabel" name="BodyLabel_18">
-                     <property name="text">
-                      <string>Windows Thumbnail Buttons</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_12">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="SwitchButton" name="SwitchButton_11" native="true">
-                     <property name="layoutDirection">
-                      <enum>Qt::RightToLeft</enum>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <widget class="BodyLabel" name="BodyLabel_27">
-                   <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, playback controls are accessible directly from the app thumbnail in the taskbar.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                   <property name="wordWrap">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QFrame" name="SettingBox10">
-                <property name="frameShape">
-                 <enum>QFrame::NoFrame</enum>
-                </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
                 <layout class="QVBoxLayout" name="verticalLayout_21">
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_14">
@@ -1223,7 +1148,7 @@ QLabel:hover {
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="SettingBox13">
+               <widget class="QFrame" name="SettingBox12">
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>
@@ -1319,7 +1244,7 @@ QLabel:hover {
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="SettingBox14">
+               <widget class="QFrame" name="SettingBox13">
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>
@@ -1401,7 +1326,7 @@ QLabel:hover {
                </widget>
               </item>
               <item>
-               <widget class="QFrame" name="SettingBox12">
+               <widget class="QFrame" name="SettingBox11">
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
                 </property>

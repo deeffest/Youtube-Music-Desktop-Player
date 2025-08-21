@@ -27,6 +27,7 @@ class WebEnginePage(QWebEnginePage):
             r"^https://www\.google\.com/recaptcha.*$",
             r"^https://consent\.youtube\.com/.*$",
             r"^https://www\.google\.com/tools/feedback/.*$",
+            r"^https://gds\.google\.com/web/landing.*$",
         ]
 
         for pattern in patterns:
