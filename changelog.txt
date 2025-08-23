@@ -1,3 +1,6 @@
+v1.20.1 is Here! (23.08.2025)
+- Fixed installer file for Windows. (If you have already upgraded to `v1.20.0`, go to the installation folder (by default `C:\Program Files\YTMDPlayer`) and delete the `YTMDPlayer` subfolder).
+
 v1.20.0 is Here! (22.08.2025)
 - Removed the `Windows Thumbnail Buttons` plugin - its functionality no longer depends on settings and is always enabled.  
 - Significantly improved the `Ad Blocker (Skipper)` plugin.  
