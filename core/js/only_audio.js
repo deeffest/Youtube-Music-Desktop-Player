@@ -28,6 +28,7 @@
             ".ytp-large-play-button",
             ".ytp-cards-button",
             ".ytp-cards-teaser",
+            ".ytp-paid-content-overlay-link",
         ].forEach((selector) => document.querySelector(selector)?.remove());
 
         const player = document.querySelector(".html5-video-player");
