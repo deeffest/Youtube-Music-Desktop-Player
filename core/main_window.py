@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import (
     QShortcut,
     QLineEdit,
     QAction,
+    QSystemTrayIcon,
 )
 from qfluentwidgets import (
     Action,
@@ -137,7 +138,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 "geometry_of_mp", QRect(get_centered_geometry(360, 150))
             )
         if self.settings_.value("tray_icon") is None:
-            self.settings_.setValue("tray_icon", 1)
+            self.settings_.setValue(
+                "tray_icon", 1 if QSystemTrayIcon.isSystemTrayAvailable() else 0
+            )
         if self.settings_.value("proxy_type") is None:
             self.settings_.setValue("proxy_type", "NoProxy")
         if self.settings_.value("proxy_host_name") is None:
@@ -185,7 +188,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.value("save_geometry_of_mp")
         )
         self.geometry_of_mp_setting = self.settings_.value("geometry_of_mp")
-        self.tray_icon_setting = int(self.settings_.value("tray_icon"))
+        self.tray_icon_setting = (
+            int(self.settings_.value("tray_icon"))
+            if QSystemTrayIcon.isSystemTrayAvailable()
+            else 0
+        )
         self.proxy_type_setting = self.settings_.value("proxy_type")
         self.proxy_host_name_setting = self.settings_.value("proxy_host_name")
         self.proxy_port_setting = self.settings_.value("proxy_port")

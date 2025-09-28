@@ -61,7 +61,7 @@ class Ui_SettingsDialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.ScrollArea.setObjectName("ScrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -240, 394, 1206))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -846, 394, 1225))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_19 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_19.setContentsMargins(0, 0, 0, 0)
@@ -470,6 +470,13 @@ class Ui_SettingsDialog(object):
         self.SwitchButton_12.setObjectName("SwitchButton_12")
         self.horizontalLayout_14.addWidget(self.SwitchButton_12)
         self.verticalLayout_21.addLayout(self.horizontalLayout_14)
+        self.label_3 = QtWidgets.QLabel(self.SettingBox9)
+        self.label_3.setStyleSheet("QLabel {\n"
+"    color: red;\n"
+"}")
+        self.label_3.setText("")
+        self.label_3.setObjectName("label_3")
+        self.verticalLayout_21.addWidget(self.label_3)
         self.BodyLabel_28 = BodyLabel(self.SettingBox9)
         self.BodyLabel_28.setWordWrap(True)
         self.BodyLabel_28.setObjectName("BodyLabel_28")
@@ -677,13 +684,3 @@ class Ui_SettingsDialog(object):
         self.PrimaryPushButton.setText(_translate("SettingsDialog", "Save"))
         self.PushButton.setText(_translate("SettingsDialog", "Cancel"))
 from qfluentwidgets import BodyLabel, CheckBox, ComboBox, HorizontalSeparator, LineEdit, PasswordLineEdit, PillPushButton, PrimaryPushButton, PushButton, ScrollArea, SwitchButton
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    SettingsDialog = QtWidgets.QDialog()
-    ui = Ui_SettingsDialog()
-    ui.setupUi(SettingsDialog)
-    SettingsDialog.show()
-    sys.exit(app.exec_())

@@ -3,9 +3,9 @@ import logging
 import platform
 from typing import TYPE_CHECKING
 
-from PyQt5.QtCore import Qt, QProcess, QRegExp
+from PyQt5.QtCore import Qt, QProcess, QRegExp, QTimer
 from PyQt5.QtGui import QIcon, QPixmap, QRegExpValidator
-from PyQt5.QtWidgets import QDialog, QApplication
+from PyQt5.QtWidgets import QDialog, QApplication, QSystemTrayIcon
 from qfluentwidgets import (
     MessageBox,
     ToolTipFilter,
@@ -160,6 +160,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
 
         self.label_5.hide()
+        self.label_3.hide()
 
     def check_settings_dependency(self):
         if not self.SwitchButton_15.isChecked():
@@ -200,20 +201,51 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         port_text = port_text_raw.strip()
         port_is_valid_number = port_text.isdigit()
 
-        error_message = None
+        proxy_error_message = None
 
         if proxy_type in ["HttpProxy", "Socks5Proxy"]:
             if not proxy_host:
-                error_message = "Proxy host cannot be empty."
+                proxy_error_message = "Proxy host cannot be empty."
             elif port_is_valid_number and int(port_text) > 65535:
-                error_message = "Proxy port cannot exceed 65535."
+                proxy_error_message = "Proxy port cannot exceed 65535."
 
-        if error_message:
-            self.label_5.setText(error_message)
+        if proxy_error_message:
+            self.label_5.setText(proxy_error_message)
             self.label_5.show()
+
+            if not self.PillPushButton.isChecked():
+                self.PillPushButton.setChecked(True)
+                self.configure_tabs()
+
+            QTimer.singleShot(
+                0, lambda: self.ScrollArea.ensureWidgetVisible(self.label_5)
+            )
             return False
         else:
             self.label_5.hide()
+
+        tray_error_message = None
+
+        if (
+            not QSystemTrayIcon.isSystemTrayAvailable()
+            and self.SwitchButton_12.isChecked()
+        ):
+            tray_error_message = "System tray is not available on this system."
+
+        if tray_error_message:
+            self.label_3.setText(tray_error_message)
+            self.label_3.show()
+
+            if not self.PillPushButton_4.isChecked():
+                self.PillPushButton_4.setChecked(True)
+                self.configure_tabs()
+
+            QTimer.singleShot(
+                0, lambda: self.ScrollArea.ensureWidgetVisible(self.label_3)
+            )
+            return False
+        else:
+            self.label_3.hide()
 
         self.window.save_last_win_geometry_setting = int(self.SwitchButton.isChecked())
         self.window.open_last_url_at_startup_setting = int(
@@ -297,7 +329,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.frame_2.hide()
         self.frame_3.hide()
         self.frame_4.hide()
-        self.frame_5.hide()
 
         icon_path = self.window.icon_folder + "/plugins.png"
 
@@ -369,6 +400,8 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         else:
             self.PrimaryPushButton.setEnabled(False)
             self.PushButton_2.setText("Restart")
+
+        self.label_3.hide()
 
     def closeEvent(self, event):
         self.window.show()
