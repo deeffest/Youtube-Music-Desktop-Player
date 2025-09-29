@@ -59,6 +59,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.PrimaryPushButton.clicked.connect(self.save_settings)
         self.PushButton.clicked.connect(self.close)
         self.ComboBox.currentIndexChanged.connect(self.toggle_proxy_config)
+        self.SwitchButton_12.checkedChanged.connect(self.toggle_tray_icon)
 
         self.SwitchButton.checkedChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_4.checkedChanged.connect(self.check_if_settings_changed)
@@ -361,6 +362,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
         self.label_5.hide()
 
+    def toggle_tray_icon(self):
+        self.label_3.hide()
+
     def check_if_settings_changed(self):
         if (
             self.SwitchButton.isChecked() != self.window.save_last_win_geometry_setting
@@ -400,8 +404,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         else:
             self.PrimaryPushButton.setEnabled(False)
             self.PushButton_2.setText("Restart")
-
-        self.label_3.hide()
 
     def closeEvent(self, event):
         self.window.show()
