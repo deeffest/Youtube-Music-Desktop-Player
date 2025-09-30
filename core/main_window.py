@@ -3,7 +3,17 @@ import platform
 import traceback
 import webbrowser
 
-from PyQt5.QtCore import QUrl, Qt, QSize, QRect, QFile, QTextStream, QPoint, QTimer
+from PyQt5.QtCore import (
+    QUrl,
+    Qt,
+    QSize,
+    QRect,
+    QFile,
+    QTextStream,
+    QPoint,
+    QTimer,
+    QEvent,
+)
 from PyQt5.QtGui import QIcon, QKeySequence, QDesktopServices
 from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.QtWebChannel import QWebChannel
@@ -159,6 +169,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("nonstop_music", 1)
         if self.settings_.value("block_video") is None:
             self.settings_.setValue("block_video", 1)
+        if self.settings_.value("hide_toolbar") is None:
+            self.settings_.setValue("hide_toolbar", 0)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(
@@ -204,6 +216,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.only_audio_mode_setting = int(self.settings_.value("only_audio_mode"))
         self.nonstop_music_setting = int(self.settings_.value("nonstop_music"))
         self.block_video_setting = int(self.settings_.value("block_video"))
+        self.hide_toolbar_setting = int(self.settings_.value("hide_toolbar"))
 
     def configure_window(self):
         if platform.system() == "Windows":
@@ -305,6 +318,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.settings_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
         self.settings_shortcut.activated.connect(self.open_settings)
 
+        self.hide_toolbar_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_T), self)
+        self.hide_toolbar_shortcut.activated.connect(self.hide_toolbar)
+
     def show_splash_screen(self):
         self.splash_screen = SplashScreen(self.windowIcon(), self)
         self.splash_screen.setIconSize(QSize(102, 102))
@@ -403,6 +419,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.about_action.setIcon(QIcon(f"{self.icon_folder}/about.png"))
         self.about_action.triggered.connect(self.about)
 
+        self.hide_toolbar_action = Action("Hide Toolbar", shortcut="Ctrl+T")
+        self.hide_toolbar_action.setIcon(QIcon(f"{self.icon_folder}/hide_toolbar.png"))
+        self.hide_toolbar_action.triggered.connect(self.hide_toolbar)
+
         self.cut_action = Action("Cut", shortcut="Ctrl+X")
         self.cut_action.setIcon(QIcon(f"{self.icon_folder}/cut.png"))
         self.cut_action.triggered.connect(self.cut)
@@ -433,6 +453,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.main_menu.addSeparator()
         self.main_menu.addAction(self.bug_report_action)
         self.main_menu.addAction(self.about_action)
+        self.main_menu.addSeparator()
+        self.main_menu.addAction(self.hide_toolbar_action)
 
         self.edit_menu = RoundMenu()
         self.edit_menu.addAction(self.cut_action)
@@ -514,6 +536,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ToolTipFilter(self.about_tbutton, 300, ToolTipPosition.TOP)
         )
         self.about_tbutton.clicked.connect(self.about)
+
+        self.ToolBar.installEventFilter(self)
+        if self.hide_toolbar_setting == 1:
+            QTimer.singleShot(0, lambda: self.ToolBar.hide())
 
     def activate_plugins(self):
         qtwebchannel = QWebEngineScript()
@@ -671,7 +697,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.ToolBar.hide()
             self.showFullScreen()
         else:
-            self.ToolBar.show()
+            if self.hide_toolbar_setting == 0:
+                self.ToolBar.show()
             self.showNormal()
 
         request.accept()
@@ -1043,7 +1070,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_downloading_state_tooltip(self, title, content):
         def calculate_tooltip_pos(
-            parent_widget, tooltip_widget, margin=20, top_offset=63
+            parent_widget,
+            tooltip_widget,
+            margin=20,
+            top_offset=63 if self.hide_toolbar_setting == 0 else 20,
         ):
             parent_width = parent_widget.width()
             parent_height = parent_widget.height()
@@ -1188,6 +1218,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             f"https://github.com/{self.app_author}/{self.name}/issues"
         )
 
+    def hide_toolbar(self):
+        if self.ToolBar.isHidden():
+            self.ToolBar.show()
+            self.hide_toolbar_setting = 0
+        else:
+            self.ToolBar.hide()
+            self.hide_toolbar_setting = 1
+
     def cut(self):
         self.webpage.triggerAction(QWebEnginePage.Cut)
 
@@ -1215,6 +1253,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.last_zoom_factor_setting = self.webview.zoomFactor()
             self.settings_.setValue("last_zoom_factor", self.last_zoom_factor_setting)
 
+        self.settings_.setValue("hide_toolbar", self.hide_toolbar_setting)
+
     def show_window(self):
         if self.isMinimized() or self.isHidden():
             if self.isMinimized():
@@ -1229,6 +1269,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             if self.mini_player_dialog.isMinimized():
                 self.mini_player_dialog.showNormal()
+
+    def eventFilter(self, obj, event):
+        if obj == self.ToolBar:
+            if event.type() == QEvent.Show:
+                self.hide_toolbar_action.setText("Hide Toolbar")
+                self.hide_toolbar_action.setIcon(
+                    QIcon(f"{self.icon_folder}/hide_toolbar.png")
+                )
+            elif event.type() == QEvent.Hide:
+                self.hide_toolbar_action.setText("Show Toolbar")
+                self.hide_toolbar_action.setIcon(
+                    QIcon(f"{self.icon_folder}/toolbar.png")
+                )
+        return super().eventFilter(obj, event)
 
     def stop_running_threads(self):
         if (
