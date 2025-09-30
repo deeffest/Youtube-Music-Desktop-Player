@@ -1,5 +1,6 @@
 import os
 import json
+import certifi
 import sqlite3
 import logging
 import requests
@@ -13,6 +14,8 @@ from core.helpers import get_proxies
 
 if TYPE_CHECKING:
     from core.main_window import MainWindow
+
+os.environ["SSL_CERT_FILE"] = certifi.where()
 
 
 class DownloadThread(QThread):
