@@ -167,10 +167,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("only_audio_mode", 0)
         if self.settings_.value("nonstop_music") is None:
             self.settings_.setValue("nonstop_music", 1)
-        if self.settings_.value("block_video") is None:
-            self.settings_.setValue("block_video", 1)
         if self.settings_.value("hide_toolbar") is None:
             self.settings_.setValue("hide_toolbar", 0)
+        if self.settings_.value("use_hd_thumbnails") is None:
+            self.settings_.setValue("use_hd_thumbnails", 0)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(
@@ -215,8 +215,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.only_audio_mode_setting = int(self.settings_.value("only_audio_mode"))
         self.nonstop_music_setting = int(self.settings_.value("nonstop_music"))
-        self.block_video_setting = int(self.settings_.value("block_video"))
         self.hide_toolbar_setting = int(self.settings_.value("hide_toolbar"))
+        self.use_hd_thumbnails_setting = int(self.settings_.value("use_hd_thumbnails"))
 
     def configure_window(self):
         if platform.system() == "Windows":
@@ -608,22 +608,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.hotkey_controller_thread.start()
 
         if self.only_audio_mode_setting == 1:
+            only_audio_source = f"""
+            window.ONLY_AUDIO_SETTINGS = {{
+                useHDThumbnails: {self.use_hd_thumbnails_setting}
+            }};
+            """ + self.read_script(
+                "only_audio.js"
+            )
+            
             only_audio_script = QWebEngineScript()
             only_audio_script.setName("OnlyAudio")
-            only_audio_script.setSourceCode(self.read_script("only_audio.js"))
+            only_audio_script.setSourceCode(only_audio_source)
             only_audio_script.setInjectionPoint(QWebEngineScript.Deferred)
             only_audio_script.setWorldId(QWebEngineScript.MainWorld)
             only_audio_script.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(only_audio_script)
 
-            if self.block_video_setting == 1:
-                block_video_script = QWebEngineScript()
-                block_video_script.setName("BlockVideo")
-                block_video_script.setSourceCode(self.read_script("block_video.js"))
-                block_video_script.setInjectionPoint(QWebEngineScript.DocumentCreation)
-                block_video_script.setWorldId(QWebEngineScript.MainWorld)
-                block_video_script.setRunsOnSubFrames(False)
-                self.webpage.profile().scripts().insert(block_video_script)
+            block_video_script = QWebEngineScript()
+            block_video_script.setName("BlockVideo")
+            block_video_script.setSourceCode(self.read_script("block_video.js"))
+            block_video_script.setInjectionPoint(QWebEngineScript.DocumentCreation)
+            block_video_script.setWorldId(QWebEngineScript.MainWorld)
+            block_video_script.setRunsOnSubFrames(False)
+            self.webpage.profile().scripts().insert(block_video_script)
 
         if self.nonstop_music_setting == 1:
             nonstop_music_script = QWebEngineScript()

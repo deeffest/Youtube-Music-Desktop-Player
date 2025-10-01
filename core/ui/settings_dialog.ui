@@ -158,7 +158,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-846</y>
+            <y>-869</y>
             <width>394</width>
             <height>1225</height>
            </rect>
@@ -1320,7 +1320,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_31">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, all video clips are hidden behind their thumbnails.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, all video clips are blocked and replaced with thumbnails.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1328,9 +1328,9 @@ QLabel:hover {
                   </widget>
                  </item>
                  <item>
-                  <widget class="CheckBox" name="checkBox">
+                  <widget class="CheckBox" name="checkBox_2">
                    <property name="text">
-                    <string>Block video</string>
+                    <string>Use HD thumbnails</string>
                    </property>
                   </widget>
                  </item>

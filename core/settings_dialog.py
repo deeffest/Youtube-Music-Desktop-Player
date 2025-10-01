@@ -79,7 +79,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.SwitchButton_15.checkedChanged.connect(self.check_if_settings_changed)
         self.ComboBox_3.currentIndexChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_16.checkedChanged.connect(self.check_if_settings_changed)
-        self.checkBox.toggled.connect(self.check_if_settings_changed)
+        self.checkBox_2.toggled.connect(self.check_if_settings_changed)
 
         self.configure_tabs()
 
@@ -110,7 +110,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.opengl_enviroments.index(self.window.opengl_enviroment_setting)
         )
         self.SwitchButton_16.setChecked(self.window.nonstop_music_setting)
-        self.checkBox.setChecked(self.window.block_video_setting)
+        self.checkBox_2.setChecked(self.window.use_hd_thumbnails_setting)
 
         self.check_settings_dependency()
         self.SwitchButton_12.checkedChanged.connect(self.check_settings_dependency)
@@ -165,9 +165,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
     def check_settings_dependency(self):
         if not self.SwitchButton_15.isChecked():
-            self.checkBox.setEnabled(False)
+            self.checkBox_2.setEnabled(False)
         else:
-            self.checkBox.setEnabled(True)
+            self.checkBox_2.setEnabled(True)
 
         self.check_if_settings_changed()
 
@@ -276,7 +276,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.only_audio_mode_setting = int(self.SwitchButton_15.isChecked())
         self.window.opengl_enviroment_setting = self.ComboBox_3.currentText()
         self.window.nonstop_music_setting = int(self.SwitchButton_16.isChecked())
-        self.window.block_video_setting = int(self.checkBox.isChecked())
+        self.window.use_hd_thumbnails_setting = int(self.checkBox_2.isChecked())
 
         self.window.settings_.setValue(
             "save_last_win_geometry", self.window.save_last_win_geometry_setting
@@ -320,7 +320,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.settings_.setValue(
             "nonstop_music", self.window.nonstop_music_setting
         )
-        self.window.settings_.setValue("block_video", self.window.block_video_setting)
+        self.window.settings_.setValue(
+            "use_hd_thumbnails", self.window.use_hd_thumbnails_setting
+        )
 
         self.check_if_settings_changed()
         return True
@@ -396,7 +398,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             or self.SwitchButton_15.isChecked() != self.window.only_audio_mode_setting
             or self.ComboBox_3.currentText() != self.window.opengl_enviroment_setting
             or self.SwitchButton_16.isChecked() != self.window.nonstop_music_setting
-            or self.checkBox.isChecked() != self.window.block_video_setting
+            or self.checkBox_2.isChecked() != self.window.use_hd_thumbnails_setting
         ):
 
             self.PrimaryPushButton.setEnabled(True)

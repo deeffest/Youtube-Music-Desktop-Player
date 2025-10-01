@@ -1,3 +1,12 @@
+v1.21.0-rc1 is Here! (02.10.2025)
+- The `Only Audio Mode` plugin can now use HD thumbnails if they are available. (Disabled by default, can be enabled as follows: `Settings` > `Plugins` > `Only Audio Mode` > check `Use HD thumbnails`.).
+- Removed `Block video` option, its functionality is now part of the `Only Audio Mode` plugin without the option to disable it.
+- The `System Tray App Icon` plugin can now only be used if your system has tray support.
+- Fixed yt-dlp `SSL: CERTIFICATE_VERIFY_FAILED` error on Linux.
+- Fixed yt-dlp `ImportError: version `OPENSSL_3.3.0' not found` on Linux.
+- Added `Hide/Show Toolbar` option to the main context menu of the application.
+- Other fixes and improvements.
+
 v1.20.1 is Here! (23.08.2025)
 - Fixed installer file for Windows. (If you have already upgraded to `v1.20.0`, go to the installation folder (by default `C:\Program Files\YTMDPlayer`) and delete the `YTMDPlayer` subfolder).
 
