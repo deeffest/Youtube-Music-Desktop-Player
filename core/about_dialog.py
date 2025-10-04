@@ -3,7 +3,7 @@ import platform
 import webbrowser
 from typing import TYPE_CHECKING
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, PYQT_VERSION_STR
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog
 
@@ -41,6 +41,17 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         self.PushButton.clicked.connect(self.github)
 
         self.BodyLabel_2.setText(self.window.version)
+        self.label_3.setText(f"PyQt5: {PYQT_VERSION_STR}")
+        self.label_5.setText(f"Python: {platform.python_version()}")
+        os_info = (
+            platform.freedesktop_os_release() if platform.system() == "Linux" else {}
+        )
+        os_name = (
+            f"{os_info.get('NAME')} {os_info.get('VERSION_ID')}"
+            if os_info
+            else f"{platform.system()} {platform.release()}"
+        )
+        self.label_7.setText(f"OS: {os_name}")
         self.label.setPixmap(QPixmap(f"{self.window.icon_folder}/logo.png"))
         self.PushButton.setIcon(QIcon(f"{self.window.icon_folder}/github.png"))
 

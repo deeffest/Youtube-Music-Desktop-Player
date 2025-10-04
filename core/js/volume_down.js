@@ -1,11 +1,5 @@
-var volumeSlider = document.querySelector(".volume-slider");
-
-if (volumeSlider) {
-    var currentSliderValue = volumeSlider.value;
-    var newSliderValue = Math.max(parseInt(currentSliderValue) - 5, 0);
-
-    volumeSlider.value = newSliderValue;
-
-    var event = new Event("change");
-    volumeSlider.dispatchEvent(event);
+var s = document.querySelector(".volume-slider");
+if (s) {
+    s.value = Math.max(+s.value - 5, 0);
+    s.dispatchEvent(new Event("change"));
 }

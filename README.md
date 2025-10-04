@@ -20,7 +20,7 @@ Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform 
 - Non-stop Music
 
 ## Get App
-Select your OS and download the app.
+Just download and extract.
 
 ### Linux
 [![Download .deb](https://img.shields.io/badge/Download%20for%20Ubuntu%20%2F%20Debian-.deb-blue?logo=ubuntu&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_deb)  
@@ -34,4 +34,4 @@ Select your OS and download the app.
 [![Download .rar](https://img.shields.io/badge/Download%20Archive-.rar-lightgrey?logo=windows&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_rar)
 
 ## Disclaimer
-This app is unofficial and not affiliated with YouTube or Google Inc. "YouTube," "YouTube Music," and the "YouTube Logo" are registered trademarks of Google Inc. Use this app at your own risk. The author assumes no responsibility for the accounts you use to log in.
+This application is unofficial and not affiliated with YouTube or Google Inc. "YouTube," "YouTube Music," and the "YouTube Logo" are registered trademarks of Google Inc. Use this application at your own risk. The author assumes no responsibility for the accounts you use to log in.

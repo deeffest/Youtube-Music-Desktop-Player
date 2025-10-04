@@ -615,7 +615,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             """ + self.read_script(
                 "only_audio.js"
             )
-            
+
             only_audio_script = QWebEngineScript()
             only_audio_script.setName("OnlyAudio")
             only_audio_script.setSourceCode(only_audio_source)

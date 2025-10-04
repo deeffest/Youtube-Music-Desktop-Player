@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'core/ui/settings_dialog.ui'
+# Form implementation generated from reading ui file 'core\ui\settings_dialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -61,7 +61,7 @@ class Ui_SettingsDialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.ScrollArea.setObjectName("ScrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -869, 394, 1225))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -883, 394, 1219))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_19 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_19.setContentsMargins(0, 0, 0, 0)
@@ -370,14 +370,6 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_3.addWidget(self.BodyLabel_3)
         self.verticalLayout_15.addWidget(self.SettingBox5)
         self.verticalLayout_19.addWidget(self.frame_3)
-        self.frame_5 = QtWidgets.QFrame(self.scrollAreaWidgetContents)
-        self.frame_5.setFrameShape(QtWidgets.QFrame.NoFrame)
-        self.frame_5.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_5.setObjectName("frame_5")
-        self.verticalLayout_18 = QtWidgets.QVBoxLayout(self.frame_5)
-        self.verticalLayout_18.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_18.setObjectName("verticalLayout_18")
-        self.verticalLayout_19.addWidget(self.frame_5)
         self.frame_4 = QtWidgets.QFrame(self.scrollAreaWidgetContents)
         self.frame_4.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)

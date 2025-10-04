@@ -9,40 +9,33 @@
         ".ad-showing",
         ".ad-interrupting",
         ".ytp-ad-text",
-        ".ytp-ad-timed-pie-countdown-container",
-        ".ytp-ad-survey-questions",
+        ".ytp-ad-button-icon",
+        ".ytp-ad-player-overlay-flyout-cta",
+        ".ytp-ad-player-overlay-flyout-cta-rounded",
     ];
 
     const isAdPlaying = () => {
         const player = document.querySelector("#movie_player");
-        if (!player) return false;
-        return AD_SELECTORS.some(
-            (sel) => player.matches(sel) || player.querySelector(sel),
+        return (
+            player &&
+            AD_SELECTORS.some(
+                (sel) => player.matches(sel) || player.querySelector(sel),
+            )
         );
     };
 
     const skipAd = () => {
-        const player = document.querySelector("#movie_player");
-        if (!player) return;
-
-        const adVideo = player.querySelector("video.html5-main-video");
-        if (adVideo && !isNaN(adVideo.duration) && isFinite(adVideo.duration)) {
-            adVideo.currentTime = adVideo.duration;
-        }
-
-        const skipButton = player.querySelector(".ytp-ad-skip-button");
-        if (skipButton) skipButton.click();
+        const video = document.querySelector("video");
+        if (video?.duration) video.currentTime = 9999;
     };
 
-    const adBlockerObserver = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-            for (const node of mutation.addedNodes) {
+    new MutationObserver((mutations) => {
+        for (const m of mutations) {
+            for (const node of m.addedNodes) {
                 if (
-                    node.nodeType === Node.ELEMENT_NODE &&
+                    node.nodeType === 1 &&
                     AD_SELECTORS.some(
-                        (selector) =>
-                            node.matches(selector) ||
-                            node.querySelector(selector),
+                        (sel) => node.matches(sel) || node.querySelector(sel),
                     )
                 ) {
                     skipAd();
@@ -50,27 +43,13 @@
                 }
             }
         }
-    });
-
-    adBlockerObserver.observe(document.documentElement, {
-        childList: true,
-        subtree: true,
-    });
-
-    const muteIfAd = (video) => {
-        if (!video) return;
-
-        if (isAdPlaying()) {
-            video.muted = true;
-        }
-    };
+    }).observe(document.documentElement, { childList: true, subtree: true });
 
     document.addEventListener(
         "loadedmetadata",
         (e) => {
-            if (e.target.tagName === "VIDEO") {
-                muteIfAd(e.target);
-            }
+            if (e.target.tagName === "VIDEO" && isAdPlaying())
+                e.target.muted = true;
         },
         true,
     );

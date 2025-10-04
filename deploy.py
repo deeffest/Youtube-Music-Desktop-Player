@@ -4,7 +4,7 @@ import shutil
 import subprocess
 
 SHORT_NAME = "YTMDPlayer"
-VERSION = "v1.21.0-rc1"
+VERSION = "v1.21.0-rc2"
 
 
 def main():
@@ -75,14 +75,31 @@ def main():
         os.remove(spec_file)
         print("Removed spec file")
 
-    def remove_pycache_dirs(root_dir):
-        for dirpath, dirnames, filenames in os.walk(root_dir):
-            if "__pycache__" in dirnames:
-                pycache_path = os.path.join(dirpath, "__pycache__")
-                shutil.rmtree(pycache_path)
-                print(f"Removed {pycache_path}")
+    def clean_dist(dist_dir):
+        internal_dir = os.path.join(dist_dir, SHORT_NAME, "_internal")
 
-    remove_pycache_dirs(os.getcwd())
+        core_dir = os.path.join(internal_dir, "core")
+        if os.path.exists(core_dir):
+            for root, dirs, files in os.walk(core_dir):
+                if "__pycache__" in dirs:
+                    shutil.rmtree(os.path.join(root, "__pycache__"))
+                    print(f"Removed {os.path.join(root, '__pycache__')}")
+                for f in files:
+                    if f.endswith(".py"):
+                        os.remove(os.path.join(root, f))
+                        print(f"Removed {os.path.join(root, f)}")
+            ui_path = os.path.join(core_dir, "ui")
+            if os.path.exists(ui_path):
+                shutil.rmtree(ui_path)
+                print(f"Removed {ui_path}")
+
+        resources_dir = os.path.join(internal_dir, "resources")
+        images_path = os.path.join(resources_dir, "images")
+        if os.path.exists(images_path):
+            shutil.rmtree(images_path)
+            print(f"Removed {images_path}")
+
+    clean_dist(base_output_dir)
 
     print("Done.")
 

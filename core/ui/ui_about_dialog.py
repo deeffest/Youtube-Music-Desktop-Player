@@ -14,8 +14,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AboutDialog(object):
     def setupUi(self, AboutDialog):
         AboutDialog.setObjectName("AboutDialog")
-        AboutDialog.resize(383, 312)
-        AboutDialog.setMinimumSize(QtCore.QSize(383, 232))
+        AboutDialog.resize(383, 313)
+        AboutDialog.setMinimumSize(QtCore.QSize(383, 313))
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(AboutDialog)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setSpacing(0)
@@ -48,6 +48,7 @@ class Ui_AboutDialog(object):
         self.verticalLayout_3.addWidget(self.SubtitleLabel)
         self.BodyLabel_2 = BodyLabel(self.frame)
         self.BodyLabel_2.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.BodyLabel_2.setText("")
         self.BodyLabel_2.setTextInteractionFlags(QtCore.Qt.LinksAccessibleByMouse)
         self.BodyLabel_2.setObjectName("BodyLabel_2")
         self.verticalLayout_3.addWidget(self.BodyLabel_2)
@@ -55,6 +56,61 @@ class Ui_AboutDialog(object):
         self.BodyLabel.setWordWrap(True)
         self.BodyLabel.setObjectName("BodyLabel")
         self.verticalLayout_3.addWidget(self.BodyLabel)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem1)
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_5.setContentsMargins(-1, -1, -1, 0)
+        self.verticalLayout_5.setSpacing(3)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(6)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label_3 = BodyLabel(self.frame)
+        self.label_3.setStyleSheet("BodyLabel {\n"
+"    color: #A0A0A0;\n"
+"    font-family: Consolas, monospace;\n"
+"    font-size: 12px;\n"
+"    padding: 1px 4px;\n"
+"}")
+        self.label_3.setText("")
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout.addWidget(self.label_3)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem2)
+        self.verticalLayout_5.addLayout(self.horizontalLayout)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_5 = BodyLabel(self.frame)
+        self.label_5.setStyleSheet("BodyLabel {\n"
+"    color: #A0A0A0;\n"
+"    font-family: Consolas, monospace;\n"
+"    font-size: 12px;\n"
+"    padding: 1px 4px;\n"
+"}")
+        self.label_5.setText("")
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout_2.addWidget(self.label_5)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem3)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_7 = BodyLabel(self.frame)
+        self.label_7.setStyleSheet("BodyLabel {\n"
+"    color: #A0A0A0;\n"
+"    font-family: Consolas, monospace;\n"
+"    font-size: 12px;\n"
+"    padding: 1px 4px;\n"
+"}")
+        self.label_7.setText("")
+        self.label_7.setObjectName("label_7")
+        self.horizontalLayout_3.addWidget(self.label_7)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem4)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_3.addLayout(self.verticalLayout_5)
+        spacerItem5 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_3.addItem(spacerItem5)
         self.BodyLabel_3 = BodyLabel(self.frame)
         self.BodyLabel_3.setObjectName("BodyLabel_3")
         self.verticalLayout_3.addWidget(self.BodyLabel_3)
@@ -76,8 +132,8 @@ class Ui_AboutDialog(object):
         self.HyperlinkLabel.setProperty("url", QtCore.QUrl("https://icons8.com"))
         self.HyperlinkLabel.setObjectName("HyperlinkLabel")
         self.horizontalLayout_5.addWidget(self.HyperlinkLabel)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem1)
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem6)
         self.PushButton = PushButton(self.ButtonBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -108,11 +164,20 @@ class Ui_AboutDialog(object):
         _translate = QtCore.QCoreApplication.translate
         AboutDialog.setWindowTitle(_translate("AboutDialog", "Dialog"))
         self.SubtitleLabel.setText(_translate("AboutDialog", "Youtube Music Desktop Player"))
-        self.BodyLabel_2.setText(_translate("AboutDialog", "Unknown Version"))
-        self.BodyLabel.setText(_translate("AboutDialog", "<html><head/><body><p><span style=\" color:#d3d3d3;\">Displays Youtube Music site using QtWebEngine to make your music listening experience even more convenient. </span></p><p><span style=\" color:#d3d3d3;\">This app is licensed under GNU GPLv3 and the source code is available on GitHub.</span></p><p><span style=\" color:#d3d3d3;\">Enjoy listening:)</span></p></body></html>"))
+        self.BodyLabel.setText(_translate("AboutDialog", "<html><head/><body><p><span style=\" color:#d3d3d3;\">Turns the YouTube Music site into a cross-platform desktop application using QtWebEngine.</span></p></body></html>"))
         self.BodyLabel_3.setText(_translate("AboutDialog", "Created with ❤️ by deeffest, 2024-2025"))
         self.BodyLabel_4.setText(_translate("AboutDialog", "Icons by"))
         self.HyperlinkLabel.setText(_translate("AboutDialog", "Icons8"))
         self.PushButton.setText(_translate("AboutDialog", "Visit GitHub"))
         self.PrimaryPushButton.setText(_translate("AboutDialog", "Close"))
 from qfluentwidgets import BodyLabel, HyperlinkLabel, PrimaryPushButton, PushButton, SubtitleLabel
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    AboutDialog = QtWidgets.QDialog()
+    ui = Ui_AboutDialog()
+    ui.setupUi(AboutDialog)
+    AboutDialog.show()
+    sys.exit(app.exec_())

@@ -113,7 +113,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.checkBox_2.setChecked(self.window.use_hd_thumbnails_setting)
 
         self.check_settings_dependency()
-        self.SwitchButton_12.checkedChanged.connect(self.check_settings_dependency)
         self.SwitchButton_15.checkedChanged.connect(self.check_settings_dependency)
 
         self.check_if_settings_changed()

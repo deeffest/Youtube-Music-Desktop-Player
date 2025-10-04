@@ -6,75 +6,62 @@
     let previousThumbnailUrl = null;
     const useHD = window.ONLY_AUDIO_SETTINGS?.useHDThumbnails ?? 0;
 
-    function getHDThumbnailUrl(url) {
-        return new Promise((resolve) => {
-            if (!useHD) return resolve(url);
+    async function getThumbnailUrl(src) {
+        const id = src.match(/\/vi\/([^/]+)\//)?.[1];
+        if (!id) return "";
 
-            const hdUrl = url.replace("sddefault.jpg", "maxresdefault.jpg");
+        const hq720 = `https://i1.ytimg.com/vi/${id}/hq720.jpg`;
+        const hqdefault = `https://i1.ytimg.com/vi/${id}/hqdefault.jpg`;
+
+        if (!useHD) {
+            return hqdefault;
+        }
+
+        return await new Promise((resolve) => {
             const img = new Image();
-
             img.onload = () => {
-                if (img.naturalWidth >= 1280 && img.naturalHeight >= 720) {
-                    resolve(hdUrl);
-                } else {
-                    resolve(url);
-                }
+                resolve(img.naturalWidth >= 720 ? hq720 : hqdefault);
             };
-
-            img.onerror = () => resolve(url);
-            img.src = hdUrl;
+            img.onerror = () => resolve(hqdefault);
+            img.src = hq720;
         });
     }
 
-    async function getThumbnailUrl() {
-        const thumbnailElement = document.querySelector(
-            ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
-        );
+    async function cutVideo(src) {
+        if (!src || src === previousThumbnailUrl) return;
 
-        if (
-            !thumbnailElement?.src ||
-            !thumbnailElement.src.includes("i.ytimg.com")
-        ) {
-            return "";
-        }
+        const url = await getThumbnailUrl(src);
+        if (!url) return;
 
-        const url = thumbnailElement.src;
-        return await getHDThumbnailUrl(url);
-    }
-
-    async function cutVideo() {
-        const videoElement = document.querySelector("video");
-        if (!videoElement) return;
-
-        [
-            ".iv-branding",
-            ".ytp-spinner",
-            ".ytp-large-play-button",
-            ".ytp-cards-button",
-            ".ytp-cards-teaser",
-            ".ytp-paid-content-overlay-link",
-        ].forEach((selector) => document.querySelector(selector)?.remove());
+        previousThumbnailUrl = src;
 
         const player = document.querySelector(".html5-video-player");
-        if (!player) return;
-
-        const thumbnailUrl = await getThumbnailUrl();
-        if (!thumbnailUrl) {
-            if (previousThumbnailUrl !== null) {
-                previousThumbnailUrl = null;
-                player.style.backgroundImage = "";
-            }
-            return;
+        if (player) {
+            Object.assign(player.style, {
+                backgroundImage: `url(${url})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                top: "0",
+                left: "0",
+            });
         }
-
-        if (thumbnailUrl === previousThumbnailUrl) return;
-        previousThumbnailUrl = thumbnailUrl;
-        player.style.background = `center/contain no-repeat url(${thumbnailUrl})`;
     }
 
-    const onlyAudioObserver = new MutationObserver(cutVideo);
-    onlyAudioObserver.observe(document.querySelector("ytmusic-player-page"), {
-        childList: true,
-        subtree: true,
-    });
+    const thumbEl = document.querySelector(
+        ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar"
+    );
+
+    if (thumbEl) {
+        new MutationObserver((mutations) => {
+            for (const m of mutations) {
+                if (m.attributeName === "src") {
+                    cutVideo(thumbEl.src);
+                }
+            }
+        }).observe(thumbEl, { attributes: true });
+    }
 })();

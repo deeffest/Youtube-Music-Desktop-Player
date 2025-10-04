@@ -1,3 +1,8 @@
+v1.21.0-rc2 is Here! (05.10.2025)
+- Now the About dialog shows the PyQt5 and Python versions, as well as the OS name and version.
+- All JS code has been updated to balance performance and quality (in particular, the `Only Audio Mode` plugin).
+- Other fixes and improvements.
+
 v1.21.0-rc1 is Here! (02.10.2025)
 - The `Only Audio Mode` plugin can now use HD thumbnails if they are available. (Disabled by default, can be enabled as follows: `Settings` > `Plugins` > `Only Audio Mode` > check `Use HD thumbnails`.).
 - Removed `Block video` option, its functionality is now part of the `Only Audio Mode` plugin without the option to disable it.
