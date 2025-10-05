@@ -7,20 +7,14 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
         let debounceTimer = null,
             DEBOUNCE_DELAY = 500;
 
-        const getThumbnailOrCoverUrl = () =>
-            document
-                .querySelector("#song-image #img")
-                ?.src.includes("lh3.googleusercontent.com")
-                ? document.querySelector("#song-image #img").src
-                : document
-                        .querySelector(
-                            ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
-                        )
-                        ?.src.includes("i.ytimg.com")
-                  ? document.querySelector(
-                        ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
-                    ).src
-                  : "";
+        const getThumbnailOrCoverUrl = () => {
+            const src = document.querySelector(
+                ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
+            )?.src;
+            return src?.includes("lh3.googleusercontent.com")
+                ? src.replace(/w\d+-h\d+/, "w544-h544")
+                : src || "";
+        };
 
         const getVideoId = () => {
             const link = document.querySelector(".ytp-title-link");
@@ -99,11 +93,10 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
             updateTrackInfo,
             { childList: true, subtree: true },
         );
-        observe(
-            document.querySelector("ytmusic-player"),
-            updateVideoState,
-            { childList: true, subtree: true },
-        );
+        observe(document.querySelector("ytmusic-player"), updateVideoState, {
+            childList: true,
+            subtree: true,
+        });
         observe(
             document.querySelector(".time-info.style-scope.ytmusic-player-bar"),
             updateTrackProgress,
