@@ -67,8 +67,8 @@ from core.text_view_dialog import TextViewDialog
 from core.signal_bus import signal_bus
 
 if platform.system() == "Windows":
-    from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton
-    from pywinstyles import apply_style
+    from PyQt5.QtWinExtras import QWinThumbnailToolBar, QWinThumbnailToolButton # type: ignore
+    from pywinstyles import apply_style # type: ignore
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
