@@ -7,3 +7,5 @@ discord-rpc==5.1
 pynput==1.8.1
 pyinstaller==6.16.0
 pywinstyles==1.8; sys_platform=="win32"
+black==25.9.0
+flake8==7.3.0
