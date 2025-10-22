@@ -244,7 +244,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_error_message(self, msg, title=None):
         text_view_dialog = TextViewDialog(
-            f"{title}" if title else "Unhandled exception", msg, self
+            f"{title}" if title else "Unexpected Error", msg, self
         )
         text_view_dialog.cancelButton.hide()
         text_view_dialog.exec_()
@@ -787,8 +787,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     logging.error(
                         f"An error occurred while updating Discord RPC: {str(e)}"
                     )
-                    if self.discord_rpc.is_connected():
+                    if self.discord_rpc.ipc.connected:
                         self.discord_rpc.disconnect()
+                    self.discord_rpc = None
 
     def clear_discord_rpc(self):
         if not self.discord_rpc:
@@ -806,8 +807,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     logging.error(
                         f"An error occurred while clearing Discord RPC: {str(e)}"
                     )
-                    if self.discord_rpc.is_connected():
+                    if self.discord_rpc.ipc.connected:
                         self.discord_rpc.disconnect()
+                    self.discord_rpc = None
 
     def reconnect_discord_rpc(self, method_to_reconnect):
         if self.discord_rpc:
