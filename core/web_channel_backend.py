@@ -1,5 +1,4 @@
 from typing import TYPE_CHECKING
-
 from PyQt5.QtCore import QObject, pyqtSlot
 
 if TYPE_CHECKING:

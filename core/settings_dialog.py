@@ -28,7 +28,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
     def configure_window(self):
         if platform.system() == "Windows":
-            from pywinstyles import apply_style
+            from pywinstyles import apply_style  # type: ignore
 
             try:
                 apply_style(self, "dark")

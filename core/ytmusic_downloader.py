@@ -9,7 +9,6 @@ import subprocess
 
 from typing import TYPE_CHECKING
 from PyQt5.QtCore import QThread, pyqtSignal
-
 from core.helpers import get_proxies
 
 if TYPE_CHECKING:

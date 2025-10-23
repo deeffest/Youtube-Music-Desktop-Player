@@ -8,8 +8,8 @@ from PyQt5.QtCore import QRect
 
 if platform.system() == "Windows":
     import winreg
-    import win32api
-    import win32gui
+    import win32api  # type: ignore
+    import win32gui  # type: ignore
 
 
 def is_valid_ytmusic_url(url):

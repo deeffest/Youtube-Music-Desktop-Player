@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
 from qfluentwidgets import MessageBox
-
 from core.input_dialog import InputDialog
 
 if TYPE_CHECKING:

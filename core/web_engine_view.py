@@ -1,5 +1,4 @@
 from typing import TYPE_CHECKING
-
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineContextMenuData
 
 if TYPE_CHECKING:
