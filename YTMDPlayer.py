@@ -1,6 +1,8 @@
 import os
 import sys
+import signal
 import logging
+import subprocess
 
 from PyQt5.QtCore import Qt, QSettings
 
@@ -93,4 +95,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if "--child" not in sys.argv:
+        result = subprocess.run([sys.executable, __file__, "--child"])
+        if result.returncode == -signal.SIGABRT or result.returncode == 134:
+            env = os.environ.copy()
+            env["QT_XCB_GL_INTEGRATION"] = "none"
+            subprocess.run([sys.executable, __file__, "--child"], env=env)
+        sys.exit(0)
+    else:
+        main()

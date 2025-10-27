@@ -1,6 +1,5 @@
 import os
 import json
-import certifi
 import sqlite3
 import logging
 import requests
@@ -13,8 +12,6 @@ from core.helpers import get_proxies
 
 if TYPE_CHECKING:
     from core.main_window import MainWindow
-
-os.environ["SSL_CERT_FILE"] = certifi.where()
 
 
 class DownloadThread(QThread):
@@ -55,10 +52,10 @@ class DownloadThread(QThread):
                 "releases/download/v8.12.3/FFmpeg-Linux"
             )
             self.ytdlp_url = (
-                "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp"
+                "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux"
             )
             self.ffmpeg_path = os.path.join(self.bin_folder, "ffmpeg")
-            self.ytdlp_path = os.path.join(self.bin_folder, "yt-dlp")
+            self.ytdlp_path = os.path.join(self.bin_folder, "yt-dlp_linux")
 
         self.cookies_txt = os.path.join(base_path, "__cache__", "cookies.txt")
         self.cookies_sqlite = os.path.join(
