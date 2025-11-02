@@ -1,3 +1,6 @@
+v1.22.0-rc2 is Here! (03.11.2025)
+- Ubuntu Apport will no longer respond to the critical error `Could not initialize GLX`.
+
 v1.22.0-rc1 is Here! (02.11.2025)
 - Fixed `is_connected AttributeError` in the `Discord Rich Presence` plugin.
 - Fixed critical error `Could not initialize GLX` on recent Linux distributions (e.g. Ubuntu 25).

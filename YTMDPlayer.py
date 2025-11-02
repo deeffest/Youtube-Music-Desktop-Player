@@ -1,11 +1,11 @@
 import os
 import sys
-import signal
 import logging
 import subprocess
 
 from PyQt5.QtCore import Qt, QSettings
 from PyQt5.QtGui import QPalette, QColor
+from PyQt5.QtWidgets import QApplication
 
 from core.application import SingletonApplication
 from core.main_window import MainWindow
@@ -13,7 +13,7 @@ from core.main_window import MainWindow
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.22.0-rc1"
+VERSION = "v1.22.0-rc2"
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -124,30 +124,22 @@ def main():
     sys.exit(app.exec_())
 
 
-if __name__ == "__main__":
-    if "--child" not in sys.argv:
-        result = subprocess.Popen(
-            [sys.executable, __file__, "--child"],
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-
-        glx_error = False
-        for line in result.stderr:
-            if "Could not initialize GLX" in line:
-                glx_error = True
-            if sys.stderr:
-                sys.stderr.write(line)
-
-        result.wait()
-
-        if glx_error and result.returncode in (-signal.SIGABRT, 134):
-            env = os.environ.copy()
-            env["QT_XCB_GL_INTEGRATION"] = "none"
-            subprocess.run([sys.executable, __file__, "--child"], env=env)
-
+def check_glx():
+    if "--child" in sys.argv:
+        app = QApplication([])  # noqa: F841
         sys.exit(0)
 
-    else:
-        signal.signal(signal.SIGABRT, lambda s, f: sys.exit(1))
-        main()
+    env = os.environ.copy()
+    env["LD_PRELOAD"] = os.path.join(CURRENT_DIR, "core", "glx", "abort_override.so")
+
+    result = subprocess.run(
+        [sys.executable, sys.argv[0], "--child"], stdout=subprocess.DEVNULL, env=env
+    )
+    return result.returncode == 0
+
+
+if __name__ == "__main__":
+    if not check_glx():
+        os.environ["QT_XCB_GL_INTEGRATION"] = "none"
+
+    main()
