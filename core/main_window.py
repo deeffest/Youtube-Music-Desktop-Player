@@ -1,6 +1,8 @@
+import os
 import logging
 import platform
 import traceback
+import subprocess
 import webbrowser
 
 from PyQt5.QtCore import (
@@ -14,7 +16,7 @@ from PyQt5.QtCore import (
     QTimer,
     QEvent,
 )
-from PyQt5.QtGui import QIcon, QKeySequence, QDesktopServices
+from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtNetwork import QNetworkProxy
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import (
@@ -46,7 +48,7 @@ from qfluentwidgets import (
     setThemeColor,
 )
 from packaging import version as pkg_version
-from discordrpc import RPC, Button
+from discordrpc import RPC, Button, Activity, ProgressBar
 
 from core.about_dialog import AboutDialog
 from core.mini_player_dialog import MiniPlayerDialog
@@ -60,6 +62,7 @@ from core.ytmusic_downloader import DownloadThread
 from core.helpers import (
     get_centered_geometry,
     is_valid_ytmusic_url,
+    get_current_desktop_environment,
 )
 from core.ui.ui_main_window import Ui_MainWindow
 from core.hotkey_controller import HotkeyController
@@ -83,16 +86,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.current_dir = app_info[3]
         self.icon_folder = f"{self.current_dir}/resources/icons"
 
-        self.title = "Unknown"
-        self.author = "Unknown"
-        self.thumbnail_url = None
-        self.video_id = None
-        self.current_url = None
-        self.current_time = "NaN"
-        self.total_time = "NaN"
-        self.video_state = None
-        self.is_video_or_playlist = False
-        self.proxy_error_message = None
+        self.title = ""
+        self.author = ""
+        self.thumbnail_url = ""
+        self.video_id = ""
+        self.current_time = "0:00"
+        self.total_time = "0:00"
+        self.video_state = "NoVideo"
 
         self.force_exit = False
         self.is_downloading = False
@@ -100,11 +100,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.settings_ = app_settings
         self.opengl_enviroment_setting = opengl_enviroment_setting
 
+        self.current_url = None
         self.mini_player_dialog = None
         self.download_thread = None
         self.update_checker_thread = None
         self.hotkey_controller_thread = None
         self.downloading_state_tool_tip = None
+        self.discord_rpc = None
+        self.proxy_error_message = None
 
         self.load_settings()
         self.configure_window()
@@ -340,7 +343,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ):
             self.webview.load(QUrl(self.last_url_setting))
         else:
-            self.home()
+            self.go_to_home()
 
         self.webview.urlChanged.connect(self.on_url_changed)
         self.webview.loadProgress.connect(self.on_load_progress)
@@ -473,28 +476,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def configure_ui_elements(self):
         self.back_tbutton.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_tbutton.setEnabled(False)
-        self.back_tbutton.installEventFilter(
-            ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.back_tbutton.clicked.connect(self.go_back)
 
         self.forward_tbutton.setIcon(QIcon(f"{self.icon_folder}/right.png"))
         self.forward_tbutton.setEnabled(False)
-        self.forward_tbutton.installEventFilter(
-            ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.forward_tbutton.clicked.connect(self.go_forward)
 
         self.home_tbutton.setIcon(QIcon(f"{self.icon_folder}/home.png"))
-        self.home_tbutton.installEventFilter(
-            ToolTipFilter(self.home_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.home_tbutton.clicked.connect(self.go_to_home)
 
         self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
-        self.reload_tbutton.installEventFilter(
-            ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.reload_tbutton.clicked.connect(self.reload_page)
 
         url_action = QAction(self)
@@ -511,34 +502,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.download_ddtbutton.setIcon(QIcon(f"{self.icon_folder}/download.png"))
         self.download_ddtbutton.setMenu(self.download_menu)
-        self.download_ddtbutton.installEventFilter(
-            ToolTipFilter(self.download_ddtbutton, 300, ToolTipPosition.TOP)
-        )
 
         self.mini_player_tbutton.setIcon(QIcon(f"{self.icon_folder}/mini-player.png"))
         self.mini_player_tbutton.setEnabled(False)
-        self.mini_player_tbutton.installEventFilter(
-            ToolTipFilter(self.mini_player_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.mini_player_tbutton.clicked.connect(self.open_mini_player)
 
         self.settings_tbutton.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
-        self.settings_tbutton.installEventFilter(
-            ToolTipFilter(self.settings_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.settings_tbutton.clicked.connect(self.open_settings)
 
         self.bug_report_tbutton.setIcon(QIcon(f"{self.icon_folder}/bug.png"))
-        self.bug_report_tbutton.installEventFilter(
-            ToolTipFilter(self.bug_report_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.bug_report_tbutton.clicked.connect(self.send_bug_report)
 
         self.about_tbutton.setIcon(QIcon(f"{self.icon_folder}/about.png"))
-        self.about_tbutton.installEventFilter(
-            ToolTipFilter(self.about_tbutton, 300, ToolTipPosition.TOP)
-        )
         self.about_tbutton.clicked.connect(self.about)
+
+        if get_current_desktop_environment() != "Xfce":
+            self.back_tbutton.installEventFilter(
+                ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP)
+            )
+            self.forward_tbutton.installEventFilter(
+                ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.TOP)
+            )
+            self.home_tbutton.installEventFilter(
+                ToolTipFilter(self.home_tbutton, 300, ToolTipPosition.TOP)
+            )
+            self.reload_tbutton.installEventFilter(
+                ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
+            )
+            self.download_ddtbutton.installEventFilter(
+                ToolTipFilter(self.download_ddtbutton, 300, ToolTipPosition.TOP)
+            )
+            self.mini_player_tbutton.installEventFilter(
+                ToolTipFilter(self.mini_player_tbutton, 300, ToolTipPosition.TOP)
+            )
+            self.settings_tbutton.installEventFilter(
+                ToolTipFilter(self.settings_tbutton, 300, ToolTipPosition.TOP)
+            )
+            self.bug_report_tbutton.installEventFilter(
+                ToolTipFilter(self.bug_report_tbutton, 300, ToolTipPosition.TOP)
+            )
+            self.about_tbutton.installEventFilter(
+                ToolTipFilter(self.about_tbutton, 300, ToolTipPosition.TOP)
+            )
 
         self.ToolBar.installEventFilter(self)
         if self.hide_toolbar_setting == 1:
@@ -725,14 +730,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.forward_action.setEnabled(can_go_forward)
         self.forward_tbutton.setEnabled(can_go_forward)
 
-        self.is_video_or_playlist = (
+        is_video_or_playlist = (
             "watch" in self.current_url or "playlist" in self.current_url
         )
         if not self.is_downloading:
-            self.download_with_oauth_action.setEnabled(self.is_video_or_playlist)
-            self.download_as_unauthorized_action.setEnabled(self.is_video_or_playlist)
-            self.download_with_oauth_shortcut.setEnabled(self.is_video_or_playlist)
-            self.download_as_unauthorized_shortcut.setEnabled(self.is_video_or_playlist)
+            self.download_with_oauth_action.setEnabled(is_video_or_playlist)
+            self.download_as_unauthorized_action.setEnabled(is_video_or_playlist)
+            self.download_with_oauth_shortcut.setEnabled(is_video_or_playlist)
+            self.download_as_unauthorized_shortcut.setEnabled(is_video_or_playlist)
 
     def update_mini_player_track_info(self):
         if self.mini_player_dialog:
@@ -743,12 +748,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.mini_player_dialog.load_thumbnail(self.thumbnail_url)
 
     def run_discord_rpc(self):
-        self.discord_rpc = None
-        try:
-            if self.discord_rpc_setting == 1:
-                self.discord_rpc = RPC(app_id="1254202610781655050", output=False)
-        except Exception as e:
-            logging.error(f"Failed to activate Discord RPC: {str(e)}")
+        if self.discord_rpc_setting == 1:
+            try:
+                self.discord_rpc = RPC(
+                    app_id="1254202610781655050",
+                    output=False,
+                    exit_if_discord_close=False,
+                    exit_on_disconnect=False,
+                )
+            except Exception as e:
+                self.discord_rpc = None
+                logging.error(f"Failed to activate Discord RPC: {str(e)}")
 
     def update_discord_rpc(self):
         if not self.discord_rpc:
@@ -764,12 +774,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             project_url = f"https://github.com/{self.app_author}/{self.name}"
             video_url = f"https://music.youtube.com/watch?v={self.video_id}"
-            buttons = Button(
-                button_one_label="Play in Browser",
-                button_one_url=video_url,
-                button_two_label="Get App on GitHub",
-                button_two_url=project_url,
-            )
+
+            def parse_time(t: str) -> int:
+                minutes, seconds = map(int, t.split(":"))
+                return minutes * 60 + seconds
 
             try:
                 self.discord_rpc.set_activity(
@@ -777,47 +785,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     state=state,
                     large_image=large_image,
                     small_image=small_image,
-                    act_type=2,
-                    buttons=buttons,
+                    act_type=Activity.Listening,
+                    **ProgressBar(
+                        parse_time(self.current_time), parse_time(self.total_time)
+                    ),
+                    buttons=[
+                        Button("Play in Browser", video_url),
+                        Button("Get App on GitHub", project_url),
+                    ],
                 )
             except Exception as e:
                 if "[Errno 22]" in str(e) or "[Errno 32]" in str(e):
-                    self.reconnect_discord_rpc("update_discord_rpc")
+                    self.reconnect_discord_rpc()
                 else:
-                    logging.error(
-                        f"An error occurred while updating Discord RPC: {str(e)}"
-                    )
-                    if self.discord_rpc.ipc.connected:
-                        self.discord_rpc.disconnect()
-                    self.discord_rpc = None
+                    logging.error(f"Failed to update Discord RPC: {str(e)}")
 
     def clear_discord_rpc(self):
-        if not self.discord_rpc:
-            self.run_discord_rpc()
-
         if self.discord_rpc:
             try:
-                self.discord_rpc.set_activity(
-                    details="Nothing's playing yet", act_type=2
-                )
+                self.discord_rpc.clear()
             except Exception as e:
-                if "[Errno 22]" in str(e) or "[Errno 32]" in str(e):
-                    self.reconnect_discord_rpc("clear_discord_rpc")
-                else:
-                    logging.error(
-                        f"An error occurred while clearing Discord RPC: {str(e)}"
-                    )
-                    if self.discord_rpc.ipc.connected:
-                        self.discord_rpc.disconnect()
-                    self.discord_rpc = None
+                logging.error(f"Failed to clear Discord RPC: {str(e)}")
 
-    def reconnect_discord_rpc(self, method_to_reconnect):
+    def reconnect_discord_rpc(self):
         if self.discord_rpc:
             self.run_discord_rpc()
-            if method_to_reconnect == "update_discord_rpc":
-                self.update_discord_rpc()
-            elif method_to_reconnect == "clear_discord_rpc":
-                self.clear_discord_rpc()
+            self.update_discord_rpc()
 
     def update_mini_player_track_progress(self):
         if self.mini_player_dialog:
@@ -1177,8 +1170,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if info_bar:
             info_bar.close()
 
-        url = QUrl.fromLocalFile(folder)
-        QDesktopServices.openUrl(url)
+        if platform.system() == "Windows":
+            os.startfile(folder)
+        else:
+            env = os.environ.copy()
+            for var in ("LD_LIBRARY_PATH", "LD_PRELOAD"):
+                env.pop(var, None)
+            subprocess.Popen(["xdg-open", folder], env=env)
 
     def on_download_finished(self):
         self.download_thread = None

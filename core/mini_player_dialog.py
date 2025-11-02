@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QDialog, QDesktopWidget
 from qfluentwidgets import ToolTipFilter, ToolTipPosition
 
 from core.thumbnail_loader import ThumbnailLoader
-from core.helpers import get_taskbar_position
+from core.helpers import get_taskbar_position, get_current_desktop_environment
 from core.ui.ui_mini_player_dialog import Ui_MiniPlayerDialog
 
 if TYPE_CHECKING:
@@ -58,21 +58,22 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
         self.volume_down_button.clicked.connect(self.window.volume_down)
         self.volume_up_button.clicked.connect(self.window.volume_up)
 
-        self.previous_button.installEventFilter(
-            ToolTipFilter(self.previous_button, 300, ToolTipPosition.TOP)
-        )
-        self.play_pause_button.installEventFilter(
-            ToolTipFilter(self.play_pause_button, 300, ToolTipPosition.TOP)
-        )
-        self.next_button.installEventFilter(
-            ToolTipFilter(self.next_button, 300, ToolTipPosition.TOP)
-        )
-        self.volume_down_button.installEventFilter(
-            ToolTipFilter(self.volume_down_button, 300, ToolTipPosition.TOP)
-        )
-        self.volume_up_button.installEventFilter(
-            ToolTipFilter(self.volume_up_button, 300, ToolTipPosition.TOP)
-        )
+        if get_current_desktop_environment() != "Xfce":
+            self.previous_button.installEventFilter(
+                ToolTipFilter(self.previous_button, 300, ToolTipPosition.TOP)
+            )
+            self.play_pause_button.installEventFilter(
+                ToolTipFilter(self.play_pause_button, 300, ToolTipPosition.TOP)
+            )
+            self.next_button.installEventFilter(
+                ToolTipFilter(self.next_button, 300, ToolTipPosition.TOP)
+            )
+            self.volume_down_button.installEventFilter(
+                ToolTipFilter(self.volume_down_button, 300, ToolTipPosition.TOP)
+            )
+            self.volume_up_button.installEventFilter(
+                ToolTipFilter(self.volume_up_button, 300, ToolTipPosition.TOP)
+            )
 
         self.previous_button.setIcon(
             QIcon(f"{self.window.icon_folder}/previous-filled.png")

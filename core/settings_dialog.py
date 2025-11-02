@@ -13,6 +13,7 @@ from qfluentwidgets import (
 )
 
 from core.ui.ui_settings_dialog import Ui_SettingsDialog
+from core.helpers import get_current_desktop_environment
 
 if TYPE_CHECKING:
     from main_window import MainWindow
@@ -134,18 +135,12 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             "• DefaultProxy: Uses system proxy.\n"
             "• NoProxy: Direct connection."
         )
-        self.label_8.installEventFilter(
-            ToolTipFilter(self.label_8, 300, ToolTipPosition.TOP)
-        )
 
         self.label_10.setToolTip(
             "• Desktop: Native OpenGL implementation.\n"
             "• Angle: OpenGL over Direct3D.\n"
             "• Software: Software-based rendering.\n"
             "• Auto: Automatic selection based on system."
-        )
-        self.label_10.installEventFilter(
-            ToolTipFilter(self.label_10, 300, ToolTipPosition.TOP)
         )
 
         self.label_6.setToolTip(
@@ -155,9 +150,17 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             "• Ctrl + Shift + Up: Volume Up.\n"
             "• Ctrl + Shift + Down: Volume Down."
         )
-        self.label_6.installEventFilter(
-            ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP)
-        )
+
+        if get_current_desktop_environment() != "Xfce":
+            self.label_10.installEventFilter(
+                ToolTipFilter(self.label_10, 300, ToolTipPosition.TOP)
+            )
+            self.label_8.installEventFilter(
+                ToolTipFilter(self.label_8, 300, ToolTipPosition.TOP)
+            )
+            self.label_6.installEventFilter(
+                ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP)
+            )
 
         self.label_5.hide()
         self.label_3.hide()

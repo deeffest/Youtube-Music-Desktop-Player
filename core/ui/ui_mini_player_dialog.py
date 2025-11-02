@@ -21,7 +21,7 @@ class Ui_MiniPlayerDialog(object):
         sizePolicy.setHeightForWidth(MiniPlayerDialog.sizePolicy().hasHeightForWidth())
         MiniPlayerDialog.setSizePolicy(sizePolicy)
         MiniPlayerDialog.setMinimumSize(QtCore.QSize(360, 150))
-        MiniPlayerDialog.setMaximumSize(QtCore.QSize(360, 150))
+        MiniPlayerDialog.setMaximumSize(QtCore.QSize(16777215, 16777215))
         MiniPlayerDialog.setMouseTracking(True)
         MiniPlayerDialog.setStyleSheet("")
         self.verticalLayout = QtWidgets.QVBoxLayout(MiniPlayerDialog)
@@ -71,6 +71,13 @@ class Ui_MiniPlayerDialog(object):
         self.horizontalLayout_3.setSpacing(6)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.BodyLabel = BodyLabel(MiniPlayerDialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.BodyLabel.sizePolicy().hasHeightForWidth())
+        self.BodyLabel.setSizePolicy(sizePolicy)
+        self.BodyLabel.setMinimumSize(QtCore.QSize(32, 0))
+        self.BodyLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.BodyLabel.setStyleSheet("FluentLabelBase {\n"
 "    color: black;\n"
 "}\n"
@@ -137,6 +144,13 @@ class Ui_MiniPlayerDialog(object):
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem4)
         self.BodyLabel_2 = BodyLabel(MiniPlayerDialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.BodyLabel_2.sizePolicy().hasHeightForWidth())
+        self.BodyLabel_2.setSizePolicy(sizePolicy)
+        self.BodyLabel_2.setMinimumSize(QtCore.QSize(32, 0))
+        self.BodyLabel_2.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.BodyLabel_2.setStyleSheet("FluentLabelBase {\n"
 "    color: black;\n"
 "}\n"
@@ -166,6 +180,7 @@ class Ui_MiniPlayerDialog(object):
 "    color: #00a7b3;\n"
 "}\n"
 "FluentLabelBase{color:lightgray}")
+        self.BodyLabel_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.BodyLabel_2.setObjectName("BodyLabel_2")
         self.horizontalLayout_3.addWidget(self.BodyLabel_2)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
@@ -176,7 +191,7 @@ class Ui_MiniPlayerDialog(object):
     def retranslateUi(self, MiniPlayerDialog):
         _translate = QtCore.QCoreApplication.translate
         MiniPlayerDialog.setWindowTitle(_translate("MiniPlayerDialog", "Dialog"))
-        self.BodyLabel.setText(_translate("MiniPlayerDialog", "NaN:NaN"))
+        self.BodyLabel.setText(_translate("MiniPlayerDialog", "0:38"))
         self.volume_down_button.setToolTip(_translate("MiniPlayerDialog", "Volume Down"))
         self.previous_button.setToolTip(_translate("MiniPlayerDialog", "Previous"))
         self.previous_button.setShortcut(_translate("MiniPlayerDialog", "Left"))
@@ -185,15 +200,5 @@ class Ui_MiniPlayerDialog(object):
         self.next_button.setToolTip(_translate("MiniPlayerDialog", "Next"))
         self.next_button.setShortcut(_translate("MiniPlayerDialog", "Right"))
         self.volume_up_button.setToolTip(_translate("MiniPlayerDialog", "Volume Up"))
-        self.BodyLabel_2.setText(_translate("MiniPlayerDialog", "NaN:NaN"))
+        self.BodyLabel_2.setText(_translate("MiniPlayerDialog", "2:34"))
 from qfluentwidgets import BodyLabel, StrongBodyLabel, TransparentToolButton
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MiniPlayerDialog = QtWidgets.QDialog()
-    ui = Ui_MiniPlayerDialog()
-    ui.setupUi(MiniPlayerDialog)
-    MiniPlayerDialog.show()
-    sys.exit(app.exec_())

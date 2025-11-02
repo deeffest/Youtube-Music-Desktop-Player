@@ -171,13 +171,3 @@ class Ui_AboutDialog(object):
         self.PushButton.setText(_translate("AboutDialog", "Visit GitHub"))
         self.PrimaryPushButton.setText(_translate("AboutDialog", "Close"))
 from qfluentwidgets import BodyLabel, HyperlinkLabel, PrimaryPushButton, PushButton, SubtitleLabel
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    AboutDialog = QtWidgets.QDialog()
-    ui = Ui_AboutDialog()
-    ui.setupUi(AboutDialog)
-    AboutDialog.show()
-    sys.exit(app.exec_())

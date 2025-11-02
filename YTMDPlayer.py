@@ -5,6 +5,7 @@ import logging
 import subprocess
 
 from PyQt5.QtCore import Qt, QSettings
+from PyQt5.QtGui import QPalette, QColor
 
 from core.application import SingletonApplication
 from core.main_window import MainWindow
@@ -12,7 +13,7 @@ from core.main_window import MainWindow
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.21.0"
+VERSION = "v1.22.0-rc1"
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -60,6 +61,34 @@ def setup_opengl_environment(app_settings):
     return setting
 
 
+def set_dark_palette(app):
+    app.setStyle("Fusion")
+
+    dark_palette = QPalette()
+    dark_palette.setColor(QPalette.Window, QColor(39, 39, 39))
+    dark_palette.setColor(QPalette.Base, QColor(32, 32, 32))
+    dark_palette.setColor(QPalette.AlternateBase, QColor(43, 43, 43))
+    dark_palette.setColor(QPalette.ToolTipBase, QColor(31, 31, 31))
+    dark_palette.setColor(QPalette.WindowText, Qt.white)
+    dark_palette.setColor(QPalette.Text, Qt.white)
+    dark_palette.setColor(QPalette.ButtonText, Qt.white)
+    dark_palette.setColor(QPalette.ToolTipText, QColor(202, 202, 202))
+    dark_palette.setColor(QPalette.BrightText, QColor(255, 41, 41))
+    dark_palette.setColor(QPalette.Button, QColor(50, 50, 50))
+    dark_palette.setColor(QPalette.Light, QColor(55, 55, 55))
+    dark_palette.setColor(QPalette.Mid, QColor(45, 45, 45))
+    dark_palette.setColor(QPalette.Dark, QColor(30, 30, 30))
+    dark_palette.setColor(QPalette.Link, QColor(255, 41, 41))
+    dark_palette.setColor(QPalette.Highlight, QColor(255, 41, 41))
+    dark_palette.setColor(QPalette.HighlightedText, Qt.white)
+    dark_palette.setColor(QPalette.Disabled, QPalette.WindowText, QColor(109, 109, 109))
+    dark_palette.setColor(QPalette.Disabled, QPalette.Text, QColor(109, 109, 109))
+    dark_palette.setColor(QPalette.Disabled, QPalette.ButtonText, QColor(109, 109, 109))
+    dark_palette.setColor(QPalette.Disabled, QPalette.Base, QColor(28, 28, 28))
+    dark_palette.setColor(QPalette.Disabled, QPalette.Highlight, QColor(60, 60, 60))
+    app.setPalette(dark_palette)
+
+
 def load_stylesheet(app):
     css_path = os.path.join(CURRENT_DIR, "core", "css", "styles.css")
     try:
@@ -81,6 +110,7 @@ def main():
     app.setOrganizationDomain(WEBSITE)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
+    set_dark_palette(app)
     load_stylesheet(app)
 
     window = MainWindow(
@@ -96,11 +126,28 @@ def main():
 
 if __name__ == "__main__":
     if "--child" not in sys.argv:
-        result = subprocess.run([sys.executable, __file__, "--child"])
-        if result.returncode == -signal.SIGABRT or result.returncode == 134:
+        result = subprocess.Popen(
+            [sys.executable, __file__, "--child"],
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+        glx_error = False
+        for line in result.stderr:
+            if "Could not initialize GLX" in line:
+                glx_error = True
+            if sys.stderr:
+                sys.stderr.write(line)
+
+        result.wait()
+
+        if glx_error and result.returncode in (-signal.SIGABRT, 134):
             env = os.environ.copy()
             env["QT_XCB_GL_INTEGRATION"] = "none"
             subprocess.run([sys.executable, __file__, "--child"], env=env)
+
         sys.exit(0)
+
     else:
+        signal.signal(signal.SIGABRT, lambda s, f: sys.exit(1))
         main()

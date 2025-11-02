@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'core\ui\settings_dialog.ui'
+# Form implementation generated from reading ui file 'core/ui/settings_dialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -61,7 +61,7 @@ class Ui_SettingsDialog(object):
         self.ScrollArea.setWidgetResizable(True)
         self.ScrollArea.setObjectName("ScrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -883, 394, 1219))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -1064, 374, 1530))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_19 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_19.setContentsMargins(0, 0, 0, 0)
@@ -666,7 +666,7 @@ class Ui_SettingsDialog(object):
         self.BodyLabel_28.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, playback controls are accessible from the tray icon in the taskbar.</span></p></body></html>"))
         self.BodyLabel_23.setText(_translate("SettingsDialog", "Hotkey Playback Control"))
         self.label_6.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">?</span></p></body></html>"))
-        self.BodyLabel_30.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, adds global hotkey support for playback control from any application.</span></p></body></html>"))
+        self.BodyLabel_30.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, adds global hotkey support for playback control from any application. (Wayland is not supported)</span></p></body></html>"))
         self.BodyLabel_24.setText(_translate("SettingsDialog", "Only Audio Mode"))
         self.BodyLabel_31.setText(_translate("SettingsDialog", "<html><head/><body><p><span style=\" color:#808080;\">When enabled, all video clips are blocked and replaced with thumbnails.</span></p></body></html>"))
         self.checkBox_2.setText(_translate("SettingsDialog", "Use HD thumbnails"))
@@ -676,13 +676,3 @@ class Ui_SettingsDialog(object):
         self.PrimaryPushButton.setText(_translate("SettingsDialog", "Save"))
         self.PushButton.setText(_translate("SettingsDialog", "Cancel"))
 from qfluentwidgets import BodyLabel, CheckBox, ComboBox, HorizontalSeparator, LineEdit, PasswordLineEdit, PillPushButton, PrimaryPushButton, PushButton, ScrollArea, SwitchButton
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    SettingsDialog = QtWidgets.QDialog()
-    ui = Ui_SettingsDialog()
-    ui.setupUi(SettingsDialog)
-    SettingsDialog.show()
-    sys.exit(app.exec_())

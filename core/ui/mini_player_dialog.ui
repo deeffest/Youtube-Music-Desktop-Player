@@ -24,8 +24,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>360</width>
-    <height>150</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="mouseTracking">
@@ -182,6 +182,24 @@
      </property>
      <item>
       <widget class="BodyLabel" name="BodyLabel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
         <string notr="true">FluentLabelBase {
     color: black;
@@ -214,7 +232,7 @@ HyperlinkLabel:pressed {
 FluentLabelBase{color:lightgray}</string>
        </property>
        <property name="text">
-        <string>NaN:NaN</string>
+        <string>0:38</string>
        </property>
       </widget>
      </item>
@@ -380,6 +398,24 @@ FluentLabelBase{color:lightgray}</string>
      </item>
      <item>
       <widget class="BodyLabel" name="BodyLabel_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>32</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="styleSheet">
         <string notr="true">FluentLabelBase {
     color: black;
@@ -412,7 +448,10 @@ HyperlinkLabel:pressed {
 FluentLabelBase{color:lightgray}</string>
        </property>
        <property name="text">
-        <string>NaN:NaN</string>
+        <string>2:34</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
