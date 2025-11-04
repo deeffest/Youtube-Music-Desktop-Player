@@ -6,7 +6,6 @@ from typing import List
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QSharedMemory, QIODevice
 from PyQt5.QtNetwork import QLocalServer, QLocalSocket
-
 from core.signal_bus import signal_bus
 
 

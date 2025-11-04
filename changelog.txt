@@ -1,3 +1,6 @@
+v1.22.0-rc3 is Here! (04.11.2025)
+- Added a new `Hide mini player` plugin.
+
 v1.22.0-rc2 is Here! (03.11.2025)
 - Ubuntu Apport will no longer respond to the critical error `Could not initialize GLX`.
 

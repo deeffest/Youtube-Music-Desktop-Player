@@ -177,6 +177,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("hide_toolbar", 0)
         if self.settings_.value("use_hd_thumbnails") is None:
             self.settings_.setValue("use_hd_thumbnails", 0)
+        if self.settings_.value("hide_mini_player") is None:
+            self.settings_.setValue("hide_mini_player", 0)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(
@@ -223,6 +225,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.nonstop_music_setting = int(self.settings_.value("nonstop_music"))
         self.hide_toolbar_setting = int(self.settings_.value("hide_toolbar"))
         self.use_hd_thumbnails_setting = int(self.settings_.value("use_hd_thumbnails"))
+        self.hide_mini_player_setting = int(self.settings_.value("hide_mini_player"))
 
     def configure_window(self):
         if platform.system() == "Windows":
@@ -648,6 +651,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             nonstop_music_script.setWorldId(QWebEngineScript.MainWorld)
             nonstop_music_script.setRunsOnSubFrames(False)
             self.webpage.profile().scripts().insert(nonstop_music_script)
+
+        if self.hide_mini_player_setting == 1:
+            hide_mini_player_script = QWebEngineScript()
+            hide_mini_player_script.setName("HideMiniPlayer")
+            hide_mini_player_script.setSourceCode(
+                self.read_script("hide_mini_player.js")
+            )
+            hide_mini_player_script.setInjectionPoint(QWebEngineScript.Deferred)
+            hide_mini_player_script.setWorldId(QWebEngineScript.MainWorld)
+            hide_mini_player_script.setRunsOnSubFrames(False)
+            self.webpage.profile().scripts().insert(hide_mini_player_script)
 
     def on_load_progress(self, progress):
         if progress > 80:

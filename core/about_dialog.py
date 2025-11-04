@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from PyQt5.QtCore import Qt, PYQT_VERSION_STR
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog
-
 from core.ui.ui_about_dialog import Ui_AboutDialog
 
 if TYPE_CHECKING:

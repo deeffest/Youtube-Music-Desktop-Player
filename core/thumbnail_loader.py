@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
-
 from core.helpers import get_proxies
 
 if TYPE_CHECKING:

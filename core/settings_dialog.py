@@ -81,6 +81,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.ComboBox_3.currentIndexChanged.connect(self.check_if_settings_changed)
         self.SwitchButton_16.checkedChanged.connect(self.check_if_settings_changed)
         self.checkBox_2.toggled.connect(self.check_if_settings_changed)
+        self.SwitchButton_17.checkedChanged.connect(self.check_if_settings_changed)
 
         self.configure_tabs()
 
@@ -112,6 +113,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
         self.SwitchButton_16.setChecked(self.window.nonstop_music_setting)
         self.checkBox_2.setChecked(self.window.use_hd_thumbnails_setting)
+        self.SwitchButton_17.setChecked(self.window.hide_mini_player_setting)
 
         self.check_settings_dependency()
         self.SwitchButton_15.checkedChanged.connect(self.check_settings_dependency)
@@ -128,6 +130,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.label_7.setPixmap(QPixmap(f"{self.window.icon_folder}/hotkeys.png"))
         self.label_9.setPixmap(QPixmap(f"{self.window.icon_folder}/audio.png"))
         self.label_11.setPixmap(QPixmap(f"{self.window.icon_folder}/nonstop-music.png"))
+        self.label_12.setPixmap(
+            QPixmap(f"{self.window.icon_folder}/hide_mini_player.png")
+        )
 
         self.label_8.setToolTip(
             "• HttpProxy: For HTTP/HTTPS traffic.\n"
@@ -279,6 +284,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.opengl_enviroment_setting = self.ComboBox_3.currentText()
         self.window.nonstop_music_setting = int(self.SwitchButton_16.isChecked())
         self.window.use_hd_thumbnails_setting = int(self.checkBox_2.isChecked())
+        self.window.hide_mini_player_setting = int(self.SwitchButton_17.isChecked())
 
         self.window.settings_.setValue(
             "save_last_win_geometry", self.window.save_last_win_geometry_setting
@@ -324,6 +330,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
         self.window.settings_.setValue(
             "use_hd_thumbnails", self.window.use_hd_thumbnails_setting
+        )
+        self.window.settings_.setValue(
+            "hide_mini_player", self.window.hide_mini_player_setting
         )
 
         self.check_if_settings_changed()
@@ -401,6 +410,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             or self.ComboBox_3.currentText() != self.window.opengl_enviroment_setting
             or self.SwitchButton_16.isChecked() != self.window.nonstop_music_setting
             or self.checkBox_2.isChecked() != self.window.use_hd_thumbnails_setting
+            or self.SwitchButton_17.isChecked() != self.window.hide_mini_player_setting
         ):
 
             self.PrimaryPushButton.setEnabled(True)
