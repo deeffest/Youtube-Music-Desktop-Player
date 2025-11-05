@@ -13,7 +13,7 @@ from core.main_window import MainWindow
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.22.0-rc3"
+VERSION = "v1.22.0"
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 

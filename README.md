@@ -18,9 +18,10 @@ Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform 
 - Hotkey Playback Control
 - Only Audio Mode
 - Non-stop Music
+- Hide mini player
 
 ## Get App
-Just download and extract.
+Just download and extract ⭣
 
 ### Linux
 [![Download .deb](https://img.shields.io/badge/Download%20for%20Ubuntu%20%2F%20Debian-.deb-blue?logo=ubuntu&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_deb)  

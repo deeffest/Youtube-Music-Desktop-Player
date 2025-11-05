@@ -1,3 +1,16 @@
+v1.22.0 is Here! (05.11.2025)
+- Fixed `is_connected AttributeError` in the `Discord Rich Presence` plugin.
+- Fixed critical error `Could not initialize GLX` on recent Linux distributions (e.g. Ubuntu 25).
+- Now the `Discord Rich Presence` plugin shows a progress bar.
+- Fixed application crash when `Remember last opened URL` setting is disabled.
+- Now the standard tooltips will be displayed on Xfce instead of Fluent tooltips due to some bugs.
+- Now the folder selection dialog on Linux has a dark style.
+- Fixed the `Open Folder` button not working after successfully downloading audio on most Linux distributions.
+- Fixed an issue where changing the current/total track time text labels in the mini-player window would shift the playback control widgets.
+- Now the track/playlist downloader on Linux uses the full yt-dlp binary instead of a Python script.
+- Added a new `Hide mini player` plugin.
+- Other fixes and improvements.
+
 v1.22.0-rc3 is Here! (04.11.2025)
 - Added a new `Hide mini player` plugin.
 
