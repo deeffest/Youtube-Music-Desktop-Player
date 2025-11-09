@@ -6,10 +6,10 @@ Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform 
 <img src="https://img.shields.io/badge/PyQt-5.15.11-00B16A"/> <img src="https://img.shields.io/badge/Python-3.13.7-00B16A"/> <img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux-00B16A"/>
 
 ## Screenshots
-<img src="resources/images/windows10.png" width="100%"/>
+<img src="resources/images/screenshot.png" width="100%"/>
 
 ## Features
-- Track/playlist Downloader
+- Audio downloader
 - Mini-Player
 - System Tray App Icon
 - Windows Thumbnail Buttons

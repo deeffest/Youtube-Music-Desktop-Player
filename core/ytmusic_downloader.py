@@ -25,13 +25,12 @@ class DownloadThread(QThread):
     downloading_audio_error = pyqtSignal(str, str)
     downloading_audio_success = pyqtSignal(str, str)
 
-    def __init__(self, url, download_folder, parent=None, use_cookies=False):
+    def __init__(self, url, download_folder, parent=None):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
         self.url = url
         self.download_folder = download_folder
-        self.use_cookies = use_cookies
 
         base_path = os.path.join(os.path.expanduser("~"), self.window.name)
         self.bin_folder = os.path.join(base_path, "bin")
@@ -64,8 +63,7 @@ class DownloadThread(QThread):
 
     def run(self):
         self.ensure_tools()
-        if self.use_cookies:
-            self.export_cookies()
+        self.export_cookies()
         self.emit_command()
 
     def ensure_tools(self):
@@ -155,7 +153,7 @@ class DownloadThread(QThread):
         if "watch" in url and "list=" in url:
             command.append("--no-playlist")
 
-        if self.use_cookies and os.path.exists(self.cookies_txt):
+        if os.path.exists(self.cookies_txt):
             command += ["--cookies", self.cookies_txt]
 
         proxy_config = {

@@ -304,21 +304,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stop_shortcut.setEnabled(False)
         self.stop_shortcut.activated.connect(self.stop)
 
-        self.download_with_oauth_shortcut = QShortcut(
-            QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_D), self
-        )
-        self.download_with_oauth_shortcut.setEnabled(False)
-        self.download_with_oauth_shortcut.activated.connect(
-            lambda: self.start_download(use_cookies=True)
-        )
+        self.download_song_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_D), self)
+        self.download_song_shortcut.setEnabled(False)
+        self.download_song_shortcut.activated.connect(self.download_song)
 
-        self.download_as_unauthorized_shortcut = QShortcut(
-            QKeySequence(Qt.CTRL + Qt.Key_D), self
+        self.download_album_shortcut = QShortcut(
+            QKeySequence(Qt.CTRL + Qt.Key_P), self
         )
-        self.download_as_unauthorized_shortcut.setEnabled(False)
-        self.download_as_unauthorized_shortcut.activated.connect(
-            lambda: self.start_download(use_cookies=False)
-        )
+        self.download_album_shortcut.setEnabled(False)
+        self.download_album_shortcut.activated.connect(self.download_album)
 
         self.mini_player_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_M), self)
         self.mini_player_shortcut.setEnabled(False)
@@ -393,23 +387,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reload_action.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
         self.reload_action.triggered.connect(self.reload_page)
 
-        self.download_with_oauth_action = Action("Signed In", shortcut="Ctrl+Shift+D")
-        self.download_with_oauth_action.setIcon(
-            QIcon(f"{self.icon_folder}/authorized.png")
-        )
-        self.download_with_oauth_action.setEnabled(True)
-        self.download_with_oauth_action.triggered.connect(
-            lambda: self.start_download(use_cookies=True)
-        )
+        self.download_menu = RoundMenu("Download...", self)
+        self.download_menu.setIcon(QIcon(f"{self.icon_folder}/download.png"))
 
-        self.download_as_unauthorized_action = Action("Guest Mode", shortcut="Ctrl+D")
-        self.download_as_unauthorized_action.setIcon(
-            QIcon(f"{self.icon_folder}/unauthorized.png")
-        )
-        self.download_as_unauthorized_action.setEnabled(False)
-        self.download_as_unauthorized_action.triggered.connect(
-            lambda: self.start_download(use_cookies=False)
-        )
+        self.download_song_action = Action("Song", shortcut="Ctrl+D")
+        self.download_song_action.setIcon(QIcon(f"{self.icon_folder}/song.png"))
+        self.download_song_action.setEnabled(False)
+        self.download_song_action.triggered.connect(self.download_song)
+
+        self.download_album_action = Action("Album", shortcut="Ctrl+P")
+        self.download_album_action.setIcon(QIcon(f"{self.icon_folder}/album.png"))
+        self.download_album_action.setEnabled(False)
+        self.download_album_action.triggered.connect(self.download_album)
 
         self.mini_player_action = Action("Mini-Player", shortcut="Ctrl+M")
         self.mini_player_action.setIcon(QIcon(f"{self.icon_folder}/mini-player.png"))
@@ -444,11 +433,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.paste_action.setIcon(QIcon(f"{self.icon_folder}/paste.png"))
         self.paste_action.triggered.connect(self.paste)
 
-        self.download_menu = RoundMenu("Get Audio", self)
-        self.download_menu.setIcon(QIcon(f"{self.icon_folder}/download.png"))
-        self.download_menu.addAction(self.download_with_oauth_action)
-        self.download_menu.addAction(self.download_as_unauthorized_action)
-
         self.main_menu = RoundMenu()
         self.main_menu.addAction(self.back_action)
         self.main_menu.addAction(self.forward_action)
@@ -464,6 +448,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.main_menu.addAction(self.about_action)
         self.main_menu.addSeparator()
         self.main_menu.addAction(self.hide_toolbar_action)
+
+        self.download_menu.addAction(self.download_song_action)
+        self.download_menu.addAction(self.download_album_action)
 
         self.edit_menu = RoundMenu()
         self.edit_menu.addAction(self.cut_action)
@@ -744,14 +731,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.forward_action.setEnabled(can_go_forward)
         self.forward_tbutton.setEnabled(can_go_forward)
 
-        is_video_or_playlist = (
-            "watch" in self.current_url or "playlist" in self.current_url
-        )
-        if not self.is_downloading:
-            self.download_with_oauth_action.setEnabled(is_video_or_playlist)
-            self.download_as_unauthorized_action.setEnabled(is_video_or_playlist)
-            self.download_with_oauth_shortcut.setEnabled(is_video_or_playlist)
-            self.download_as_unauthorized_shortcut.setEnabled(is_video_or_playlist)
+        self.update_download_buttons_state()
 
     def update_mini_player_track_info(self):
         if self.mini_player_dialog:
@@ -1052,7 +1032,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         return folder if folder else None
 
-    def start_download(self, use_cookies=False):
+    def download_song(self):
+        self.start_download(f"https://music.youtube.com/watch?v={self.video_id}")
+
+    def download_album(self):
+        self.start_download(self.current_url)
+
+    def start_download(self, download_url):
         download_folder = self.select_download_folder()
         if not download_folder:
             return
@@ -1061,11 +1047,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.settings_.setValue("last_download_folder", download_folder)
 
         self.is_downloading = True
-        self.update_download_buttons_state(self.is_downloading)
+        self.update_download_buttons_state()
 
-        self.download_thread = DownloadThread(
-            self.current_url, download_folder, self, use_cookies=use_cookies
-        )
+        self.download_thread = DownloadThread(download_url, download_folder, self)
         self.download_thread.downloading_ffmpeg.connect(self.on_downloading_ffmpeg)
         self.download_thread.downloading_ffmpeg_success.connect(
             self.on_downloading_ffmpeg_success
@@ -1156,11 +1140,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button.clicked.connect(lambda: self.show_download_error(msg, info_bar))
         info_bar.addWidget(button)
 
-    def show_download_error(self, msg, info_bar):
-        info_bar.close()
-
-        QTimer.singleShot(0, lambda: self.show_error_message(msg, "yt-dlp Error"))
-
     def on_downloading_audio_success(self, folder, title):
         self.hide_downloading_state_tooltip()
 
@@ -1180,9 +1159,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button.clicked.connect(lambda: self.open_download_folder(folder, info_bar))
         info_bar.addWidget(button)
 
+    def show_download_error(self, msg, info_bar):
+        info_bar.close()
+
+        QTimer.singleShot(0, lambda: self.show_error_message(msg, "yt-dlp Error"))
+
     def open_download_folder(self, folder, info_bar):
-        if info_bar:
-            info_bar.close()
+        info_bar.close()
 
         if platform.system() == "Windows":
             os.startfile(folder)
@@ -1197,13 +1180,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.hide_downloading_state_tooltip()
 
         self.is_downloading = False
-        self.update_download_buttons_state(self.is_downloading)
+        self.update_download_buttons_state()
 
-    def update_download_buttons_state(self, is_downloading):
-        self.download_with_oauth_action.setEnabled(not is_downloading)
-        self.download_as_unauthorized_action.setEnabled(not is_downloading)
-        self.download_with_oauth_shortcut.setEnabled(not is_downloading)
-        self.download_as_unauthorized_shortcut.setEnabled(not is_downloading)
+    def update_download_buttons_state(self):
+        can_download_song = not self.is_downloading and bool(self.video_id)
+        can_download_album = not self.is_downloading and "playlist" in self.current_url
+
+        self.download_song_action.setEnabled(can_download_song)
+        self.download_song_shortcut.setEnabled(can_download_song)
+        self.download_album_action.setEnabled(can_download_album)
+        self.download_album_shortcut.setEnabled(can_download_album)
 
     def open_mini_player(self):
         if self.video_state == "VideoPlaying" or "VideoPaused":
