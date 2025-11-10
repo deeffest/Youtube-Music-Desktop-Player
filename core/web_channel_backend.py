@@ -33,7 +33,7 @@ class WebChannelBackend(QObject):
             self.window.update_discord_rpc()
 
         self.window.update_download_buttons_state()
-        
+
         self.window.setWindowTitle(window_title)
         if self.window.tray_icon is not None:
             self.window.tray_icon.setToolTip(window_title)

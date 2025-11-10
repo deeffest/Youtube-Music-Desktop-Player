@@ -308,9 +308,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.download_song_shortcut.setEnabled(False)
         self.download_song_shortcut.activated.connect(self.download_song)
 
-        self.download_album_shortcut = QShortcut(
-            QKeySequence(Qt.CTRL + Qt.Key_P), self
-        )
+        self.download_album_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_P), self)
         self.download_album_shortcut.setEnabled(False)
         self.download_album_shortcut.activated.connect(self.download_album)
 
