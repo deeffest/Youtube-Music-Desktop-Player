@@ -1,7 +1,7 @@
 packaging==25.0
 PyQt5==5.15.11
 PyQtWebEngine==5.15.7
-PyQt_Fluent_Widgets==1.9.2
+git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@57396ad
 Requests==2.32.5
 git+https://github.com/deeffest/Discord-RPC.git@f6d24ed
 pynput==1.8.1

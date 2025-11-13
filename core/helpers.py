@@ -24,16 +24,6 @@ def get_centered_geometry(width, height):
     return QRect(x, y, width, height)
 
 
-def get_current_desktop_environment():
-    de = os.environ.get("XDG_CURRENT_DESKTOP")
-    if not de:
-        return "Unknown"
-
-    de = de.strip().lower()
-    if "xfce" in de:
-        return "Xfce"
-
-
 def get_taskbar_position():
     position = "Unknown"
 

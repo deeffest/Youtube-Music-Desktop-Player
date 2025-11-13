@@ -11,9 +11,7 @@ from qfluentwidgets import (
     ToolTipFilter,
     ToolTipPosition,
 )
-
 from core.ui.ui_settings_dialog import Ui_SettingsDialog
-from core.helpers import get_current_desktop_environment
 
 if TYPE_CHECKING:
     from main_window import MainWindow
@@ -156,16 +154,15 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             "• Ctrl + Shift + Down: Volume Down."
         )
 
-        if get_current_desktop_environment() != "Xfce":
-            self.label_10.installEventFilter(
-                ToolTipFilter(self.label_10, 300, ToolTipPosition.TOP)
-            )
-            self.label_8.installEventFilter(
-                ToolTipFilter(self.label_8, 300, ToolTipPosition.TOP)
-            )
-            self.label_6.installEventFilter(
-                ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP)
-            )
+        self.label_10.installEventFilter(
+            ToolTipFilter(self.label_10, 300, ToolTipPosition.TOP)
+        )
+        self.label_8.installEventFilter(
+            ToolTipFilter(self.label_8, 300, ToolTipPosition.TOP)
+        )
+        self.label_6.installEventFilter(
+            ToolTipFilter(self.label_6, 300, ToolTipPosition.TOP)
+        )
 
         self.label_5.hide()
         self.label_3.hide()

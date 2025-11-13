@@ -62,7 +62,6 @@ from core.ytmusic_downloader import DownloadThread
 from core.helpers import (
     get_centered_geometry,
     is_valid_ytmusic_url,
-    get_current_desktop_environment,
 )
 from core.ui.ui_main_window import Ui_MainWindow
 from core.hotkey_controller import HotkeyController
@@ -504,34 +503,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.about_tbutton.setIcon(QIcon(f"{self.icon_folder}/about.png"))
         self.about_tbutton.clicked.connect(self.about)
 
-        if get_current_desktop_environment() != "Xfce":
-            self.back_tbutton.installEventFilter(
-                ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP)
-            )
-            self.forward_tbutton.installEventFilter(
-                ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.TOP)
-            )
-            self.home_tbutton.installEventFilter(
-                ToolTipFilter(self.home_tbutton, 300, ToolTipPosition.TOP)
-            )
-            self.reload_tbutton.installEventFilter(
-                ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
-            )
-            self.download_ddtbutton.installEventFilter(
-                ToolTipFilter(self.download_ddtbutton, 300, ToolTipPosition.TOP)
-            )
-            self.mini_player_tbutton.installEventFilter(
-                ToolTipFilter(self.mini_player_tbutton, 300, ToolTipPosition.TOP)
-            )
-            self.settings_tbutton.installEventFilter(
-                ToolTipFilter(self.settings_tbutton, 300, ToolTipPosition.TOP)
-            )
-            self.bug_report_tbutton.installEventFilter(
-                ToolTipFilter(self.bug_report_tbutton, 300, ToolTipPosition.TOP)
-            )
-            self.about_tbutton.installEventFilter(
-                ToolTipFilter(self.about_tbutton, 300, ToolTipPosition.TOP)
-            )
+        self.back_tbutton.installEventFilter(
+            ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP)
+        )
+        self.forward_tbutton.installEventFilter(
+            ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.TOP)
+        )
+        self.home_tbutton.installEventFilter(
+            ToolTipFilter(self.home_tbutton, 300, ToolTipPosition.TOP)
+        )
+        self.reload_tbutton.installEventFilter(
+            ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
+        )
+        self.download_ddtbutton.installEventFilter(
+            ToolTipFilter(self.download_ddtbutton, 300, ToolTipPosition.TOP)
+        )
+        self.mini_player_tbutton.installEventFilter(
+            ToolTipFilter(self.mini_player_tbutton, 300, ToolTipPosition.TOP)
+        )
+        self.settings_tbutton.installEventFilter(
+            ToolTipFilter(self.settings_tbutton, 300, ToolTipPosition.TOP)
+        )
+        self.bug_report_tbutton.installEventFilter(
+            ToolTipFilter(self.bug_report_tbutton, 300, ToolTipPosition.TOP)
+        )
+        self.about_tbutton.installEventFilter(
+            ToolTipFilter(self.about_tbutton, 300, ToolTipPosition.TOP)
+        )
 
         self.ToolBar.installEventFilter(self)
         if self.hide_toolbar_setting == 1:
@@ -1053,6 +1051,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.on_downloading_ffmpeg_success
         )
 
+        self.download_thread.downloading_deno.connect(self.on_downloading_deno)
+        self.download_thread.downloading_deno_success.connect(
+            self.on_downloading_deno_success
+        )
+
         self.download_thread.downloading_ytdlp.connect(self.on_downloading_ytdlp)
         self.download_thread.downloading_ytdlp_success.connect(
             self.on_downloading_ytdlp_success
@@ -1110,6 +1113,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.show_downloading_state_tooltip("Downloading ffmpeg", "Please wait...")
 
     def on_downloading_ffmpeg_success(self):
+        self.hide_downloading_state_tooltip()
+
+    def on_downloading_deno(self):
+        self.show_downloading_state_tooltip("Downloading deno", "Please wait...")
+
+    def on_downloading_deno_success(self):
         self.hide_downloading_state_tooltip()
 
     def on_downloading_ytdlp(self):
@@ -1201,6 +1210,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_mini_player_track_info()
         self.update_mini_player_track_progress()
         self.mini_player_dialog.show()
+        self.mini_player_dialog.activateWindow()
 
     def show_tray_icon(self):
         if self.tray_icon:

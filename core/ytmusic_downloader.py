@@ -18,6 +18,9 @@ class DownloadThread(QThread):
     downloading_ffmpeg = pyqtSignal()
     downloading_ffmpeg_success = pyqtSignal()
 
+    downloading_deno = pyqtSignal()
+    downloading_deno_success = pyqtSignal()
+
     downloading_ytdlp = pyqtSignal()
     downloading_ytdlp_success = pyqtSignal()
 
@@ -40,20 +43,30 @@ class DownloadThread(QThread):
                 "https://github.com/deeffest/pytubefix/"
                 "releases/download/v8.12.3/FFmpeg-Win32.exe"
             )
+            self.deno_url = (
+                "https://github.com/deeffest/pytubefix/"
+                "releases/download/v8.12.3/Deno-Win32.exe"
+            )
             self.ytdlp_url = (
                 "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
             )
             self.ffmpeg_path = os.path.join(self.bin_folder, "ffmpeg.exe")
+            self.deno_path = os.path.join(self.bin_folder, "deno.exe")
             self.ytdlp_path = os.path.join(self.bin_folder, "yt-dlp.exe")
         else:
             self.ffmpeg_url = (
                 "https://github.com/deeffest/pytubefix/"
                 "releases/download/v8.12.3/FFmpeg-Linux"
             )
+            self.deno_url = (
+                "https://github.com/deeffest/pytubefix/"
+                "releases/download/v8.12.3/Deno-Linux"
+            )
             self.ytdlp_url = (
                 "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux"
             )
             self.ffmpeg_path = os.path.join(self.bin_folder, "ffmpeg")
+            self.deno_path = os.path.join(self.bin_folder, "deno")
             self.ytdlp_path = os.path.join(self.bin_folder, "yt-dlp_linux")
 
         self.cookies_txt = os.path.join(base_path, "__cache__", "cookies.txt")
@@ -95,6 +108,10 @@ class DownloadThread(QThread):
             self.downloading_ffmpeg.emit()
             download_binary(self.ffmpeg_url, self.ffmpeg_path)
             self.downloading_ffmpeg_success.emit()
+        if not os.path.exists(self.deno_path):
+            self.downloading_deno.emit()
+            download_binary(self.deno_url, self.deno_path)
+            self.downloading_deno_success.emit()
         if not os.path.exists(self.ytdlp_path):
             self.downloading_ytdlp.emit()
             download_binary(self.ytdlp_url, self.ytdlp_path)
@@ -137,7 +154,6 @@ class DownloadThread(QThread):
 
         command = [
             self.ytdlp_path,
-            "--update",
             "--extract-audio",
             "--audio-format",
             "mp3",
@@ -148,6 +164,8 @@ class DownloadThread(QThread):
             "--print-json",
             "--socket-timeout",
             "10",
+            "--js-runtimes",
+            f"deno:{self.deno_path}",
         ]
 
         if "watch" in url and "list=" in url:
@@ -179,6 +197,16 @@ class DownloadThread(QThread):
 
     def start_ytdlp(self, command):
         self.downloading_audio.emit()
+
+        try:
+            subprocess.run(
+                [self.ytdlp_path, "--update"],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except Exception as e:
+            logging.error(f"Failed to update yt-dlp: {e}")
 
         kwargs = dict(
             cwd=self.download_folder,
