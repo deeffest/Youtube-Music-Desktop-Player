@@ -199,11 +199,16 @@ class DownloadThread(QThread):
         self.downloading_audio.emit()
 
         try:
+            cflags = 0
+            if platform.system() == "Windows":
+                cflags = subprocess.CREATE_NO_WINDOW
+
             subprocess.run(
                 [self.ytdlp_path, "--update"],
                 check=False,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
+                creationflags=cflags,
             )
         except Exception as e:
             logging.error(f"Failed to update yt-dlp: {e}")

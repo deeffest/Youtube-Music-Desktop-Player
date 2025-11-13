@@ -35,8 +35,13 @@ class MiniPlayerDialog(QDialog, Ui_MiniPlayerDialog):
 
         self.setupUi(self)
         self.setWindowTitle("Mini-Player")
-        self.setWindowFlags(Qt.Window)
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(
+            Qt.Window
+            | Qt.WindowStaysOnTopHint
+            | Qt.WindowCloseButtonHint
+            | Qt.WindowMinimizeButtonHint
+        )
+
         if self.window.save_last_pos_of_mp_setting == 1:
             self.setGeometry(self.window.geometry_of_mp_setting)
         else:
