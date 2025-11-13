@@ -1,3 +1,9 @@
+v1.23.0 is Here! (14.11.2025)
+- Fixed some bugs with Fluent tooltips on Xfce, so they are back.
+- Fixed issues with the focus of the main window and mini-player window when switching between them on Xfce.
+- Improved audio downloader - now you can download the currently playing song from any page + added support for Deno!
+- Other fixes and improvements.
+
 v1.23.0-rc1 is Here! (13.11.2025)
 - Fixed some bugs with Fluent tooltips on Xfce, so they are back.
 - Fixed issues with the focus of the main window and mini-player window when switching between them on Xfce.
