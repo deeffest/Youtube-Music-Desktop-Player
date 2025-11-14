@@ -1,9 +1,6 @@
-import os
 import logging
 import platform
 import traceback
-import subprocess
-import webbrowser
 
 from PyQt5.QtCore import (
     QUrl,
@@ -62,6 +59,7 @@ from core.ytmusic_downloader import DownloadThread
 from core.helpers import (
     get_centered_geometry,
     is_valid_ytmusic_url,
+    open_url,
 )
 from core.ui.ui_main_window import Ui_MainWindow
 from core.hotkey_controller import HotkeyController
@@ -700,7 +698,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             msg_box.yesButton.setText("Download")
             msg_box.cancelButton.setText("Later")
             if msg_box.exec_():
-                webbrowser.open_new_tab(last_release_url)
+                open_url(last_release_url)
                 self.force_exit = True
                 self.close()
 
@@ -1173,14 +1171,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def open_download_folder(self, folder, info_bar):
         info_bar.close()
-
-        if platform.system() == "Windows":
-            os.startfile(folder)
-        else:
-            env = os.environ.copy()
-            for var in ("LD_LIBRARY_PATH", "LD_PRELOAD"):
-                env.pop(var, None)
-            subprocess.Popen(["xdg-open", folder], env=env)
+        open_url(folder)
 
     def on_download_finished(self):
         self.download_thread = None
@@ -1232,9 +1223,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         about_dialog.exec()
 
     def send_bug_report(self):
-        webbrowser.open_new_tab(
-            f"https://github.com/{self.app_author}/{self.name}/issues"
-        )
+        open_url(f"https://github.com/{self.app_author}/{self.name}/issues")
 
     def hide_toolbar(self):
         if self.ToolBar.isHidden():

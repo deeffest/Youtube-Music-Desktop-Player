@@ -327,11 +327,6 @@
           <property name="text">
            <string>Icons8</string>
           </property>
-          <property name="url" stdset="0">
-           <url>
-            <string>https://icons8.com</string>
-           </url>
-          </property>
          </widget>
         </item>
         <item>

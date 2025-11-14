@@ -1,6 +1,7 @@
 import os
 import logging
 import platform
+import subprocess
 from urllib.parse import urlparse
 
 from PyQt5.QtWidgets import QDesktopWidget
@@ -22,6 +23,18 @@ def get_centered_geometry(width, height):
     x = (screen_geometry.width() - width) // 2
     y = (screen_geometry.height() - height) // 2
     return QRect(x, y, width, height)
+
+
+def open_url(url):
+    if platform.system() == "Windows":
+        os.startfile(url)
+        return
+
+    env = os.environ.copy()
+    for var in ("LD_LIBRARY_PATH", "LD_PRELOAD"):
+        env.pop(var, None)
+
+    subprocess.Popen(["xdg-open", url], env=env)
 
 
 def get_taskbar_position():

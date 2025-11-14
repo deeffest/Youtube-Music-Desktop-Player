@@ -129,7 +129,6 @@ class Ui_AboutDialog(object):
         self.BodyLabel_4.setObjectName("BodyLabel_4")
         self.horizontalLayout_5.addWidget(self.BodyLabel_4)
         self.HyperlinkLabel = HyperlinkLabel(self.ButtonBox)
-        self.HyperlinkLabel.setProperty("url", QtCore.QUrl("https://icons8.com"))
         self.HyperlinkLabel.setObjectName("HyperlinkLabel")
         self.horizontalLayout_5.addWidget(self.HyperlinkLabel)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)

@@ -1,3 +1,6 @@
+v1.23.1 is Here! (14.11.2025)
+- Fixed opening links in the browser on most Linux distributions.
+
 v1.23.0 is Here! (14.11.2025)
 - Fixed some bugs with Fluent tooltips on Xfce, so they are back.
 - Fixed issues with the focus of the main window and mini-player window when switching between them on Xfce.
