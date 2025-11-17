@@ -682,7 +682,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stop_shortcut.setEnabled(True)
 
     def close_splash_screen(self):
-        self.splash_screen.finish()
+        self.splash_screen.deleteLater()
         self.splash_screen = None
 
     def check_updates(self):
