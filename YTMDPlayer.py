@@ -1,6 +1,8 @@
 import os
 import sys
+import shutil
 import logging
+import platform
 import subprocess
 
 from PyQt5.QtCore import Qt, QSettings
@@ -13,7 +15,7 @@ from core.main_window import MainWindow
 NAME = "Youtube-Music-Desktop-Player"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
-VERSION = "v1.23.1"
+VERSION = "v1.23.2"
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -112,6 +114,20 @@ def main():
 
     set_dark_palette(app)
     load_stylesheet(app)
+
+    # https://stackoverflow.com/q/76724700/20546833
+    if platform.system() == "Windows":
+        sw_dir = os.path.expanduser(
+            f"~/AppData/Local/{AUTHOR}/{NAME}/QtWebEngine/Default/Service Worker"
+        )
+    else:
+        sw_dir = os.path.expanduser(
+            f"~/.local/share/{AUTHOR}/{NAME}/QtWebEngine/Default/Service Worker"
+        )
+    try:
+        shutil.rmtree(sw_dir)
+    except Exception as e:
+        logging.error(f"Failed to remove Service Worker: {str(e)}")
 
     window = MainWindow(
         app_settings,

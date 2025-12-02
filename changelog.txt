@@ -1,3 +1,7 @@
+v1.23.2 is Here! (02.12.2025)
+- Fixed app closing when hiding to tray during splash.
+- Fixed a critical application crash at startup caused by Service Worker.
+
 v1.23.1 is Here! (14.11.2025)
 - Fixed opening links in the browser on most Linux distributions.
 
