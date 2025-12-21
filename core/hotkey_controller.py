@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 class HotkeyController(QThread):
-    previous = pyqtSignal()
     play_pause = pyqtSignal()
+    previous = pyqtSignal()
     next = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -29,10 +29,10 @@ class HotkeyController(QThread):
                 self.shift_pressed = True
 
             if self.ctrl_pressed and self.shift_pressed:
-                if key == keyboard.Key.left:
-                    self.previous.emit()
-                elif key == keyboard.Key.space:
+                if key == keyboard.Key.space:
                     self.play_pause.emit()
+                elif key == keyboard.Key.left:
+                    self.previous.emit()
                 elif key == keyboard.Key.right:
                     self.next.emit()
 

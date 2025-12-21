@@ -149,8 +149,8 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
 
         self.label_6.setToolTip(
-            "• Ctrl + Shift + Left: Previous.\n"
             "• Ctrl + Shift + Space: Play/Pause.\n"
+            "• Ctrl + Shift + Left: Previous.\n"
             "• Ctrl + Shift + Right: Next."
         )
 

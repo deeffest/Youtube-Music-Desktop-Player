@@ -293,24 +293,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def connect_shortcuts(self):
         self.back_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Left), self)
-        self.back_shortcut.activated.connect(self.go_back)
+        self.back_shortcut.activated.connect(self.back)
 
         self.forward_shortcut = QShortcut(QKeySequence(Qt.ALT + Qt.Key_Right), self)
-        self.forward_shortcut.activated.connect(self.go_forward)
+        self.forward_shortcut.activated.connect(self.forward)
 
         self.home_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_H), self)
-        self.home_shortcut.activated.connect(self.go_to_home)
+        self.home_shortcut.activated.connect(self.home)
 
         self.reload_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_R), self)
-        self.reload_shortcut.activated.connect(self.reload_page)
+        self.reload_shortcut.activated.connect(self.reload)
 
         self.stop_shortcut = QShortcut(QKeySequence(Qt.Key_Escape), self)
         self.stop_shortcut.setEnabled(False)
         self.stop_shortcut.activated.connect(self.stop)
 
-        self.open_in_yt_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Y), self)
-        self.open_in_yt_shortcut.setEnabled(False)
-        self.open_in_yt_shortcut.activated.connect(self.open_in_yt)
+        self.go_to_youtube_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_Y), self)
+        self.go_to_youtube_shortcut.setEnabled(False)
+        self.go_to_youtube_shortcut.activated.connect(self.go_to_youtube)
 
         self.download_song_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_D), self)
         self.download_song_shortcut.setEnabled(False)
@@ -346,7 +346,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ):
             self.webview.load(QUrl(self.last_url_setting))
         else:
-            self.go_to_home()
+            self.home()
 
         self.webview.urlChanged.connect(self.on_url_changed)
         self.webview.loadProgress.connect(self.on_load_progress)
@@ -384,25 +384,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.back_action = Action("Back", shortcut="Alt+Left")
         self.back_action.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_action.setEnabled(False)
-        self.back_action.triggered.connect(self.go_back)
+        self.back_action.triggered.connect(self.back)
 
         self.forward_action = Action("Forward", shortcut="Alt+Right")
         self.forward_action.setIcon(QIcon(f"{self.icon_folder}/right.png"))
         self.forward_action.setEnabled(False)
-        self.forward_action.triggered.connect(self.go_forward)
+        self.forward_action.triggered.connect(self.forward)
 
         self.home_action = Action("Home", shortcut="Ctrl+H")
         self.home_action.setIcon(QIcon(f"{self.icon_folder}/home.png"))
-        self.home_action.triggered.connect(self.go_to_home)
+        self.home_action.triggered.connect(self.home)
 
         self.reload_action = Action("Reload", shortcut="Ctrl+R")
         self.reload_action.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
-        self.reload_action.triggered.connect(self.reload_page)
+        self.reload_action.triggered.connect(self.reload)
 
-        self.open_in_yt_action = Action("Go to YouTube", shortcut="Ctrl+Y")
-        self.open_in_yt_action.setIcon(QIcon(f"{self.icon_folder}/open.png"))
-        self.open_in_yt_action.setEnabled(False)
-        self.open_in_yt_action.triggered.connect(self.open_in_yt)
+        self.go_to_youtube_action = Action("Go to YouTube", shortcut="Ctrl+Y")
+        self.go_to_youtube_action.setIcon(QIcon(f"{self.icon_folder}/open.png"))
+        self.go_to_youtube_action.setEnabled(False)
+        self.go_to_youtube_action.triggered.connect(self.go_to_youtube)
 
         self.download_menu = RoundMenu("Download...", self)
         self.download_menu.setIcon(QIcon(f"{self.icon_folder}/download.png"))
@@ -485,7 +485,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.main_menu.addAction(self.home_action)
         self.main_menu.addAction(self.reload_action)
         self.main_menu.addSeparator()
-        self.main_menu.addAction(self.open_in_yt_action)
+        self.main_menu.addAction(self.go_to_youtube_action)
         self.main_menu.addMenu(self.download_menu)
         self.main_menu.addAction(self.watch_in_pip_action)
         self.main_menu.addSeparator()
@@ -519,17 +519,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def configure_ui_elements(self):
         self.back_tbutton.setIcon(QIcon(f"{self.icon_folder}/left.png"))
         self.back_tbutton.setEnabled(False)
-        self.back_tbutton.clicked.connect(self.go_back)
+        self.back_tbutton.clicked.connect(self.back)
 
         self.forward_tbutton.setIcon(QIcon(f"{self.icon_folder}/right.png"))
         self.forward_tbutton.setEnabled(False)
-        self.forward_tbutton.clicked.connect(self.go_forward)
+        self.forward_tbutton.clicked.connect(self.forward)
 
         self.home_tbutton.setIcon(QIcon(f"{self.icon_folder}/home.png"))
-        self.home_tbutton.clicked.connect(self.go_to_home)
+        self.home_tbutton.clicked.connect(self.home)
 
         self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
-        self.reload_tbutton.clicked.connect(self.reload_page)
+        self.reload_tbutton.clicked.connect(self.reload)
 
         url_action = QAction(self)
         url_action.setIcon(QIcon(f"{self.icon_folder}/url.png"))
@@ -705,13 +705,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.reload_tbutton.setToolTip("Reload")
             self.reload_tbutton.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
             self.reload_tbutton.clicked.disconnect()
-            self.reload_tbutton.clicked.connect(self.reload_page)
+            self.reload_tbutton.clicked.connect(self.reload)
 
             self.reload_action.setText("Reload")
             self.reload_action.setShortcut("Ctrl+R")
             self.reload_action.setIcon(QIcon(f"{self.icon_folder}/reload.png"))
             self.reload_action.triggered.disconnect()
-            self.reload_action.triggered.connect(self.reload_page)
+            self.reload_action.triggered.connect(self.reload)
 
             self.stop_shortcut.setEnabled(False)
 
@@ -733,7 +733,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reload_action.setShortcut("Esc")
         self.reload_action.setIcon(QIcon(f"{self.icon_folder}/close.png"))
         self.reload_action.triggered.disconnect()
-        self.reload_action.triggered.connect(self.reload_page)
+        self.reload_action.triggered.connect(self.reload)
 
         self.stop_shortcut.setEnabled(True)
 
@@ -856,32 +856,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_system_tray_icon_song_state(self):
         if self.tray_icon_setting == 1 and self.system_tray_icon:
             if self.song_state == "Playing":
-                self.system_tray_icon.dislike_action.setEnabled(True)
-                self.system_tray_icon.previous_action.setEnabled(True)
                 self.system_tray_icon.play_pause_action.setIcon(
                     QIcon(f"{self.icon_folder}/pause.png")
                 )
                 self.system_tray_icon.play_pause_action.setEnabled(True)
-                self.system_tray_icon.next_action.setEnabled(True)
                 self.system_tray_icon.like_action.setEnabled(True)
-            elif self.song_state == "Paused":
-                self.system_tray_icon.dislike_action.setEnabled(True)
                 self.system_tray_icon.previous_action.setEnabled(True)
+                self.system_tray_icon.next_action.setEnabled(True)
+                self.system_tray_icon.dislike_action.setEnabled(True)
+            elif self.song_state == "Paused":
                 self.system_tray_icon.play_pause_action.setIcon(
                     QIcon(f"{self.icon_folder}/play.png")
                 )
                 self.system_tray_icon.play_pause_action.setEnabled(True)
-                self.system_tray_icon.next_action.setEnabled(True)
                 self.system_tray_icon.like_action.setEnabled(True)
+                self.system_tray_icon.previous_action.setEnabled(True)
+                self.system_tray_icon.next_action.setEnabled(True)
+                self.system_tray_icon.dislike_action.setEnabled(True)
             else:
-                self.system_tray_icon.dislike_action.setEnabled(False)
-                self.system_tray_icon.previous_action.setEnabled(False)
                 self.system_tray_icon.play_pause_action.setIcon(
                     QIcon(f"{self.icon_folder}/play.png")
                 )
                 self.system_tray_icon.play_pause_action.setEnabled(False)
-                self.system_tray_icon.next_action.setEnabled(False)
                 self.system_tray_icon.like_action.setEnabled(False)
+                self.system_tray_icon.previous_action.setEnabled(False)
+                self.system_tray_icon.next_action.setEnabled(False)
+                self.system_tray_icon.dislike_action.setEnabled(False)
 
     def update_system_tray_icon_song_status(self):
         if self.tray_icon_setting == 1 and self.system_tray_icon:
@@ -913,40 +913,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tool_btn_previous.setIcon(
                     QIcon(f"{self.icon_folder}/previous-filled-border.png")
                 )
+                self.tool_btn_previous.setEnabled(True)
                 self.tool_btn_play_pause.setIcon(
                     QIcon(f"{self.icon_folder}/pause-filled-border.png")
                 )
+                self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setIcon(
                     QIcon(f"{self.icon_folder}/next-filled-border.png")
                 )
-                self.tool_btn_previous.setEnabled(True)
-                self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setEnabled(True)
             elif self.song_state == "Paused":
                 self.tool_btn_previous.setIcon(
                     QIcon(f"{self.icon_folder}/previous-filled-border.png")
                 )
+                self.tool_btn_previous.setEnabled(True)
                 self.tool_btn_play_pause.setIcon(
                     QIcon(f"{self.icon_folder}/play-filled-border.png")
                 )
+                self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setIcon(
                     QIcon(f"{self.icon_folder}/next-filled-border.png")
                 )
-                self.tool_btn_previous.setEnabled(True)
-                self.tool_btn_play_pause.setEnabled(True)
                 self.tool_btn_next.setEnabled(True)
             else:
                 self.tool_btn_previous.setIcon(
                     QIcon(f"{self.icon_folder}/previous-filled-border-disabled.png")
                 )
+                self.tool_btn_previous.setEnabled(False)
                 self.tool_btn_play_pause.setIcon(
                     QIcon(f"{self.icon_folder}/play-filled-border-disabled.png")
                 )
+                self.tool_btn_play_pause.setEnabled(False)
                 self.tool_btn_next.setIcon(
                     QIcon(f"{self.icon_folder}/next-filled-border-disabled.png")
                 )
-                self.tool_btn_previous.setEnabled(False)
-                self.tool_btn_play_pause.setEnabled(False)
                 self.tool_btn_next.setEnabled(False)
 
     def update_picture_in_picture_song_info(self):
@@ -995,25 +995,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_picture_in_picture_song_status(self):
         if self.picture_in_picture_dialog:
             if self.song_status == "Like":
+                self.picture_in_picture_dialog.dislike_button.setIcon(
+                    QIcon(f"{self.icon_folder}/dislike.png")
+                )
                 self.picture_in_picture_dialog.like_button.setIcon(
                     QIcon(f"{self.icon_folder}/like-filled.png")
                 )
-                self.picture_in_picture_dialog.dislike_button.setIcon(
-                    QIcon(f"{self.icon_folder}/dislike.png")
-                )
             elif self.song_status == "Dislike":
-                self.picture_in_picture_dialog.like_button.setIcon(
-                    QIcon(f"{self.icon_folder}/like.png")
-                )
                 self.picture_in_picture_dialog.dislike_button.setIcon(
                     QIcon(f"{self.icon_folder}/dislike-filled.png")
                 )
-            else:
                 self.picture_in_picture_dialog.like_button.setIcon(
                     QIcon(f"{self.icon_folder}/like.png")
                 )
+            else:
                 self.picture_in_picture_dialog.dislike_button.setIcon(
                     QIcon(f"{self.icon_folder}/dislike.png")
+                )
+                self.picture_in_picture_dialog.like_button.setIcon(
+                    QIcon(f"{self.icon_folder}/like.png")
                 )
 
     def create_previous_button(self):
@@ -1068,22 +1068,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open(f"{self.current_dir}/core/js/{filename}", "r", encoding="utf-8") as f:
             return f.read()
 
-    def go_back(self):
+    def back(self):
         self.webview.back()
 
-    def go_forward(self):
+    def forward(self):
         self.webview.forward()
 
-    def go_to_home(self):
+    def home(self):
         self.webview.load(QUrl("https://music.youtube.com/"))
 
-    def reload_page(self):
+    def reload(self):
         self.webview.reload()
 
     def stop(self):
         self.webview.stop()
 
-    def open_in_yt(self):
+    def go_to_youtube(self):
         open_url(f"https://www.youtube.com/watch?v={self.video_id}")
 
     def select_download_folder(self):
