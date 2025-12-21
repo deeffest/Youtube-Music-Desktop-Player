@@ -1,11 +1,18 @@
 if (typeof qt !== "undefined" && qt.webChannelTransport) {
     new QWebChannel(qt.webChannelTransport, (channel) => {
         const backend = channel.objects.backend;
-        let lastState = "",
-            lastTrackInfo = {},
-            lastTrackProgress = {};
+        let lastSongState = "",
+            lastSongInfo = {},
+            lastSongProgress = {},
+            lastLikeStatus = "";
         let debounceTimer = null,
             DEBOUNCE_DELAY = 500;
+
+        const isAdPlaying = () => {
+            return (isAd = document.querySelector(
+                ".ad-showing, .ad-interrupting, .ytp-ad-text",
+            ));
+        };
 
         const getThumbnailOrCoverUrl = () => {
             const src = document.querySelector(
@@ -23,7 +30,7 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                 : "";
         };
 
-        const updateTrackInfo = () => {
+        const updateSongInfo = () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 const title =
@@ -36,38 +43,36 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                         ?.textContent.trim() || "";
                 const thumbnailUrl = getThumbnailOrCoverUrl();
                 const videoId = getVideoId();
-                const changed =
-                    title !== lastTrackInfo.title ||
-                    author !== lastTrackInfo.author ||
-                    thumbnailUrl !== lastTrackInfo.thumbnailUrl ||
-                    videoId !== lastTrackInfo.videoId;
 
+                const changed =
+                    title !== lastSongInfo.title ||
+                    author !== lastSongInfo.author ||
+                    thumbnailUrl !== lastSongInfo.thumbnailUrl ||
+                    videoId !== lastSongInfo.videoId;
                 if (!changed) return;
-                backend.track_info_changed(
-                    title,
-                    author,
-                    thumbnailUrl,
-                    videoId,
-                );
-                lastTrackInfo = { title, author, thumbnailUrl, videoId };
+
+                if (isAdPlaying()) return;
+                backend.song_info_changed(title, author, thumbnailUrl, videoId);
+                lastSongInfo = { title, author, thumbnailUrl, videoId };
             }, DEBOUNCE_DELAY);
         };
 
-        const updateVideoState = () => {
+        const updateSongState = () => {
             const video = document.querySelector("video");
             const state =
                 video?.readyState === 4
                     ? video.paused
-                        ? "VideoPaused"
-                        : "VideoPlaying"
-                    : "NoVideo";
-            if (state !== lastState) {
-                backend.video_state_changed(state);
-                lastState = state;
+                        ? "Paused"
+                        : "Playing"
+                    : "NoSong";
+            if (state !== lastSongState) {
+                if (isAdPlaying()) return;
+                backend.song_state_changed(state);
+                lastSongState = state;
             }
         };
 
-        const updateTrackProgress = () => {
+        const updateSongProgress = () => {
             const [currentTime, totalTime] =
                 document
                     .querySelector(".time-info.style-scope.ytmusic-player-bar")
@@ -75,12 +80,29 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     .split("/")
                     .map((t) => t.trim()) || [];
             if (
-                currentTime !== lastTrackProgress.currentTime ||
-                totalTime !== lastTrackProgress.totalTime
+                currentTime !== lastSongProgress.currentTime ||
+                totalTime !== lastSongProgress.totalTime
             ) {
-                backend.track_progress_changed(currentTime, totalTime);
-                lastTrackProgress = { currentTime, totalTime };
+                if (isAdPlaying()) return;
+                backend.song_progress_changed(currentTime, totalTime);
+                lastSongProgress = { currentTime, totalTime };
             }
+        };
+
+        const updateSongStatus = () => {
+            const likeButton = document.querySelector("#like-button-renderer");
+            if (!likeButton) return;
+
+            let likeStatus = likeButton.getAttribute("like-status");
+            if (!likeStatus || likeStatus === lastLikeStatus) return;
+
+            likeStatus =
+                likeStatus.charAt(0).toUpperCase() +
+                likeStatus.slice(1).toLowerCase();
+
+            if (isAdPlaying()) return;
+            backend.song_status_changed(likeStatus);
+            lastLikeStatus = likeStatus;
         };
 
         const observe = (el, fn, opts) =>
@@ -90,20 +112,29 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
             document.querySelector(
                 ".middle-controls.style-scope.ytmusic-player-bar",
             ),
-            updateTrackInfo,
+            updateSongInfo,
             { childList: true, subtree: true },
         );
-        observe(document.querySelector("ytmusic-player"), updateVideoState, {
+        observe(document.querySelector("ytmusic-player"), updateSongState, {
             childList: true,
             subtree: true,
         });
         observe(
             document.querySelector(".time-info.style-scope.ytmusic-player-bar"),
-            updateTrackProgress,
+            updateSongProgress,
             { characterData: true, subtree: true },
         );
+        observe(
+            document.querySelector(
+                "ytmusic-player-bar ytmusic-like-button-renderer#like-button-renderer",
+            ),
+            updateSongStatus,
+            { attributes: true, attributeFilter: ["like-status"] },
+        );
 
-        updateTrackInfo();
-        updateVideoState();
+        updateSongInfo();
+        updateSongState();
+        updateSongProgress();
+        updateSongStatus();
     });
 }

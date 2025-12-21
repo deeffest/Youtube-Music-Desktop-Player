@@ -41,7 +41,6 @@ class UpdateChecker(QThread):
             self.update_checked.emit(last_version, title, whats_new, last_release_url)
         except Exception as e:
             logging.error(f"Failed to check for updates: {str(e)}")
-            return
 
     def stop(self):
         self.terminate()

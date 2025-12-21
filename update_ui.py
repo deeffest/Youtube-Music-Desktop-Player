@@ -1,6 +1,11 @@
 import subprocess
 
-ui_files = ["about_dialog", "main_window", "mini_player_dialog", "settings_dialog"]
+ui_files = [
+    "about_dialog",
+    "main_window",
+    "picture_in_picture_dialog",
+    "settings_dialog",
+]
 
 for ui_file in ui_files:
     subprocess.run(

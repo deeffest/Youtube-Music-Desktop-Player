@@ -30,9 +30,9 @@ class AboutDialog(QDialog, Ui_AboutDialog):
                 logging.error(f"Failed to apply dark style: + {str(e)}")
 
         self.setupUi(self)
-        self.setWindowTitle("About")
+        self.setWindowTitle("About...")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about.png"))
+        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/about-filled-border.png"))
         self.setFixedSize(self.size())
 
     def configure_ui_elements(self):

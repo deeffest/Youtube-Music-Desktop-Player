@@ -1,9 +1,9 @@
 packaging==25.0
 PyQt5==5.15.11
 PyQtWebEngine==5.15.7
-git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@57396ad
+git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@63e1c07
 Requests==2.32.5
-git+https://github.com/deeffest/Discord-RPC.git@f6d24ed
+git+https://github.com/deeffest/Discord-RPC.git@5324548
 pynput==1.8.1
 pyinstaller==6.16.0
 pywinstyles==1.8; sys_platform=="win32"

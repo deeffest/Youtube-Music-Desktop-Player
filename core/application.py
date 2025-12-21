@@ -20,6 +20,7 @@ class SingletonApplication(QApplication):
         self.memory.setKey(key)
         if self.memory.attach():
             self.is_running = True
+            logging.info("Application is already running")
             self.show_existing_instance()
             sys.exit(0)
 
@@ -54,9 +55,9 @@ class SingletonApplication(QApplication):
         socket.disconnectFromServer()
 
 
-def exception_hook(exc_type, exc_value, exc_traceback):
-    logging.error("Unhandled exception", exc_info=(exc_type, exc_value, exc_traceback))
-    error_msg = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+def exception_hook(type, value, tb):
+    logging.error("".join(traceback.format_exception(type, value, tb)))
+    error_msg = "".join(traceback.format_exception(type, value, tb))
     signal_bus.app_error_sig.emit(error_msg)
 
 

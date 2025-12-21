@@ -37,7 +37,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.setupUi(self)
         self.setWindowTitle("Settings")
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
-        self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings.png"))
+        self.setWindowIcon(
+            QIcon(f"{self.window.icon_folder}/settings-filled-border.png")
+        )
         self.setFixedSize(self.size())
 
     def configure_ui_elements(self):
@@ -147,11 +149,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
 
         self.label_6.setToolTip(
+            "• Ctrl + Shift + Left: Previous.\n"
             "• Ctrl + Shift + Space: Play/Pause.\n"
-            "• Ctrl + Shift + Right: Skip Next.\n"
-            "• Ctrl + Shift + Left: Skip Previous.\n"
-            "• Ctrl + Shift + Up: Volume Up.\n"
-            "• Ctrl + Shift + Down: Volume Down."
+            "• Ctrl + Shift + Right: Next."
         )
 
         self.label_10.installEventFilter(
@@ -178,7 +178,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
     def restart_app(self):
         msg_box = None
 
-        if self.window.video_state == "VideoPlaying":
+        if self.window.song_state == "Playing":
             msg_box = MessageBox(
                 "Restart Confirmation",
                 (

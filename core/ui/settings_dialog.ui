@@ -93,7 +93,7 @@
         <item>
          <widget class="PillPushButton" name="PillPushButton_3">
           <property name="text">
-           <string>Mini-Player</string>
+           <string>PiP Mode</string>
           </property>
           <property name="autoExclusive">
            <bool>true</bool>
@@ -199,7 +199,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel">
                      <property name="text">
-                      <string>Remember last size &amp; pos</string>
+                      <string>Remember window pos</string>
                      </property>
                     </widget>
                    </item>
@@ -311,7 +311,7 @@
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_5">
                      <property name="text">
-                      <string>Proxy Server Configuration</string>
+                      <string>Proxy server configuration</string>
                      </property>
                     </widget>
                    </item>
@@ -551,7 +551,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_36">
                      <property name="text">
-                      <string>QT OpenGL environment</string>
+                      <string>Qt OpenGL Environment</string>
                      </property>
                     </widget>
                    </item>
@@ -649,7 +649,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_9">
                      <property name="text">
-                      <string>Full screen mode support</string>
+                      <string>Full screen support</string>
                      </property>
                     </widget>
                    </item>
@@ -681,7 +681,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_33">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, allows the window to enter fullscreen mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, allows the window to enter full screen mode.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -758,7 +758,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_13">
                      <property name="text">
-                      <string>Remember last zoom factor</string>
+                      <string>Remember zoom factor</string>
                      </property>
                     </widget>
                    </item>
@@ -835,7 +835,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_2">
                      <property name="text">
-                      <string>Remember mini-player position</string>
+                      <string>Remember picture-in-picture pos</string>
                      </property>
                     </widget>
                    </item>
@@ -864,7 +864,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_3">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, the mini-player will open at the last position it was moved to.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, remembers the last picture-in-picture position for the next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -934,7 +934,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_6">
                      <property name="text">
-                      <string>Ad Blocker (Skipper)</string>
+                      <string>Skip video ads</string>
                      </property>
                     </widget>
                    </item>
@@ -1009,7 +1009,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_12">
                      <property name="text">
-                      <string>Discord Rich Presence</string>
+                      <string>Discord rich presence</string>
                      </property>
                     </widget>
                    </item>
@@ -1084,7 +1084,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_20">
                      <property name="text">
-                      <string>System Tray App Icon</string>
+                      <string>System tray icon</string>
                      </property>
                     </widget>
                    </item>
@@ -1174,7 +1174,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_23">
                      <property name="text">
-                      <string>Hotkey Playback Control</string>
+                      <string>Playback hotkeys</string>
                      </property>
                     </widget>
                    </item>
@@ -1267,7 +1267,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_24">
                      <property name="text">
-                      <string>Only Audio Mode</string>
+                      <string>Audio-only mode</string>
                      </property>
                     </widget>
                    </item>
@@ -1349,7 +1349,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_25">
                      <property name="text">
-                      <string>Non-stop Music</string>
+                      <string>Non-stop music</string>
                      </property>
                     </widget>
                    </item>

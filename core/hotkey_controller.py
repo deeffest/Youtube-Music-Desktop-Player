@@ -9,11 +9,9 @@ if TYPE_CHECKING:
 
 
 class HotkeyController(QThread):
+    previous = pyqtSignal()
     play_pause = pyqtSignal()
-    skip_next = pyqtSignal()
-    skip_previous = pyqtSignal()
-    volume_up = pyqtSignal()
-    volume_down = pyqtSignal()
+    next = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -31,16 +29,13 @@ class HotkeyController(QThread):
                 self.shift_pressed = True
 
             if self.ctrl_pressed and self.shift_pressed:
-                if key == keyboard.Key.space:
+                if key == keyboard.Key.left:
+                    self.previous.emit()
+                elif key == keyboard.Key.space:
                     self.play_pause.emit()
                 elif key == keyboard.Key.right:
-                    self.skip_next.emit()
-                elif key == keyboard.Key.left:
-                    self.skip_previous.emit()
-                elif key == keyboard.Key.up:
-                    self.volume_up.emit()
-                elif key == keyboard.Key.down:
-                    self.volume_down.emit()
+                    self.next.emit()
+
         except AttributeError as e:
             logging.error(f"Failed to handle hotkey: {str(e)}")
 

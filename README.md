@@ -9,19 +9,19 @@ Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform 
 <img src="resources/images/screenshot.png" width="100%"/>
 
 ## Features
-- Audio downloader
-- Mini-Player
-- System Tray App Icon
-- Windows Thumbnail Buttons
-- Ad Blocker (Skipper)
-- Discord Rich Presence
-- Hotkey Playback Control
-- Only Audio Mode
-- Non-stop Music
+- Built-in yt-dlp
+- Picture-in-Picture
+- Windows thumbnail buttons
+- Skip video ads
+- Discord rich presence
+- System tray icon
+- Playback hotkeys
+- Audio-only mode
+- Non-stop music
 - Hide mini player
 
 ## Get App
-Just download and extract ⭣
+Just download and extract ↓
 
 ### Linux
 [![Download .deb](https://img.shields.io/badge/Download%20for%20Ubuntu%20%2F%20Debian-.deb-blue?logo=ubuntu&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_deb)  

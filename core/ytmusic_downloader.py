@@ -28,12 +28,23 @@ class DownloadThread(QThread):
     downloading_audio_error = pyqtSignal(str, str)
     downloading_audio_success = pyqtSignal(str, str)
 
-    def __init__(self, url, download_folder, parent=None):
+    def __init__(
+        self,
+        url,
+        download_folder,
+        use_cookies,
+        convert_to_mp3,
+        auto_update,
+        parent=None,
+    ):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
         self.url = url
         self.download_folder = download_folder
+        self.use_cookies = use_cookies
+        self.convert_to_mp3 = convert_to_mp3
+        self.auto_update = auto_update
 
         base_path = os.path.join(os.path.expanduser("~"), self.window.name)
         self.bin_folder = os.path.join(base_path, "bin")
@@ -76,7 +87,8 @@ class DownloadThread(QThread):
 
     def run(self):
         self.ensure_tools()
-        self.export_cookies()
+        if self.use_cookies:
+            self.export_cookies()
         self.emit_command()
 
     def ensure_tools(self):
@@ -154,9 +166,11 @@ class DownloadThread(QThread):
 
         command = [
             self.ytdlp_path,
+            "-f",
+            "ba/best",
             "--extract-audio",
             "--audio-format",
-            "mp3",
+            f"{"mp3" if self.convert_to_mp3 else "opus"}",
             "--ffmpeg-location",
             self.ffmpeg_path,
             "-o",
@@ -171,7 +185,7 @@ class DownloadThread(QThread):
         if "watch" in url and "list=" in url:
             command.append("--no-playlist")
 
-        if os.path.exists(self.cookies_txt):
+        if self.use_cookies and os.path.exists(self.cookies_txt):
             command += ["--cookies", self.cookies_txt]
 
         proxy_config = {
@@ -198,20 +212,21 @@ class DownloadThread(QThread):
     def start_ytdlp(self, command):
         self.downloading_audio.emit()
 
-        try:
-            cflags = 0
-            if platform.system() == "Windows":
-                cflags = subprocess.CREATE_NO_WINDOW
+        if self.auto_update:
+            try:
+                cflags = 0
+                if platform.system() == "Windows":
+                    cflags = subprocess.CREATE_NO_WINDOW
 
-            subprocess.run(
-                [self.ytdlp_path, "--update"],
-                check=False,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                creationflags=cflags,
-            )
-        except Exception as e:
-            logging.error(f"Failed to update yt-dlp: {e}")
+                subprocess.run(
+                    [self.ytdlp_path, "--update"],
+                    check=False,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    creationflags=cflags,
+                )
+            except Exception as e:
+                logging.error(f"Failed to update yt-dlp: {e}")
 
         kwargs = dict(
             cwd=self.download_folder,

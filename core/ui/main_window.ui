@@ -103,9 +103,9 @@
         </widget>
        </item>
        <item>
-        <widget class="ToolButton" name="mini_player_tbutton">
+        <widget class="ToolButton" name="watch_in_pip_tbutton">
          <property name="toolTip">
-          <string>Mini-Player</string>
+          <string>Watch in PiP</string>
          </property>
         </widget>
        </item>
@@ -126,7 +126,7 @@
        <item>
         <widget class="ToolButton" name="about_tbutton">
          <property name="toolTip">
-          <string>About</string>
+          <string>About...</string>
          </property>
         </widget>
        </item>
