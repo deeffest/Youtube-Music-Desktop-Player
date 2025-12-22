@@ -1,3 +1,18 @@
+v1.24.0 is Here! (22.12.2025)
+- Improved codebase and UI.
+- Now ytmusic observer script will not send data to the app when ads are playing.
+- Now `Mini-Player` has been renamed to `Picture-in-Picture`.
+- Now `Volume Up` and `Volume Down` buttons have been replaced with `Like` and `Dislike` buttons in picture-in-picture and system tray.
+- Added `yt-dlp Options...` submenu to the `Download...` menu and contains:
+  - `Use Cookies` - Exports your cookies and passes them to yt-dlp so that it can, for example, download your private playlists or bypass IP blocking if you use a VPN. (There is a risk of temporary account lockout, so enable as needed).
+  - `Convert to MP3` - Converts the original media file (.opus) to .mp3. Needed mostly for compatibility, but messes up the already compressed quality a bit. 
+  - `Auto Update` - When turned off, yt-dlp will not self-update.
+- Added `Go to YouTube` action to the main context menu.
+- Removed the `Ctrl+Shift+Up` and `Ctrl+Shift+Down` hotkeys from the `Playback hotkeys` plugin.
+- Removed `Volume Up` and `Volume Down` buttons from Windows thumbnail buttons.
+- Added `Exit full screen` action to the main context menu.
+- Other fixes and improvements.
+
 v1.24.0-rc1 is Here! (21.12.2025)
 - Improved codebase and UI.
 - Now ytmusic observer script will not send data to the app when ads are playing.
