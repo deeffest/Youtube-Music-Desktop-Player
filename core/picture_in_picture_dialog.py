@@ -7,7 +7,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QDesktopWidget
 from qfluentwidgets import ToolTipFilter, ToolTipPosition
 
-from core.thumbnail_loader import ThumbnailLoader
+from core.artwork_loader import ArtworkLoader
 from core.helpers import get_taskbar_position
 from core.ui.ui_picture_in_picture_dialog import Ui_PictureInPictureDialog
 
@@ -19,7 +19,7 @@ class PictureInPictureDialog(QDialog, Ui_PictureInPictureDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.window: "MainWindow" = parent
-        self.thumbnail_loader_thread = None
+        self.artwork_loader_thread = None
 
         self.configure_window()
         self.configure_ui_elements()
@@ -89,18 +89,16 @@ class PictureInPictureDialog(QDialog, Ui_PictureInPictureDialog):
         self.next_button.setIcon(QIcon(f"{self.window.icon_folder}/next-filled.png"))
         self.like_button.setIcon(QIcon(f"{self.window.icon_folder}/like.png"))
 
-    def load_thumbnail(self, url):
+    def load_artwork(self, url):
         self.stop_running_threads()
 
-        self.thumbnail_loader_thread = ThumbnailLoader(url, self.window)
-        self.thumbnail_loader_thread.thumbnail_loaded.connect(self.on_thumbnail_loaded)
-        self.thumbnail_loader_thread.start()
+        self.artwork_loader_thread = ArtworkLoader(url, self.window)
+        self.artwork_loader_thread.artwork_loaded.connect(self.on_artwork_loaded)
+        self.artwork_loader_thread.start()
 
-    def on_thumbnail_loaded(self, pixmap):
-        self.thumbnail_loader_thread = None
-
-        self.thumbnail = pixmap
-        self.thumbnail_label.setPixmap(self.thumbnail)
+    def on_artwork_loaded(self, pixmap):
+        self.artwork_loader_thread = None
+        self.artwork_label.setPixmap(pixmap)
 
     def save_geometry_of_mp(self):
         if self.window.save_last_pos_of_mp_setting == 1:
@@ -111,10 +109,10 @@ class PictureInPictureDialog(QDialog, Ui_PictureInPictureDialog):
 
     def stop_running_threads(self):
         if (
-            self.thumbnail_loader_thread is not None
-            and self.thumbnail_loader_thread.isRunning()
+            self.artwork_loader_thread is not None
+            and self.artwork_loader_thread.isRunning()
         ):
-            self.thumbnail_loader_thread.stop()
+            self.artwork_loader_thread.stop()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:

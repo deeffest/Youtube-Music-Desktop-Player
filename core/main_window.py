@@ -80,15 +80,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, app_settings, opengl_enviroment_setting, app_info):
         super().__init__()
         self.name = app_info[0]
-        self.app_author = app_info[1]
+        self.author = app_info[1]
         self.version = app_info[2]
         self.current_dir = app_info[3]
         self.icon_folder = f"{self.current_dir}/resources/icons"
 
         self.title = ""
-        self.author = ""
-        self.thumbnail_url = ""
+        self.artist = ""
+        self.artwork = ""
         self.video_id = ""
+        self.duration = 0
         self.current_time = "0:00"
         self.total_time = "0:00"
         self.song_state = "NoSong"
@@ -325,15 +326,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.watch_in_pip_shortcut.activated.connect(self.watch_in_pip)
 
         self.settings_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_S), self)
-        self.settings_shortcut.activated.connect(self.open_settings)
+        self.settings_shortcut.activated.connect(self.settings)
 
         self.hide_toolbar_shortcut = QShortcut(QKeySequence(Qt.CTRL + Qt.Key_T), self)
         self.hide_toolbar_shortcut.activated.connect(self.hide_toolbar)
 
     def show_splash_screen(self):
-        self.splash_screen = SplashScreen(self.windowIcon(), self)
+        self.splash_screen = SplashScreen(self.windowIcon(), self, enableTitleBar=False)
         self.splash_screen.setIconSize(QSize(102, 102))
-        self.splash_screen.titleBar.deleteLater()
 
     def setup_web_engine(self):
         self.webview = WebEngineView(self)
@@ -448,13 +448,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.watch_in_pip_action.setEnabled(False)
         self.watch_in_pip_action.triggered.connect(self.watch_in_pip)
 
-        self.settings_action = Action("Settings", shortcut="Ctrl+S")
+        self.settings_action = Action("Settings...", shortcut="Ctrl+S")
         self.settings_action.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
-        self.settings_action.triggered.connect(self.open_settings)
+        self.settings_action.triggered.connect(self.settings)
 
         self.bug_report_action = Action("Bug Report")
         self.bug_report_action.setIcon(QIcon(f"{self.icon_folder}/bug.png"))
-        self.bug_report_action.triggered.connect(self.send_bug_report)
+        self.bug_report_action.triggered.connect(self.bug_report)
 
         self.about_action = Action("About...")
         self.about_action.setIcon(QIcon(f"{self.icon_folder}/about.png"))
@@ -553,10 +553,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.watch_in_pip_tbutton.clicked.connect(self.watch_in_pip)
 
         self.settings_tbutton.setIcon(QIcon(f"{self.icon_folder}/settings.png"))
-        self.settings_tbutton.clicked.connect(self.open_settings)
+        self.settings_tbutton.clicked.connect(self.settings)
 
         self.bug_report_tbutton.setIcon(QIcon(f"{self.icon_folder}/bug.png"))
-        self.bug_report_tbutton.clicked.connect(self.send_bug_report)
+        self.bug_report_tbutton.clicked.connect(self.bug_report)
 
         self.about_tbutton.setIcon(QIcon(f"{self.icon_folder}/about.png"))
         self.about_tbutton.clicked.connect(self.about)
@@ -807,18 +807,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.discord_rpc:
             details = self.title[:128]
-            state = self.author[:128]
-            large_image = self.thumbnail_url
+            state = self.artist[:128]
+            large_image = self.artwork
             small_image = (
                 "https://cdn.discordapp.com/app-icons/1254202610781655050/"
                 "b4ede41d663f6caa7e45c6a042e447c9.png?size=32"
             )
-            project_url = f"https://github.com/{self.app_author}/{self.name}"
+            project_url = f"https://github.com/{self.author}/{self.name}"
             video_url = f"https://music.youtube.com/watch?v={self.video_id}"
-
-            def parse_time(t: str) -> int:
-                minutes, seconds = map(int, t.split(":"))
-                return minutes * 60 + seconds
 
             try:
                 self.discord_rpc.set_activity(
@@ -827,9 +823,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     large_image=large_image,
                     small_image=small_image,
                     act_type=Activity.Listening,
-                    **ProgressBar(
-                        parse_time(self.current_time), parse_time(self.total_time)
-                    ),
+                    **ProgressBar(0, self.duration),
                     buttons=[
                         Button("Play in Browser", video_url),
                         Button("Get App on GitHub", project_url),
@@ -953,9 +947,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.picture_in_picture_dialog:
             self.picture_in_picture_dialog.title_label.setText(self.title)
             self.picture_in_picture_dialog.title_label.setToolTip(self.title)
-            self.picture_in_picture_dialog.author_label.setText(self.author)
-            self.picture_in_picture_dialog.author_label.setToolTip(self.author)
-            self.picture_in_picture_dialog.load_thumbnail(self.thumbnail_url)
+            self.picture_in_picture_dialog.artist_label.setText(self.artist)
+            self.picture_in_picture_dialog.artist_label.setToolTip(self.artist)
+            self.picture_in_picture_dialog.load_artwork(self.artwork)
 
     def update_picture_in_picture_song_state(self):
         if self.picture_in_picture_dialog:
@@ -1289,7 +1283,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def load_url(self, url):
         self.webview.load(QUrl(url))
 
-    def open_settings(self):
+    def settings(self):
         settings_dialog = SettingsDialog(self)
         settings_dialog.exec()
 
@@ -1297,8 +1291,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         about_dialog = AboutDialog(self)
         about_dialog.exec()
 
-    def send_bug_report(self):
-        open_url(f"https://github.com/{self.app_author}/{self.name}/issues")
+    def bug_report(self):
+        open_url(f"https://github.com/{self.author}/{self.name}/issues")
 
     def hide_toolbar(self):
         if self.ToolBar.isHidden():

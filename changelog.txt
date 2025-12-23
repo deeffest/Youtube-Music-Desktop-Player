@@ -1,3 +1,8 @@
+v1.24.1 is Here! (24.12.2025)
+- Fixed application crash when resizing window during splash screen.
+- Fixed a bug with the progress bar in the `Discord Rich Presence` plugin.
+- Other fixes and improvements.
+
 v1.24.0 is Here! (22.12.2025)
 - Improved codebase and UI.
 - Now ytmusic observer script will not send data to the app when ads are playing.

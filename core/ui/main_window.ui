@@ -112,7 +112,7 @@
        <item>
         <widget class="ToolButton" name="settings_tbutton">
          <property name="toolTip">
-          <string>Settings</string>
+          <string>Settings...</string>
          </property>
         </widget>
        </item>

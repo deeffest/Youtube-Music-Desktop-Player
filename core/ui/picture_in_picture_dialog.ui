@@ -96,7 +96,7 @@
         </widget>
        </item>
        <item>
-        <widget class="BodyLabel" name="author_label">
+        <widget class="BodyLabel" name="artist_label">
          <property name="styleSheet">
           <string notr="true">QLabel {
 	color: lightgray;
@@ -137,7 +137,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="thumbnail_label">
+      <widget class="QLabel" name="artwork_label">
        <property name="minimumSize">
         <size>
          <width>60</width>

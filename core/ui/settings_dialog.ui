@@ -551,7 +551,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_36">
                      <property name="text">
-                      <string>Qt OpenGL Environment</string>
+                      <string>Qt OpenGL environment</string>
                      </property>
                     </widget>
                    </item>
@@ -835,7 +835,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_2">
                      <property name="text">
-                      <string>Remember picture-in-picture pos</string>
+                      <string>Remember Picture-in-Picture pos</string>
                      </property>
                     </widget>
                    </item>
@@ -864,7 +864,7 @@ QLabel:hover {
                  <item>
                   <widget class="BodyLabel" name="BodyLabel_3">
                    <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, remembers the last picture-in-picture position for the next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808080;&quot;&gt;When enabled, remembers the last Picture-in-Picture position for the next session.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -1009,7 +1009,7 @@ QLabel:hover {
                    <item>
                     <widget class="BodyLabel" name="BodyLabel_12">
                      <property name="text">
-                      <string>Discord rich presence</string>
+                      <string>Discord Rich Presence</string>
                      </property>
                     </widget>
                    </item>

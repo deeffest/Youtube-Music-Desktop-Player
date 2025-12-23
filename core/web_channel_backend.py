@@ -10,18 +10,20 @@ class WebChannelBackend(QObject):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
-    @pyqtSlot(str, str, str, str)
-    def song_info_changed(self, title, author, thumbnail_url, video_id):
+    @pyqtSlot(str, str, str, str, str)
+    def song_info_changed(self, title, artist, artwork, video_id, duration):
         self.window.title = title
-        self.window.author = author
-        self.window.thumbnail_url = thumbnail_url
+        self.window.artist = artist
+        self.window.artwork = artwork
         self.window.video_id = video_id
+        self.window.duration = duration
 
         is_empty = (
             not self.window.title
-            or not self.window.author
-            or not self.window.thumbnail_url
+            or not self.window.artist
+            or not self.window.artwork
             or not self.window.video_id
+            or not self.window.duration
         )
 
         if is_empty:

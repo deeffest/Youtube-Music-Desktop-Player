@@ -82,7 +82,7 @@ class Ui_MainWindow(object):
         self.url_line_edit.setPlaceholderText(_translate("MainWindow", "https://music.youtube.com/"))
         self.download_ddtbutton.setToolTip(_translate("MainWindow", "Download..."))
         self.watch_in_pip_tbutton.setToolTip(_translate("MainWindow", "Watch in PiP"))
-        self.settings_tbutton.setToolTip(_translate("MainWindow", "Settings"))
+        self.settings_tbutton.setToolTip(_translate("MainWindow", "Settings..."))
         self.bug_report_tbutton.setToolTip(_translate("MainWindow", "Bug Report"))
         self.about_tbutton.setToolTip(_translate("MainWindow", "About..."))
 from qfluentwidgets import DropDownToolButton, LineEdit, ToolButton

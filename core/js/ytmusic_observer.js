@@ -14,7 +14,7 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
             ));
         };
 
-        const getThumbnailOrCoverUrl = () => {
+        const getArtwork = () => {
             const src = document.querySelector(
                 ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
             )?.src;
@@ -37,23 +37,37 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     document
                         .querySelector(".title.style-scope.ytmusic-player-bar")
                         ?.textContent.trim() || "";
-                const author =
+                const artist =
                     document
                         .querySelector(".byline.style-scope.ytmusic-player-bar")
                         ?.textContent.trim() || "";
-                const thumbnailUrl = getThumbnailOrCoverUrl();
+                const artwork = getArtwork();
                 const videoId = getVideoId();
+                const duration = document.querySelector("video")?.duration || 0;
 
                 const changed =
                     title !== lastSongInfo.title ||
-                    author !== lastSongInfo.author ||
-                    thumbnailUrl !== lastSongInfo.thumbnailUrl ||
-                    videoId !== lastSongInfo.videoId;
+                    artist !== lastSongInfo.artist ||
+                    artwork !== lastSongInfo.artwork ||
+                    videoId !== lastSongInfo.videoId ||
+                    duration !== lastSongInfo.duration;
                 if (!changed) return;
 
                 if (isAdPlaying()) return;
-                backend.song_info_changed(title, author, thumbnailUrl, videoId);
-                lastSongInfo = { title, author, thumbnailUrl, videoId };
+                backend.song_info_changed(
+                    title,
+                    artist,
+                    artwork,
+                    videoId,
+                    duration,
+                );
+                lastSongInfo = {
+                    title,
+                    artist,
+                    artwork,
+                    videoId,
+                    duration,
+                };
             }, DEBOUNCE_DELAY);
         };
 

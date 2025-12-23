@@ -10,8 +10,8 @@ if TYPE_CHECKING:
     from core.main_window import MainWindow
 
 
-class ThumbnailLoader(QThread):
-    thumbnail_loaded = pyqtSignal(QPixmap)
+class ArtworkLoader(QThread):
+    artwork_loaded = pyqtSignal(QPixmap)
 
     def __init__(self, url, parent=None):
         super().__init__(parent)
@@ -39,10 +39,10 @@ class ThumbnailLoader(QThread):
                 60, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation
             )
 
-            self.thumbnail_loaded.emit(resized_pixmap)
+            self.artwork_loaded.emit(resized_pixmap)
         except Exception as e:
-            logging.error(f"Failed to load thumbnail: {str(e)}")
-            self.thumbnail_loaded.emit(QPixmap())
+            logging.error(f"Failed to load artwork: {str(e)}")
+            self.artwork_loaded.emit(QPixmap())
 
     def stop(self):
         self.terminate()

@@ -13,7 +13,7 @@ Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform 
 - Picture-in-Picture
 - Windows thumbnail buttons
 - Skip video ads
-- Discord rich presence
+- Discord Rich Presence
 - System tray icon
 - Playback hotkeys
 - Audio-only mode
@@ -35,4 +35,4 @@ Just download and extract ↓
 [![Download .rar](https://img.shields.io/badge/Download%20Archive-.rar-lightgrey?logo=windows&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_rar)
 
 ## Disclaimer
-This application is unofficial and not affiliated with YouTube or Google Inc. "YouTube," "YouTube Music," and the "YouTube Logo" are registered trademarks of Google Inc. Use this application at your own risk. The author assumes no responsibility for the accounts you use to log in.
+This application is unofficial and not affiliated with YouTube or Google Inc. "YouTube", "YouTube Music", and the "YouTube Logo" are registered trademarks of Google Inc. Use this application at your own risk. The author assumes no responsibility for the accounts you use to log in.
