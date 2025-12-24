@@ -19,7 +19,7 @@ class UpdateChecker(QThread):
     def run(self):
         try:
             response = requests.get(
-                f"https://api.github.com/repos/{self.window.app_author}/"
+                f"https://api.github.com/repos/{self.window.author}/"
                 f"{self.window.name}/releases/latest",
                 proxies=get_proxies(
                     self.window.proxy_type_setting,

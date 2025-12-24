@@ -16,9 +16,10 @@ if TYPE_CHECKING:
 
 
 class PictureInPictureDialog(QDialog, Ui_PictureInPictureDialog):
-    def __init__(self, parent=None):
+    def __init__(self, last_win_geo, parent=None):
         super().__init__(parent)
         self.window: "MainWindow" = parent
+        self.last_win_geo = last_win_geo
         self.artwork_loader_thread = None
 
         self.configure_window()
@@ -126,7 +127,9 @@ class PictureInPictureDialog(QDialog, Ui_PictureInPictureDialog):
 
         self.window.show()
         self.window.activateWindow()
-        self.window.show_system_tray_icon()
+        self.window.setGeometry(self.last_win_geo)
+        if self.window.system_tray_icon:
+            self.window.system_tray_icon.show()
 
         self.window.picture_in_picture_dialog = None
         event.accept()

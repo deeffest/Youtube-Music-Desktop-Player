@@ -1,3 +1,7 @@
+v1.24.2 is Here! (24.12.2025)
+- Fixed broken update checking after v1.24.1.
+- Fixed a problem where the main window would go up when switching its visibility in GNOME and some other DEs.
+
 v1.24.1 is Here! (24.12.2025)
 - Fixed application crash when resizing window during splash screen.
 - Fixed a bug with the progress bar in the `Discord Rich Presence` plugin.

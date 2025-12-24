@@ -39,7 +39,7 @@ class AboutDialog(QDialog, Ui_AboutDialog):
         self.PrimaryPushButton.clicked.connect(self.close)
         self.PushButton.clicked.connect(
             lambda: open_url(
-                f"https://github.com/{self.window.app_author}/{self.window.name}"
+                f"https://github.com/{self.window.author}/{self.window.name}"
             )
         )
         self.HyperlinkLabel.clicked.connect(lambda: open_url("https://icons8.com"))

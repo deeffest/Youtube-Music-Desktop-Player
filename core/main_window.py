@@ -1259,26 +1259,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def watch_in_pip(self):
         if self.song_state == "Playing" or "Paused":
-            self.show_picture_in_picture()
+            self.picture_in_picture_dialog = PictureInPictureDialog(
+                self.geometry(), self
+            )
+            self.update_picture_in_picture_song_info()
+            self.update_picture_in_picture_song_state()
+            self.update_picture_in_picture_song_progress()
+            self.update_picture_in_picture_song_status()
+            self.picture_in_picture_dialog.show()
+            self.picture_in_picture_dialog.activateWindow()
+
             self.hide()
-            self.hide_system_tray_icon()
-
-    def show_picture_in_picture(self):
-        self.picture_in_picture_dialog = PictureInPictureDialog(self)
-        self.update_picture_in_picture_song_info()
-        self.update_picture_in_picture_song_state()
-        self.update_picture_in_picture_song_progress()
-        self.update_picture_in_picture_song_status()
-        self.picture_in_picture_dialog.show()
-        self.picture_in_picture_dialog.activateWindow()
-
-    def show_system_tray_icon(self):
-        if self.system_tray_icon:
-            self.system_tray_icon.show()
-
-    def hide_system_tray_icon(self):
-        if self.system_tray_icon:
-            self.system_tray_icon.hide()
+            if self.system_tray_icon:
+                self.system_tray_icon.hide()
 
     def load_url(self, url):
         self.webview.load(QUrl(url))
@@ -1338,13 +1331,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "auto_update_ytdlp", self.auto_update_action.isChecked()
         )
 
-    def show_window(self):
+    def show_window(self, last_win_geo=None):
         if self.isMinimized() or self.isHidden():
             if self.isMinimized():
                 self.showNormal()
             else:
                 self.show()
         self.activateWindow()
+        if last_win_geo:
+            self.setGeometry(last_win_geo)
+        if self.system_tray_icon:
+            self.system_tray_icon.last_win_geo = None
 
     def show_window_or_picture_in_picture(self):
         if self.picture_in_picture_dialog is None:
@@ -1391,6 +1388,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.tray_icon_setting == 1 and self.system_tray_icon is not None:
             if not self.force_exit:
+                self.system_tray_icon.last_win_geo = self.geometry()
                 self.hide()
                 event.ignore()
                 return
