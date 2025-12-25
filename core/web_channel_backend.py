@@ -10,7 +10,7 @@ class WebChannelBackend(QObject):
         super().__init__(parent)
         self.window: "MainWindow" = parent
 
-    @pyqtSlot(str, str, str, str, str)
+    @pyqtSlot(str, str, str, str, int)
     def song_info_changed(self, title, artist, artwork, video_id, duration):
         self.window.title = title
         self.window.artist = artist

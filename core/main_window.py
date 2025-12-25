@@ -806,13 +806,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.run_discord_rpc()
 
         if self.discord_rpc:
-            details = self.title[:128]
+            details = (
+                self.title + "\u200b" if len(self.title) == 1 else self.title[:128]
+            )
             state = self.artist[:128]
             large_image = self.artwork
             small_image = (
                 "https://cdn.discordapp.com/app-icons/1254202610781655050/"
                 "b4ede41d663f6caa7e45c6a042e447c9.png?size=32"
             )
+            duration = self.duration
             project_url = f"https://github.com/{self.author}/{self.name}"
             video_url = f"https://music.youtube.com/watch?v={self.video_id}"
 
@@ -823,7 +826,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     large_image=large_image,
                     small_image=small_image,
                     act_type=Activity.Listening,
-                    **ProgressBar(0, self.duration),
+                    **ProgressBar(0, duration),
                     buttons=[
                         Button("Play in Browser", video_url),
                         Button("Get App on GitHub", project_url),
@@ -1345,7 +1348,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_window_or_picture_in_picture(self):
         if self.picture_in_picture_dialog is None:
-            self.show_window()
+            self.show_window(
+                self.system_tray_icon.last_win_geo if self.system_tray_icon else None
+            )
         else:
             if self.picture_in_picture_dialog.isMinimized():
                 self.picture_in_picture_dialog.showNormal()
@@ -1394,7 +1399,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 return
 
         if self.song_state == "Playing":
-            self.show_window()
+            self.show_window(
+                self.system_tray_icon.last_win_geo if self.system_tray_icon else None
+            )
 
             msg_box = MessageBox(
                 "Exit Confirmation",

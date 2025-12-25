@@ -8,11 +8,10 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
         let debounceTimer = null,
             DEBOUNCE_DELAY = 500;
 
-        const isAdPlaying = () => {
-            return (isAd = document.querySelector(
+        const isAdPlaying = () =>
+            !!document.querySelector(
                 ".ad-showing, .ad-interrupting, .ytp-ad-text",
-            ));
-        };
+            );
 
         const getArtwork = () => {
             const src = document.querySelector(
@@ -23,16 +22,24 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                 : src || "";
         };
 
-        const getVideoId = () => {
-            const link = document.querySelector(".ytp-title-link");
-            return link?.href
-                ? new URL(link.href).searchParams.get("v") || ""
-                : "";
-        };
-
         const updateSongInfo = () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
+                const link = document.querySelector(".ytp-title-link");
+                if (!link?.textContent.trim() || "") {
+                    if (lastSongInfo.videoId !== "") {
+                        backend.song_info_changed("", "", "", "", 0);
+                        lastSongInfo = {
+                            title: "",
+                            artist: "",
+                            artwork: "",
+                            videoId: "",
+                            duration: 0,
+                        };
+                    }
+                    return;
+                }
+
                 const title =
                     document
                         .querySelector(".title.style-scope.ytmusic-player-bar")
@@ -42,18 +49,23 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                         .querySelector(".byline.style-scope.ytmusic-player-bar")
                         ?.textContent.trim() || "";
                 const artwork = getArtwork();
-                const videoId = getVideoId();
-                const duration = document.querySelector("video")?.duration || 0;
+                const videoId = link?.href
+                    ? new URL(link.href).searchParams.get("v") || ""
+                    : "";
+                const duration = Math.floor(
+                    document.querySelector("video")?.duration || 0,
+                );
+
+                if (!Number.isFinite(duration) || duration <= 0) return;
 
                 const changed =
                     title !== lastSongInfo.title ||
                     artist !== lastSongInfo.artist ||
                     artwork !== lastSongInfo.artwork ||
-                    videoId !== lastSongInfo.videoId ||
-                    duration !== lastSongInfo.duration;
-                if (!changed) return;
+                    videoId !== lastSongInfo.videoId;
 
-                if (isAdPlaying()) return;
+                if (!changed || isAdPlaying()) return;
+
                 backend.song_info_changed(
                     title,
                     artist,
@@ -61,6 +73,7 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     videoId,
                     duration,
                 );
+
                 lastSongInfo = {
                     title,
                     artist,
@@ -145,6 +158,21 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
             updateSongStatus,
             { attributes: true, attributeFilter: ["like-status"] },
         );
+
+        const addVideoListeners = () => {
+            const video = document.querySelector("video");
+            if (!video || video._ytBound) return;
+
+            video._ytBound = true;
+            video.addEventListener("loadedmetadata", updateSongInfo);
+            video.addEventListener("durationchange", updateSongInfo);
+        };
+
+        addVideoListeners();
+        observe(document.body, addVideoListeners, {
+            childList: true,
+            subtree: true,
+        });
 
         updateSongInfo();
         updateSongState();
