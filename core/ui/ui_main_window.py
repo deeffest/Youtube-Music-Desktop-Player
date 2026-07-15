@@ -69,6 +69,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.url_label.sizePolicy().hasHeightForWidth())
         self.url_label.setSizePolicy(sizePolicy)
         self.url_label.setMinimumSize(QSize(30, 0))
+        self.url_label.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
         self.toolbar_layout.addWidget(self.url_label)
 
@@ -139,6 +140,11 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.reload_tbutton.setToolTip(QCoreApplication.translate("MainWindow", u"Reload", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.url_label.setToolTip(QCoreApplication.translate("MainWindow", u"\u2022 Left Click: Open the \"Enter URL\" dialog.\n"
+"\u2022 Middle Click: Load the home page.\n"
+"\u2022 Right Click: Show the context menu.", None))
 #endif // QT_CONFIG(tooltip)
         self.url_label.setText(QCoreApplication.translate("MainWindow", u"music.youtube.com", None))
 #if QT_CONFIG(tooltip)
