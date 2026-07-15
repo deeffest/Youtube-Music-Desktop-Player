@@ -114,6 +114,14 @@
            <height>0</height>
           </size>
          </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>• Left Click: Open the &quot;Enter URL&quot; dialog.
+• Middle Click: Load the home page.
+• Right Click: Show the context menu.</string>
+         </property>
          <property name="text">
           <string>music.youtube.com</string>
          </property>

@@ -1,5 +1,5 @@
 import re
-import logging
+# import logging
 from typing import TYPE_CHECKING
 
 from PyQt5.QtWebEngineWidgets import QWebEnginePage
@@ -57,14 +57,14 @@ class WebEnginePage(QWebEnginePage):
         else:
             return (False, "")
 
-    def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
-        if level == QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel:
-            logging.error(
-                f"JavaScript Console Error: {message} "
-                f"(Line: {lineNumber}, Source: {sourceID})"
-            )
-        else:
-            print(
-                f"JavaScript Console Message: {message} "
-                f"(Line: {lineNumber}, Source: {sourceID})"
-            )
+    # def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
+    #     if level == QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel:
+    #         logging.error(
+    #             f"JavaScript Console Error: {message} "
+    #             f"(Line: {lineNumber}, Source: {sourceID})"
+    #         )
+    #     else:
+    #         print(
+    #             f"JavaScript Console Message: {message} "
+    #             f"(Line: {lineNumber}, Source: {sourceID})"
+    #         )

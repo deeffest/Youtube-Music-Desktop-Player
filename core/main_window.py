@@ -51,6 +51,7 @@ from qfluentwidgets5 import (
     setThemeColor,
     ToolTipPosition,
     InfoBarPosition,
+    FluentIcon as FIF,
 )
 from packaging import version as pkg_version
 from discordrpc import RPC, Button, Activity, progress_bar
@@ -68,6 +69,7 @@ from core.signal_bus import signal_bus
 from core.multi_action import MultiAction
 from core.lyrics_dialog import LyricsDialog
 from core.update_checker import UpdateChecker
+from core.input_msg_box import InputMessageBox
 from core.web_engine_page import WebEnginePage
 from core.web_engine_view import WebEngineView
 from core.settings_dialog import SettingsDialog
@@ -579,22 +581,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.hide_toolbar_action = MultiAction()
 
         self.cut_action = Action("Cut", shortcut="Ctrl+X")
-        self.cut_action.setIcon(
-            recolor_icon(f"{self.icon_folder}/cut.png", self.light_theme_setting)
-        )
+        self.cut_action.setIcon(FIF.CUT.icon())
         self.cut_action.triggered.connect(self.cut)
 
         self.copy_action = Action("Copy", shortcut="Ctrl+C")
-        self.copy_action.setIcon(
-            recolor_icon(f"{self.icon_folder}/copy.png", self.light_theme_setting)
-        )
+        self.copy_action.setIcon(FIF.COPY.icon())
         self.copy_action.triggered.connect(self.copy)
 
         self.paste_action = Action("Paste", shortcut="Ctrl+V")
-        self.paste_action.setIcon(
-            recolor_icon(f"{self.icon_folder}/paste.png", self.light_theme_setting)
-        )
+        self.paste_action.setIcon(FIF.PASTE.icon())
         self.paste_action.triggered.connect(self.paste)
+
+        self.cancel_action = Action("Cancel", shortcut="Ctrl+Z")
+        self.cancel_action.setIcon(FIF.CANCEL.icon())
+        self.cancel_action.triggered.connect(self.cancel)
+
+        self.select_all_action = Action("Select all", shortcut="Ctrl+A")
+        self.select_all_action.triggered.connect(self.select_all)
 
         self.copy_url_action = Action("Copy URL")
         self.copy_url_action.setIcon(
@@ -725,17 +728,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.see_more_menu, self.create_hide_toolbar_action()
         )
 
-        self.edit_menu = RoundMenu()
-        self.edit_menu.addAction(self.cut_action)
-        self.edit_menu.addAction(self.copy_action)
-        self.edit_menu.addAction(self.paste_action)
-
-        self.copy_menu = RoundMenu()
-        self.copy_menu.addAction(self.copy_action)
-
-        self.paste_menu = RoundMenu()
-        self.paste_menu.addAction(self.paste_action)
-
         self.url_menu = RoundMenu()
         self.url_menu.addAction(self.copy_url_action)
         self.url_menu.addAction(self.open_url_in_browser_action)
@@ -797,31 +789,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.see_more_ddtbutton.setMenu(self.see_more_menu)
 
         self.back_tbutton.installEventFilter(
-            ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.back_tbutton, 300, ToolTipPosition.BOTTOM)
         )
         self.forward_tbutton.installEventFilter(
-            ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.forward_tbutton, 300, ToolTipPosition.BOTTOM)
         )
         self.reload_tbutton.installEventFilter(
-            ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.reload_tbutton, 300, ToolTipPosition.BOTTOM)
+        )
+        self.url_label.installEventFilter(
+            ToolTipFilter(self.url_label, 300, ToolTipPosition.BOTTOM)
         )
         self.download_ddtbutton.installEventFilter(
-            ToolTipFilter(self.download_ddtbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.download_ddtbutton, 300, ToolTipPosition.BOTTOM)
         )
         self.lyrics_tbutton.installEventFilter(
-            ToolTipFilter(self.lyrics_tbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.lyrics_tbutton, 300, ToolTipPosition.BOTTOM)
         )
         self.comments_tbutton.installEventFilter(
-            ToolTipFilter(self.comments_tbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.comments_tbutton, 300, ToolTipPosition.BOTTOM)
         )
         self.settings_ddtbutton.installEventFilter(
-            ToolTipFilter(self.settings_ddtbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.settings_ddtbutton, 300, ToolTipPosition.BOTTOM)
         )
         self.plugins_ddtbutton.installEventFilter(
-            ToolTipFilter(self.plugins_ddtbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.plugins_ddtbutton, 300, ToolTipPosition.BOTTOM)
         )
         self.see_more_ddtbutton.installEventFilter(
-            ToolTipFilter(self.see_more_ddtbutton, 300, ToolTipPosition.TOP)
+            ToolTipFilter(self.see_more_ddtbutton, 300, ToolTipPosition.BOTTOM)
         )
 
         self.ToolBar.installEventFilter(self)
@@ -931,6 +926,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.url_menu.exec(self.url_label.mapToGlobal(pos))
         QTimer.singleShot(0, reset_hover)
 
+    def show_enter_url_dialog(self):
+        dialog = InputMessageBox("Enter URL", parent=self)
+        dialog.line_edit.setPlaceholderText("Only music.youtube.com URLs are supported")
+        dialog.yesButton.setText("Go")
+        if dialog.exec():
+            url = dialog.line_edit.text().strip()
+            if url and url != self.current_url:
+                self.webview.setUrl(QUrl.fromUserInput(url))
+
     def create_hide_toolbar_action(self):
         action = Action("Hide toolbar", shortcut="Ctrl+T")
         action.setIcon(
@@ -1022,8 +1026,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def recognize_music(self, service):
         self.audd_action.setEnabled(False)
         self.audd_shortcut.setEnabled(False)
-
-        self.webpage.runJavaScript("document.querySelector('video').pause()")
 
         self.music_recognizer_thread = MusicRecognizerThread(service, self)
         self.music_recognizer_thread.recording_audio_from_pc.connect(
@@ -1436,7 +1438,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.url_label.setText("".join(parts_html))
         self.url_label.setTextFormat(Qt.TextFormat.RichText)
-        self.url_label.setToolTip(url)
 
     def update_win_thumbnail_buttons_song_state(self):
         if self.taskbar is not None:
@@ -1981,6 +1982,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def paste(self):
         self.webpage.triggerAction(QWebEnginePage.WebAction.Paste)
 
+    def cancel(self):
+        self.webpage.triggerAction(QWebEnginePage.WebAction.Undo)
+
+    def select_all(self):
+        self.webpage.triggerAction(QWebEnginePage.WebAction.SelectAll)
+
     def save_settings(self):
         if self.save_last_win_geometry_setting == 1:
             if self.isMaximized():
@@ -2126,6 +2133,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if event.type() == QEvent.Type.MouseButtonPress:
                 if event.button() == Qt.MouseButton.MiddleButton:
                     self.webview.setUrl(QUrl(self.default_home_url))
+                    return True
+                elif event.button() == Qt.MouseButton.LeftButton:
+                    self.show_enter_url_dialog()
                     return True
 
         return super().eventFilter(obj, event)

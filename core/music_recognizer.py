@@ -1,5 +1,7 @@
 import os
 import time
+import wave
+import audioop
 import logging
 import platform
 import subprocess
@@ -10,6 +12,79 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 if TYPE_CHECKING:
     from core.main_window import MainWindow
+
+
+RATE = 44100
+CHANNELS = 1
+WIDTH = 2
+CHUNK_FRAMES = 1024
+
+
+def _record_win32(duration):
+    import pyaudiowpatch as pyaudio
+
+    pa = pyaudio.PyAudio()
+    stream = None
+    try:
+        wasapi_info = pa.get_host_api_info_by_type(pyaudio.paWASAPI)
+        default_out = pa.get_device_info_by_index(wasapi_info["defaultOutputDevice"])
+        device = default_out
+        for loopback in pa.get_loopback_device_info_generator():
+            if default_out["name"] in loopback["name"]:
+                device = loopback
+                break
+
+        rate = int(device["defaultSampleRate"])
+        channels = device["maxInputChannels"]
+        frames_needed = int(rate * duration)
+        chunks, collected = [], 0
+
+        def _callback(in_data, frame_count, time_info, status):
+            nonlocal collected
+            chunks.append(in_data)
+            collected += frame_count
+            done = collected >= frames_needed
+            return (None, pyaudio.paComplete if done else pyaudio.paContinue)
+
+        stream = pa.open(
+            format=pyaudio.paInt16,
+            channels=channels,
+            rate=rate,
+            input=True,
+            input_device_index=device["index"],
+            frames_per_buffer=CHUNK_FRAMES,
+            stream_callback=_callback,
+        )
+        stream.start_stream()
+
+        deadline = time.monotonic() + duration + 5
+        while stream.is_active() and time.monotonic() < deadline:
+            time.sleep(0.05)
+    finally:
+        if stream is not None:
+            stream.stop_stream()
+            stream.close()
+        pa.terminate()
+
+    return b"".join(chunks), rate, channels
+
+
+def _record_linux(duration):
+    cmd = [
+        "parec",
+        "--device=@DEFAULT_SINK@.monitor",
+        f"--rate={RATE}",
+        f"--channels={CHANNELS}",
+        "--format=s16le",
+    ]
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        raw = process.stdout.read(int(RATE * duration) * WIDTH)
+    finally:
+        process.terminate()
+        process.wait()
+
+    return raw, RATE, CHANNELS
 
 
 class MusicRecognizerThread(QThread):
@@ -28,82 +103,27 @@ class MusicRecognizerThread(QThread):
 
     def run(self):
         self.recording_audio_from_pc.emit()
+        duration = self.window.audd_recording_lenght_setting
 
         if platform.system() == "Windows":
-            import numpy
-            import soundfile
-            import pyaudiowpatch as pyaudio
-
-            pa = pyaudio.PyAudio()
-
-            wasapi_info = pa.get_host_api_info_by_type(pyaudio.paWASAPI)
-
-            default_out = pa.get_device_info_by_index(
-                wasapi_info["defaultOutputDevice"]
-            )
-
-            target_idx = None
-            for loopback in pa.get_loopback_device_info_generator():
-                if default_out["name"] in loopback["name"]:
-                    target_idx = loopback["index"]
-                    break
-
-            if target_idx is None:
-                target_idx = default_out["index"]
-
-            dev_info = pa.get_device_info_by_index(target_idx)
-            rate = int(dev_info["defaultSampleRate"])
-            channels = dev_info["maxInputChannels"]
-
-            stream = pa.open(
-                format=pyaudio.paFloat32,
-                channels=channels,
-                rate=rate,
-                input=True,
-                input_device_index=target_idx,
-            )
-
-            frames = []
-            num_chunks = int(rate / 1024 * self.window.audd_recording_lenght_setting)
-            for i in range(num_chunks):
-                data = stream.read(1024, exception_on_overflow=False)
-                frames.append(data)
-
-            stream.stop_stream()
-            stream.close()
-            pa.terminate()
-
-            audio_data = numpy.frombuffer(
-                b"".join(frames), dtype=numpy.float32
-            ).reshape(-1, channels)
-            if channels > 1:
-                audio_mono = audio_data.mean(axis=1)
-            else:
-                audio_mono = audio_data.flatten()
-
-            abs_max = numpy.max(numpy.abs(audio_mono))
-            if abs_max > 0:
-                audio_mono = audio_mono / abs_max * 0.9
-
-            soundfile.write(self.temp_wav, audio_mono, rate, subtype="PCM_16")
+            raw, rate, channels = _record_win32(duration)
         else:
-            if os.path.exists(self.temp_wav):
-                os.remove(self.temp_wav)
+            raw, rate, channels = _record_linux(duration)
 
-            cmd = [
-                "parec",
-                "--device=@DEFAULT_SINK@.monitor",
-                "--file-format=wav",
-                "--channels=1",
-                "--rate=44100",
-                self.temp_wav,
-            ]
+        if not raw:
+            logging.error("No audio recorded")
+            return
 
-            process = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            time.sleep(self.window.audd_recording_lenght_setting)
-            process.terminate()
+        if channels > 1:
+            raw = audioop.tomono(raw, WIDTH, 0.5, 0.5)
+        if rate != RATE:
+            raw, _ = audioop.ratecv(raw, WIDTH, 1, rate, RATE, None)
+
+        with wave.open(self.temp_wav, "wb") as wf:
+            wf.setnchannels(CHANNELS)
+            wf.setsampwidth(WIDTH)
+            wf.setframerate(RATE)
+            wf.writeframes(raw)
 
         self.recording_audio_from_pc_success.emit()
 
@@ -123,15 +143,18 @@ class MusicRecognizerThread(QThread):
 
             resp_json = resp.json()
 
-            if resp_json["status"] == "success" and resp_json.get("result"):
-                r = resp_json["result"]
+        if resp_json["status"] == "success":
+            r = resp_json.get("result")
+            if r:
                 self.recognizing_via_audd_api_success.emit(r["title"], r["artist"])
             else:
-                e = resp_json.get("error", {})
-                msg = e.get("error_message", "Unknown error")
-                code = e.get("error_code", "Unknown code")
-                logging.error(resp_json)
-                self.recognizing_via_audd_api_error.emit(code, msg)
+                self.recognizing_via_audd_api_error.emit(0, "Music not recognized")
+        else:
+            e = resp_json.get("error", {})
+            code = e.get("error_code", "Unknown code")
+            msg = e.get("error_message", "Unknown error")
+            logging.error(resp_json)
+            self.recognizing_via_audd_api_error.emit(code, msg)
 
     def stop(self):
         self.terminate()

@@ -1,15 +1,11 @@
 pynput==1.8.2
-flake8==7.3.0
-black==26.5.1
 pyqt5==5.15.11
 packaging==26.2
 requests==2.34.2
 discord-rpc==5.6
 pyinstaller==6.19.0
 pyqtwebengine==5.15.7
-numpy==2.5.0; sys_platform=="win32"
 comtypes==1.4.16; sys_platform=="win32"
-soundfile==0.14.0; sys_platform=="win32"
 pyaudiowpatch==0.2.12.8; sys_platform=="win32"
-git+https://github.com/deeffest/PyQt-Frameless-Window.git@PyQt5
-git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@PyQt5
+git+https://github.com/deeffest/PyQt-Frameless-Window.git@cb78a40
+git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@1ee0f51

@@ -50,6 +50,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.url_label.sizePolicy().hasHeightForWidth())
         self.url_label.setSizePolicy(sizePolicy)
         self.url_label.setMinimumSize(QtCore.QSize(30, 0))
+        self.url_label.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.url_label.setObjectName("url_label")
         self.toolbar_layout.addWidget(self.url_label)
         spacerItem1 = QtWidgets.QSpacerItem(6, 0, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
@@ -96,6 +97,9 @@ class Ui_MainWindow(object):
         self.back_tbutton.setToolTip(_translate("MainWindow", "Back"))
         self.forward_tbutton.setToolTip(_translate("MainWindow", "Forward"))
         self.reload_tbutton.setToolTip(_translate("MainWindow", "Reload"))
+        self.url_label.setToolTip(_translate("MainWindow", "• Left Click: Open the \"Enter URL\" dialog.\n"
+"• Middle Click: Load the home page.\n"
+"• Right Click: Show the context menu."))
         self.url_label.setText(_translate("MainWindow", "music.youtube.com"))
         self.download_ddtbutton.setToolTip(_translate("MainWindow", "Download"))
         self.lyrics_tbutton.setToolTip(_translate("MainWindow", "Lyrics..."))
