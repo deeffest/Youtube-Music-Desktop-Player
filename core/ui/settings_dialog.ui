@@ -171,6 +171,9 @@
             <layout class="QVBoxLayout" name="verticalLayout_14">
              <item>
               <widget class="QCheckBox" name="checkBox_14">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
                <property name="text">
                 <string>Windows thumbnail buttons</string>
                </property>
@@ -222,7 +225,7 @@
              <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
+             <enum>QSizePolicy::MinimumExpanding</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -291,8 +294,11 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="toolTip">
-                  <string>ANGLE is recommended if you have a working graphics card.
+                  <string>ANGLE is recommended for Windows systems with graphics acceleration.
 
 • Auto: Automatic selection based on system.
 • Desktop: Native OpenGL implementation.
@@ -364,12 +370,12 @@
              <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
+             <enum>QSizePolicy::MinimumExpanding</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>40</height>
+              <height>0</height>
              </size>
             </property>
            </spacer>
@@ -488,6 +494,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="checkBox_16">
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
                <property name="toolTip">
                 <string>The system's yt-dlp will be used, if available.
 Make sure that the version of yt-dlp installed is 2025.11.12 or later.</string>
@@ -611,10 +620,13 @@ If you encounter errors, make sure that yt-dlp is compatible with your version o
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::MinimumExpanding</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>40</height>
+              <height>0</height>
              </size>
             </property>
            </spacer>
@@ -731,7 +743,7 @@ Alternatively, please wait; recognitions should be restored shortly.</string>
              <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
+             <enum>QSizePolicy::MinimumExpanding</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>

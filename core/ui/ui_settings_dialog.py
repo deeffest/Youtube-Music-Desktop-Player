@@ -87,6 +87,7 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_14 = QtWidgets.QVBoxLayout(self.groupBox_10)
         self.verticalLayout_14.setObjectName("verticalLayout_14")
         self.checkBox_14 = QtWidgets.QCheckBox(self.groupBox_10)
+        self.checkBox_14.setFocusPolicy(QtCore.Qt.NoFocus)
         self.checkBox_14.setObjectName("checkBox_14")
         self.verticalLayout_14.addWidget(self.checkBox_14)
         self.checkBox_10 = QtWidgets.QCheckBox(self.groupBox_10)
@@ -102,7 +103,7 @@ class Ui_SettingsDialog(object):
         self.checkBox_13.setObjectName("checkBox_13")
         self.verticalLayout_14.addWidget(self.checkBox_13)
         self.verticalLayout_2.addWidget(self.groupBox_10)
-        spacerItem = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
@@ -137,6 +138,7 @@ class Ui_SettingsDialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.comboBox.sizePolicy().hasHeightForWidth())
         self.comboBox.setSizePolicy(sizePolicy)
+        self.comboBox.setFocusPolicy(QtCore.Qt.NoFocus)
         self.comboBox.setObjectName("comboBox")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
@@ -159,7 +161,7 @@ class Ui_SettingsDialog(object):
         self.pushButton_4.setObjectName("pushButton_4")
         self.verticalLayout_7.addWidget(self.pushButton_4)
         self.verticalLayout_4.addWidget(self.groupBox_5)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         self.verticalLayout_4.addItem(spacerItem1)
         spacerItem2 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_4.addItem(spacerItem2)
@@ -206,6 +208,7 @@ class Ui_SettingsDialog(object):
         self.checkBox_17.setObjectName("checkBox_17")
         self.verticalLayout_8.addWidget(self.checkBox_17)
         self.checkBox_16 = QtWidgets.QCheckBox(self.groupBox_3)
+        self.checkBox_16.setFocusPolicy(QtCore.Qt.NoFocus)
         self.checkBox_16.setObjectName("checkBox_16")
         self.verticalLayout_8.addWidget(self.checkBox_16)
         self.pushButton = QtWidgets.QPushButton(self.groupBox_3)
@@ -246,7 +249,7 @@ class Ui_SettingsDialog(object):
         self.pushButton_3.setObjectName("pushButton_3")
         self.verticalLayout_10.addWidget(self.pushButton_3)
         self.verticalLayout_5.addWidget(self.groupBox_7)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         self.verticalLayout_5.addItem(spacerItem3)
         spacerItem4 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_5.addItem(spacerItem4)
@@ -291,7 +294,7 @@ class Ui_SettingsDialog(object):
         self.horizontalLayout_6.addWidget(self.label_6)
         self.verticalLayout_17.addLayout(self.horizontalLayout_6)
         self.verticalLayout_18.addWidget(self.groupBox_12)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem5 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         self.verticalLayout_18.addItem(spacerItem5)
         self.tabWidget.addTab(self.tab_4, "")
         self.verticalLayout.addWidget(self.tabWidget)
@@ -335,7 +338,7 @@ class Ui_SettingsDialog(object):
         self.checkBox_9.setText(_translate("SettingsDialog", "Animated scrolling support"))
         self.groupBox_4.setTitle(_translate("SettingsDialog", "Rendering"))
         self.label_2.setText(_translate("SettingsDialog", "OpenGL backend"))
-        self.comboBox.setToolTip(_translate("SettingsDialog", "ANGLE is recommended if you have a working graphics card.\n"
+        self.comboBox.setToolTip(_translate("SettingsDialog", "ANGLE is recommended for Windows systems with graphics acceleration.\n"
 "\n"
 "• Auto: Automatic selection based on system.\n"
 "• Desktop: Native OpenGL implementation.\n"
