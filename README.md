@@ -37,11 +37,25 @@ Just download and extract ↓
 [![Download .rpm](https://img.shields.io/badge/Download%20for%20Fedora%20%2F%20RHEL-.rpm-orange?logo=fedora&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_rpm)  
 [![Download tar.xz](https://img.shields.io/badge/Download%20Archive-.tar.xz-lightgrey?logo=linux&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_tar_xz)
 
+<details>
+<summary>Qt5 builds (legacy)</summary>
+
+[![Download Qt5 tar.xz](https://img.shields.io/badge/Download%20Archive-Qt5.tar.xz-lightgrey?logo=linux&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_qt5_tar_xz)
+
+</details>
+
 ---
 
 ### Windows
 [![Download Setup.exe](https://img.shields.io/badge/Download%20Installer-Setup.exe-blue?logo=windows&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_setup_exe)  
 [![Download .rar](https://img.shields.io/badge/Download%20Archive-.rar-lightgrey?logo=windows&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_rar)
+
+<details>
+<summary>Qt5 builds (legacy)</summary>
+
+[![Download Qt5 .rar](https://img.shields.io/badge/Download%20Archive-Qt5.rar-lightgrey?logo=windows&style=for-the-badge)](https://deeffest.pythonanywhere.com/ytmdplayer/latest_qt5_rar)
+
+</details>
 
 ## Disclaimer
 This application is unofficial and not affiliated with YouTube or Google Inc. "YouTube", "YouTube Music", and the "YouTube Logo" are registered trademarks of Google Inc. Use this application at your own risk. The author assumes no responsibility for the accounts you use to log in.

@@ -51,8 +51,25 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Logs or screenshots
+      label: Logs
+      description: |
+        You can find app.log here:
+      placeholder: |
+        Windows: C:\Users\USERNAME\Youtube-Music-Desktop-Player\logs
+        Linux: /home/USERNAME/Youtube-Music-Desktop-Player/logs
+
+        Make sure "Show hidden files and folders" is enabled in your file manager.
       render: shell
+    validations:
+      required: false
+
+  - type: upload
+    id: attachments
+    attributes:
+      label: Screenshots or video
+      description: If applicable, attach screenshots, video, or other files.
+    validations:
+      required: false
 
   - type: checkboxes
     id: checks

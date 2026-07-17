@@ -118,6 +118,7 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.checkBox_14 = QCheckBox(self.groupBox_10)
         self.checkBox_14.setObjectName(u"checkBox_14")
+        self.checkBox_14.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.verticalLayout_14.addWidget(self.checkBox_14)
 
@@ -142,7 +143,7 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout_2.addWidget(self.groupBox_10)
 
-        self.verticalSpacer = QSpacerItem(293, 54, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+        self.verticalSpacer = QSpacerItem(20, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
 
@@ -176,6 +177,7 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.checkBox_12 = QCheckBox(self.groupBox_4)
         self.checkBox_12.setObjectName(u"checkBox_12")
+        self.checkBox_12.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.verticalLayout_6.addWidget(self.checkBox_12)
 
@@ -207,11 +209,11 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_4.addItem(self.verticalSpacer_2)
 
         self.tabWidget.addTab(self.tab_2, "")
-        self.tab_4 = QWidget()
-        self.tab_4.setObjectName(u"tab_4")
-        self.verticalLayout_5 = QVBoxLayout(self.tab_4)
+        self.tab_3 = QWidget()
+        self.tab_3.setObjectName(u"tab_3")
+        self.verticalLayout_5 = QVBoxLayout(self.tab_3)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.groupBox_3 = QGroupBox(self.tab_4)
+        self.groupBox_3 = QGroupBox(self.tab_3)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.groupBox_3.setCheckable(False)
         self.verticalLayout_8 = QVBoxLayout(self.groupBox_3)
@@ -259,6 +261,7 @@ class Ui_SettingsDialog(object):
 
         self.checkBox_16 = QCheckBox(self.groupBox_3)
         self.checkBox_16.setObjectName(u"checkBox_16")
+        self.checkBox_16.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.verticalLayout_8.addWidget(self.checkBox_16)
 
@@ -272,7 +275,7 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout_5.addWidget(self.groupBox_3)
 
-        self.groupBox_6 = QGroupBox(self.tab_4)
+        self.groupBox_6 = QGroupBox(self.tab_3)
         self.groupBox_6.setObjectName(u"groupBox_6")
         self.groupBox_6.setEnabled(True)
         self.groupBox_6.setFlat(False)
@@ -295,7 +298,7 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout_5.addWidget(self.groupBox_6)
 
-        self.groupBox_7 = QGroupBox(self.tab_4)
+        self.groupBox_7 = QGroupBox(self.tab_3)
         self.groupBox_7.setObjectName(u"groupBox_7")
         self.groupBox_7.setCheckable(False)
         self.verticalLayout_10 = QVBoxLayout(self.groupBox_7)
@@ -320,12 +323,12 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout_5.addItem(self.verticalSpacer_4)
 
-        self.tabWidget.addTab(self.tab_4, "")
-        self.tab_5 = QWidget()
-        self.tab_5.setObjectName(u"tab_5")
-        self.verticalLayout_18 = QVBoxLayout(self.tab_5)
+        self.tabWidget.addTab(self.tab_3, "")
+        self.tab_4 = QWidget()
+        self.tab_4.setObjectName(u"tab_4")
+        self.verticalLayout_18 = QVBoxLayout(self.tab_4)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
-        self.groupBox_12 = QGroupBox(self.tab_5)
+        self.groupBox_12 = QGroupBox(self.tab_4)
         self.groupBox_12.setObjectName(u"groupBox_12")
         self.verticalLayout_17 = QVBoxLayout(self.groupBox_12)
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
@@ -376,11 +379,11 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout_18.addWidget(self.groupBox_12)
 
-        self.verticalSpacer_5 = QSpacerItem(275, 196, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+        self.verticalSpacer_5 = QSpacerItem(20, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
         self.verticalLayout_18.addItem(self.verticalSpacer_5)
 
-        self.tabWidget.addTab(self.tab_5, "")
+        self.tabWidget.addTab(self.tab_4, "")
 
         self.verticalLayout.addWidget(self.tabWidget)
 
@@ -436,7 +439,8 @@ class Ui_SettingsDialog(object):
         self.checkBox_9.setText(QCoreApplication.translate("SettingsDialog", u"Animated scrolling support", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("SettingsDialog", u"Rendering", None))
 #if QT_CONFIG(tooltip)
-        self.checkBox_12.setToolTip(QCoreApplication.translate("SettingsDialog", u"This setting removes the 60 FPS limit, but may consume more CPU resources.", None))
+        self.checkBox_12.setToolTip(QCoreApplication.translate("SettingsDialog", u"This setting removes the 60 FPS limit, but it can place a heavy and unnecessary load on the CPU.\n"
+"It is recommended to leave it disabled.", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_12.setText(QCoreApplication.translate("SettingsDialog", u"Disable frame rate limit", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("SettingsDialog", u"Cookies", None))
@@ -485,7 +489,7 @@ class Ui_SettingsDialog(object):
         self.pushButton_3.setToolTip(QCoreApplication.translate("SettingsDialog", u"This will not remove the system version of Deno - only the built-in version!", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_3.setText(QCoreApplication.translate("SettingsDialog", u"Remove from device", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("SettingsDialog", u"Tools", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("SettingsDialog", u"Tools", None))
         self.groupBox_12.setTitle(QCoreApplication.translate("SettingsDialog", u"AudD API", None))
         self.label_4.setText(QCoreApplication.translate("SettingsDialog", u"Token", None))
 #if QT_CONFIG(tooltip)
@@ -498,6 +502,6 @@ class Ui_SettingsDialog(object):
         self.horizontalSlider.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.label_6.setText(QCoreApplication.translate("SettingsDialog", u"1s", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), QCoreApplication.translate("SettingsDialog", u"Music recognition", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("SettingsDialog", u"Music recognition", None))
     # retranslateUi
 
