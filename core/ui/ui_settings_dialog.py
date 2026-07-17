@@ -118,6 +118,7 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.checkBox_14 = QCheckBox(self.groupBox_10)
         self.checkBox_14.setObjectName(u"checkBox_14")
+        self.checkBox_14.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.verticalLayout_14.addWidget(self.checkBox_14)
 
@@ -176,6 +177,7 @@ class Ui_SettingsDialog(object):
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.checkBox_12 = QCheckBox(self.groupBox_4)
         self.checkBox_12.setObjectName(u"checkBox_12")
+        self.checkBox_12.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.verticalLayout_6.addWidget(self.checkBox_12)
 
@@ -259,6 +261,7 @@ class Ui_SettingsDialog(object):
 
         self.checkBox_16 = QCheckBox(self.groupBox_3)
         self.checkBox_16.setObjectName(u"checkBox_16")
+        self.checkBox_16.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.verticalLayout_8.addWidget(self.checkBox_16)
 
@@ -436,7 +439,8 @@ class Ui_SettingsDialog(object):
         self.checkBox_9.setText(QCoreApplication.translate("SettingsDialog", u"Animated scrolling support", None))
         self.groupBox_4.setTitle(QCoreApplication.translate("SettingsDialog", u"Rendering", None))
 #if QT_CONFIG(tooltip)
-        self.checkBox_12.setToolTip(QCoreApplication.translate("SettingsDialog", u"This setting removes the 60 FPS limit, but may consume more CPU resources.", None))
+        self.checkBox_12.setToolTip(QCoreApplication.translate("SettingsDialog", u"This setting removes the 60 FPS limit, but it can place a heavy and unnecessary load on the CPU.\n"
+"It is recommended to leave it disabled.", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_12.setText(QCoreApplication.translate("SettingsDialog", u"Disable frame rate limit", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("SettingsDialog", u"Cookies", None))

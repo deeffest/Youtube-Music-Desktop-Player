@@ -1,6 +1,6 @@
 #define AppShortName "YTMDPlayer"
 #define AppFullName  "YouTube Music Desktop Player"
-#define AppVersion   "1.28.0-rc1"
+#define AppVersion   "1.28.0"
 #define AppExeName   AppShortName + ".exe"
 #define AppIconRel   "_internal\resources\icons\icon.ico"
 #define DistDir      AppShortName + ".dist"

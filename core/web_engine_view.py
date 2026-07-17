@@ -17,10 +17,10 @@ class WebEngineView(QWebEngineView):
         request = self.lastContextMenuRequest()
         flags = request.editFlags()
         EditFlag = QWebEngineContextMenuRequest.EditFlag
- 
+
         menu = RoundMenu()
         has_content = False
- 
+
         if request.isContentEditable():
             if flags & EditFlag.CanCut:
                 menu.addAction(self.window.cut_action)
@@ -37,14 +37,14 @@ class WebEngineView(QWebEngineView):
             if flags & EditFlag.CanSelectAll:
                 menu.addAction(self.window.select_all_action)
                 has_content = True
- 
+
         elif request.selectedText():
             menu.addAction(self.window.copy_action)
             has_content = True
- 
+
         if has_content:
             menu.exec(event.globalPos())
         else:
             self.window.main_menu.exec(event.globalPos())
- 
+
         request.setAccepted(True)

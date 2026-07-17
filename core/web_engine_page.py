@@ -1,5 +1,5 @@
 import re
-# import logging
+import logging
 from typing import TYPE_CHECKING
 
 from PySide6.QtWebEngineCore import QWebEnginePage
@@ -33,10 +33,8 @@ class WebEnginePage(QWebEnginePage):
 
         for pattern in patterns:
             if re.match(pattern, url_str):
-                print(f"Allowing navigation to: {url_str}")
                 return True
 
-        print(f"Blocking navigation to: {url_str}")
         return False
 
     def javaScriptAlert(self, securityOrigin, msg):
@@ -59,14 +57,14 @@ class WebEnginePage(QWebEnginePage):
         else:
             return (False, "")
 
-    # def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
-    #     if level == QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel:
-    #         logging.error(
-    #             f"JavaScript Console Error: {message} "
-    #             f"(Line: {lineNumber}, Source: {sourceID})"
-    #         )
-    #     else:
-    #         print(
-    #             f"JavaScript Console Message: {message} "
-    #             f"(Line: {lineNumber}, Source: {sourceID})"
-    #         )
+    def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
+        if level == QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel:
+            logging.error(
+                f"JavaScript Console Error: {message} "
+                f"(Line: {lineNumber}, Source: {sourceID})"
+            )
+        else:
+            print(
+                f"JavaScript Console Message: {message} "
+                f"(Line: {lineNumber}, Source: {sourceID})"
+            )
