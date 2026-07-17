@@ -52,11 +52,10 @@ body:
     id: logs
     attributes:
       label: Logs
-      description: |
-        You can find app.log here:
       placeholder: |
+        You can find app.log here:
         Windows: C:\Users\USERNAME\Youtube-Music-Desktop-Player\logs
-        Linux: /home/USERNAME/Youtube-Music-Desktop-Player/logs
+        Linux:   /home/USERNAME/Youtube-Music-Desktop-Player/logs
 
         Make sure "Show hidden files and folders" is enabled in your file manager.
       render: shell
