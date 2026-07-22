@@ -90,9 +90,10 @@ def _record_linux(duration):
 class MusicRecognizerThread(QThread):
     recording_audio_from_pc = Signal()
     recording_audio_from_pc_success = Signal()
+
     recognizing_via_audd_api = Signal()
-    recognizing_via_audd_api_success = Signal(str, str)
     recognizing_via_audd_api_error = Signal(int, str)
+    recognizing_via_audd_api_success = Signal(str, str)
 
     def __init__(self, service, parent=None):
         super().__init__(parent)
@@ -109,10 +110,6 @@ class MusicRecognizerThread(QThread):
             raw, rate, channels = _record_win32(duration)
         else:
             raw, rate, channels = _record_linux(duration)
-
-        if not raw:
-            logging.error("No audio recorded")
-            return
 
         if channels > 1:
             raw = audioop.tomono(raw, WIDTH, 0.5, 0.5)
@@ -133,28 +130,29 @@ class MusicRecognizerThread(QThread):
             with open(self.temp_wav, "rb") as f:
                 resp = requests.post(
                     "https://api.audd.io/",
-                    data={
-                        "api_token": self.window.audd_api_token_setting,
-                        "return": "apple_music,spotify,deezer",
-                    },
+                    data={"api_token": self.window.audd_api_token_setting},
                     files={"file": f},
                     timeout=10,
                 )
 
             resp_json = resp.json()
 
-        if resp_json["status"] == "success":
-            r = resp_json.get("result")
-            if r:
-                self.recognizing_via_audd_api_success.emit(r["title"], r["artist"])
+            if resp_json["status"] == "success":
+                r = resp_json.get("result")
+                if r:
+                    self.recognizing_via_audd_api_success.emit(r["title"], r["artist"])
+                else:
+                    self.recognizing_via_audd_api_error.emit(
+                        0,
+                        "Music not recognized; try a different"
+                        " time range or increase the recording length in the settings.",
+                    )
             else:
-                self.recognizing_via_audd_api_error.emit(0, "Music not recognized")
-        else:
-            e = resp_json.get("error", {})
-            code = e.get("error_code", "Unknown code")
-            msg = e.get("error_message", "Unknown error")
-            logging.error(resp_json)
-            self.recognizing_via_audd_api_error.emit(code, msg)
+                e = resp_json.get("error", {})
+                code = e.get("error_code", "Unknown code")
+                msg = e.get("error_message", "Unknown error")
+                logging.error(resp_json)
+                self.recognizing_via_audd_api_error.emit(code, msg)
 
     def stop(self):
         self.terminate()

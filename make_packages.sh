@@ -2,7 +2,7 @@
 set -e
 
 SRC_DIR="$(pwd)"
-VERSION="1.28.0"
+VERSION="1.29.0-rc1"
 APP_NAME="YTMDPlayer"
 DESCRIPTION="Turns the YouTube Music site into a desktop application."
 MAINTAINER="deeffest"
