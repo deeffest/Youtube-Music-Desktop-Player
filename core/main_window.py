@@ -54,7 +54,7 @@ from qfluentwidgets5 import (
     FluentIcon as FIF,
 )
 from packaging import version as pkg_version
-from discordrpc import RPC, Button, Activity, progress_bar
+from discordrpc import RPC, button, Activity, progress_bar
 
 from core.helpers import (
     open_url,
@@ -266,6 +266,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("last_save_lyrics_path", os.path.expanduser("~"))
         if self.settings_.value("prefer_system_ytdlp") is None:
             self.settings_.setValue("prefer_system_ytdlp", 0)
+        if self.settings_.value("lyrics_dialog_opacity") is None:
+            self.settings_.setValue("lyrics_dialog_opacity", 100)
+        if self.settings_.value("comments_dialog_opacity") is None:
+            self.settings_.setValue("comments_dialog_opacity", 100)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(
@@ -337,6 +341,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.prefer_system_ytdlp_setting = int(
             self.settings_.value("prefer_system_ytdlp")
+        )
+        self.lyrics_dialog_opacity_setting = int(
+            self.settings_.value("lyrics_dialog_opacity")
+        )
+        self.comments_dialog_opacity_setting = int(
+            self.settings_.value("comments_dialog_opacity")
         )
 
     def configure_window(self):
@@ -1037,11 +1047,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.music_recognizer_thread.recognizing_via_audd_api.connect(
             self.on_recognizing_via_audd_api
         )
-        self.music_recognizer_thread.recognizing_via_audd_api_success.connect(
-            self.on_recognizing_via_audd_api_success
-        )
         self.music_recognizer_thread.recognizing_via_audd_api_error.connect(
             self.on_recognizing_via_audd_api_error
+        )
+        self.music_recognizer_thread.recognizing_via_audd_api_success.connect(
+            self.on_recognizing_via_audd_api_success
         )
         self.music_recognizer_thread.finished.connect(self.on_recognizing_finish)
         self.music_recognizer_thread.start()
@@ -1661,8 +1671,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     act_type=Activity.Listening,
                     **progress_bar(0, duration),
                     buttons=[
-                        Button("Play in Browser", video_url),
-                        Button("Get App on GitHub", project_url),
+                        button("Play in Browser", video_url),
+                        button("Get App on GitHub", project_url),
                     ],
                 )
             except Exception as e:
@@ -1972,6 +1982,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.ToolBar.hide()
             self.hide_toolbar_setting = 1
+        self.settings_.setValue("hide_toolbar", self.hide_toolbar_setting)
 
     def cut(self):
         self.webpage.triggerAction(QWebEnginePage.WebAction.Cut)

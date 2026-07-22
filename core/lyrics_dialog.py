@@ -1,101 +1,19 @@
 import os
-import re
 import bisect
 import logging
 from typing import TYPE_CHECKING
 
-import requests
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QThread, QSize, pyqtSignal
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QDialog, QLabel, QFileDialog
 from qfluentwidgets5 import SplashScreen, Action, RoundMenu
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 
 from core.helpers import recolor_icon, open_url
+from core.lyrics_loader import LoadLyricsThread
 from core.ui.ui_lyrics_dialog import Ui_LyricsDialog
 
 if TYPE_CHECKING:
     from core.main_window import MainWindow
-
-
-class LoadLyricsThread(QThread):
-    load_lyrics_success = pyqtSignal(list)
-    load_lyrics_failed = pyqtSignal()
-    load_lyrics_error = pyqtSignal(str)
-
-    def __init__(self, title, artist, duration, cache_dir, video_id, parent=None):
-        super().__init__(parent)
-        self.title = title
-        self.artist = artist
-        self.duration = duration
-        self.cache_dir = cache_dir
-        self.video_id = video_id
-
-    def run(self):
-        cache_path = os.path.join(self.cache_dir, "lyrics", f"{self.video_id}.lrc")
-        os.makedirs(os.path.dirname(cache_path), exist_ok=True)
-
-        files = sorted(
-            [
-                os.path.join(self.cache_dir, "lyrics", f)
-                for f in os.listdir(os.path.join(self.cache_dir, "lyrics"))
-                if f.endswith(".lrc")
-            ],
-            key=os.path.getmtime,
-        )
-        while len(files) >= 100:
-            os.remove(files.pop(0))
-
-        def parse(lrc):
-            pattern = re.compile(r"\[(\d+):(\d+(?:\.\d+)?)\](.*)")
-            lines = []
-            for raw in lrc.splitlines():
-                m = pattern.match(raw.strip())
-                if m:
-                    t = int(m.group(1)) * 60 + float(m.group(2))
-                    lines.append((t, m.group(3).strip()))
-            return lines
-
-        if os.path.exists(cache_path):
-            with open(cache_path, encoding="utf-8") as f:
-                lrc = f.read()
-            lines = parse(lrc)
-            if lines:
-                self.load_lyrics_success.emit(lines)
-                return
-
-        session = requests.Session()
-        retry = Retry(total=2, backoff_factor=0.3)
-        session.mount("https://", HTTPAdapter(max_retries=retry))
-
-        try:
-            resp = session.get(
-                "https://lrclib.net/api/get",
-                params={
-                    "track_name": self.title,
-                    "artist_name": self.artist,
-                    "duration": self.duration,
-                },
-                timeout=15,
-            )
-            data = resp.json() if resp.status_code == 200 else {}
-            lrc = data.get("syncedLyrics", "")
-            lines = parse(lrc) if lrc else []
-
-            if lines:
-                with open(cache_path, "w", encoding="utf-8") as f:
-                    f.write(lrc)
-                self.load_lyrics_success.emit(lines)
-            else:
-                self.load_lyrics_failed.emit()
-        except Exception as e:
-            logging.error(f"Failed to load lyrics: {str(e)}")
-            self.load_lyrics_error.emit(str(e))
-
-    def stop(self):
-        self.terminate()
-        self.wait()
 
 
 class LyricsDialog(QDialog, Ui_LyricsDialog):
@@ -126,6 +44,10 @@ class LyricsDialog(QDialog, Ui_LyricsDialog):
             self.windowIcon(), self.scrollArea, enableTitleBar=False
         )
         self.splash_screen.setIconSize(QSize(102, 102))
+
+        opacity = self.window.lyrics_dialog_opacity_setting
+        if opacity < 100:
+            self.setWindowOpacity(opacity / 100)
 
     def configure_ui_elements(self):
         self.verticalLayout_4.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -162,9 +84,9 @@ class LyricsDialog(QDialog, Ui_LyricsDialog):
             self.window.video_id,
             self,
         )
-        self.load_lyrics_thread.load_lyrics_success.connect(self.on_load_lyrics_success)
-        self.load_lyrics_thread.load_lyrics_failed.connect(self.on_load_lyrics_failed)
         self.load_lyrics_thread.load_lyrics_error.connect(self.on_load_lyrics_error)
+        self.load_lyrics_thread.load_lyrics_failed.connect(self.on_load_lyrics_failed)
+        self.load_lyrics_thread.load_lyrics_success.connect(self.on_load_lyrics_success)
         self.load_lyrics_thread.finished.connect(self.on_load_lyrics_finished)
         self.load_lyrics_thread.start()
 
@@ -302,6 +224,26 @@ class LyricsDialog(QDialog, Ui_LyricsDialog):
 
     def contextMenuEvent(self, event):
         self.main_menu.exec(event.globalPos())
+
+    def keyPressEvent(self, event):
+        key = event.key()
+        if key in (Qt.Key.Key_Plus, Qt.Key.Key_Equal):
+            delta = 5
+        elif key == Qt.Key.Key_Minus:
+            delta = -5
+        else:
+            super().keyPressEvent(event)
+            return
+
+        current = self.window.lyrics_dialog_opacity_setting
+        new_value = min(100, max(50, current + delta))
+
+        if new_value != current:
+            self.window.lyrics_dialog_opacity_setting = new_value
+            self.window.settings_.setValue("lyrics_dialog_opacity", new_value)
+            self.setWindowOpacity(new_value / 100)
+
+        event.accept()
 
     def closeEvent(self, event):
         if self.load_lyrics_thread and self.load_lyrics_thread.isRunning():
