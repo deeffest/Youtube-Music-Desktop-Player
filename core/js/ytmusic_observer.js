@@ -24,6 +24,17 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                 : src;
         };
 
+        const getArtist = (runs) => {
+            const boundary = runs.findIndex((r) => r.text.trim() === "•");
+            return boundary === -1
+                ? runs
+                : runs
+                      .slice(0, boundary)
+                      .filter((_, i) => i % 2 === 0)
+                      .map((r) => r.text.trim())
+                      .filter(Boolean);
+        };
+
         const updateSongInfo = () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
@@ -44,14 +55,12 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
 
                 const title =
                     document
-                        .querySelector(".title.style-scope.ytmusic-player-bar")
+                        .querySelector(".ytp-title-link")
                         ?.textContent.trim() || "";
-                const artist =
-                    document
-                        .querySelector(".byline.style-scope.ytmusic-player-bar")
-                        ?.textContent.trim()
-                        .split("•")[0]
-                        .trim() || "";
+                const artist = getArtist(
+                    document.querySelector("ytmusic-player-bar")?.inst?.__data
+                        ?.displayedMetadata?.bylineText?.[0]?.runs ?? [],
+                ).join(", ");
                 const artwork = getArtwork();
                 const videoId = link?.href
                     ? new URL(link.href).searchParams.get("v") || ""
