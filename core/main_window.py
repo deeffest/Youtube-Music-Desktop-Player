@@ -1755,9 +1755,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webview.stop()
 
     def search_on(self, service):
-        query = quote_plus(f"{self.title}+-+{self.artist}")
+        query = quote_plus(f"{self.title} - {self.artist}")
         if service == "MusicBrainz":
-            open_url(f"https://musicbrainz.org/search?query={query}&type=release")
+            open_url(f"https://musicbrainz.org/search?query={query}&type=recording")
         elif service == "Spotify":
             open_url(f"https://open.spotify.com/search/{query}/tracks")
         elif service == "Genius":
