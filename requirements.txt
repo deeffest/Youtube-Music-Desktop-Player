@@ -1,8 +1,8 @@
 pynput==1.8.2
 pyqt5==5.15.11
-packaging==26.2
+packaging==26.3
 requests==2.34.2
-discord-rpc==6.0
+discord-rpc==6.5
 pyinstaller==6.19.0
 pyqtwebengine==5.15.7
 comtypes==1.4.16; sys_platform=="win32"
