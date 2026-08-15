@@ -1,6 +1,5 @@
-Drop your .js files into this folder, or into:
-Windows: C:\Users\USERNAME\Youtube-Music-Desktop-Player\plugins
-Linux:   /home/USERNAME/Youtube-Music-Desktop-Player/plugins
+Option 1:
+Drop your `.js` files (scripts) into this folder.
 
-Create the "plugins" folder if it doesn't exist, and make sure "Show hidden files
-and folders" is enabled in your file manager.
+Option 2:
+Go to "Settings" > "Advanced" > "Open plugins folder", then drop your `.js` files (scripts) into it.

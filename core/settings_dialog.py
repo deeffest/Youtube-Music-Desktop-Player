@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QDialog, QSystemTrayIcon
 
-from core.helpers import recolor_icon
+from core.helpers import recolor_icon, open_url
 from core.ui.ui_settings_dialog import Ui_SettingsDialog
 
 if TYPE_CHECKING:
@@ -60,7 +60,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.checkBox_13.setChecked(self.window.hotkey_playback_control_setting)
         self.checkBox_8.setChecked(self.window.fullscreen_mode_support_setting)
         self.checkBox_9.setChecked(self.window.support_animated_scrolling_setting)
-        self.checkBox_12.setChecked(self.window.disable_frame_rate_limit_setting)
         self.checkBox_15.setChecked(self.window.do_not_save_cookies_setting)
         self.pushButton_4.setIcon(
             recolor_icon(
@@ -156,6 +155,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.checkBox_14.setEnabled(False)
             self.checkBox_14.setToolTip("Works only on Windows.")
         self.checkBox_16.setChecked(self.window.prefer_system_ytdlp_setting)
+        self.checkBox_19.setChecked(self.window.check_for_updates_at_startup_setting)
+        self.checkBox_20.setChecked(self.window.disable_navigation_restrictions_setting)
+        self.pushButton_5.clicked.connect(lambda: open_url(self.window.logs_dir))
+        self.pushButton_6.clicked.connect(lambda: open_url(self.window.plugins_dir))
 
     def save_settings(self):
         self.window.save_last_win_geometry_setting = int(self.checkBox.isChecked())
@@ -192,10 +195,6 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         )
         self.window.settings_.setValue(
             "support_animated_scrolling", self.window.support_animated_scrolling_setting
-        )
-        self.window.disable_frame_rate_limit_setting = int(self.checkBox_12.isChecked())
-        self.window.settings_.setValue(
-            "disable_frame_rate_limit", self.window.disable_frame_rate_limit_setting
         )
         self.window.do_not_save_cookies_setting = int(self.checkBox_15.isChecked())
         self.window.settings_.setValue(
@@ -240,6 +239,20 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.prefer_system_ytdlp_setting = int(self.checkBox_16.isChecked())
         self.window.settings_.setValue(
             "prefer_system_ytdlp", self.window.prefer_system_ytdlp_setting
+        )
+        self.window.check_for_updates_at_startup_setting = int(
+            self.checkBox_19.isChecked()
+        )
+        self.window.settings_.setValue(
+            "check_for_updates_at_startup",
+            self.window.check_for_updates_at_startup_setting,
+        )
+        self.window.disable_navigation_restrictions_setting = int(
+            self.checkBox_20.isChecked()
+        )
+        self.window.settings_.setValue(
+            "disable_navigation_restrictions",
+            self.window.disable_navigation_restrictions_setting,
         )
 
         self.close()
