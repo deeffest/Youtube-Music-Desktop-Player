@@ -106,8 +106,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.author = app_info[4]
         self.website = app_info[5]
         self.current_dir = app_info[6]
-        self.home_dir = app_info[7]
-        self.data_dir = app_info[8]
+        self.data_dir = app_info[7]
+        self.home_dir = app_info[8]
+        self.logs_dir = app_info[9]
+        self.plugins_dir = app_info[10]
 
         self.title = ""
         self.artist = ""
@@ -270,6 +272,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("lyrics_dialog_opacity", 100)
         if self.settings_.value("comments_dialog_opacity") is None:
             self.settings_.setValue("comments_dialog_opacity", 100)
+        if self.settings_.value("check_for_updates_at_startup") is None:
+            self.settings_.setValue("check_for_updates_at_startup", 1)
+        if self.settings_.value("disable_navigation_restrictions") is None:
+            self.settings_.setValue("disable_navigation_restrictions", 0)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(
@@ -347,6 +353,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.comments_dialog_opacity_setting = int(
             self.settings_.value("comments_dialog_opacity")
+        )
+        self.check_for_updates_at_startup_setting = int(
+            self.settings_.value("check_for_updates_at_startup")
+        )
+        self.disable_navigation_restrictions_setting = int(
+            self.settings_.value("disable_navigation_restrictions")
         )
 
     def configure_window(self):
@@ -1237,7 +1249,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def activate_custom_plugins(self):
         plugin_locations = [
             os.path.join(self.current_dir, "plugins"),
-            os.path.join(self.home_dir, "plugins"),
+            self.plugins_dir,
         ]
 
         seen_plugins = set()
@@ -1317,7 +1329,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if self.splash_screen is not None:
                 self.close_splash_screen()
-                self.check_updates()
+                if self.check_for_updates_at_startup_setting == 1:
+                    self.check_updates()
 
     def on_load_started(self):
         self.reload_tbutton.setToolTip("Stop")

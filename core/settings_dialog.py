@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDialog, QSystemTrayIcon
 
-from core.helpers import recolor_icon
+from core.helpers import recolor_icon, open_url
 from core.ui.ui_settings_dialog import Ui_SettingsDialog
 
 if TYPE_CHECKING:
@@ -166,6 +166,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             self.checkBox_14.setEnabled(False)
             self.checkBox_14.setToolTip("Works only on Windows.")
         self.checkBox_16.setChecked(self.window.prefer_system_ytdlp_setting)
+        self.checkBox_12.setChecked(self.window.check_for_updates_at_startup_setting)
+        self.checkBox_19.setChecked(self.window.disable_navigation_restrictions_setting)
+        self.pushButton_5.clicked.connect(lambda: open_url(self.window.logs_dir))
+        self.pushButton_6.clicked.connect(lambda: open_url(self.window.plugins_dir))
 
     def save_settings(self):
         self.window.save_last_win_geometry_setting = int(self.checkBox.isChecked())
@@ -258,6 +262,20 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.window.prefer_system_ytdlp_setting = int(self.checkBox_16.isChecked())
         self.window.settings_.setValue(
             "prefer_system_ytdlp", self.window.prefer_system_ytdlp_setting
+        )
+        self.window.check_for_updates_at_startup_setting = int(
+            self.checkBox_12.isChecked()
+        )
+        self.window.settings_.setValue(
+            "check_for_updates_at_startup",
+            self.window.check_for_updates_at_startup_setting,
+        )
+        self.window.disable_navigation_restrictions_setting = int(
+            self.checkBox_19.isChecked()
+        )
+        self.window.settings_.setValue(
+            "disable_navigation_restrictions",
+            self.window.disable_navigation_restrictions_setting,
         )
 
         self.close()

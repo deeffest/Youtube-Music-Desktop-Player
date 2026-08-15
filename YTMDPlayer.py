@@ -15,11 +15,10 @@ from core.application import SingletonApplication
 NAME = "Youtube-Music-Desktop-Player"
 DISPLAY_NAME = "YouTube Music Desktop Player"
 SHORT_NAME = "YTMDPlayer"
-VERSION = "1.29.0"
+VERSION = "1.30.0"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-HOME_DIR = os.path.join(os.path.expanduser("~"), NAME)
 DATA_DIR = os.path.join(
     QStandardPaths.writableLocation(
         QStandardPaths.StandardLocation.AppLocalDataLocation
@@ -27,6 +26,9 @@ DATA_DIR = os.path.join(
     AUTHOR,
     NAME,
 )
+HOME_DIR = os.path.join(os.path.expanduser("~"), NAME)
+LOGS_DIR = os.path.join(HOME_DIR, "logs")
+PLUGINS_DIR = os.path.join(HOME_DIR, "plugins")
 
 UNIQUE_KEY = f"{AUTHOR}.{NAME}"
 ACCENT_COLOR = QColor(255, 41, 41)
@@ -86,13 +88,10 @@ def hide_home_folder():
 
 
 def init_logging():
-    log_dir = os.path.join(HOME_DIR, "logs")
-    os.makedirs(log_dir, exist_ok=True)
-
     from logging.handlers import RotatingFileHandler
 
     rotating_handler = RotatingFileHandler(
-        os.path.join(log_dir, "app.log"),
+        os.path.join(LOGS_DIR, "app.log"),
         maxBytes=5 * 1024 * 1024,
         backupCount=5,
         encoding="utf-8",
@@ -311,6 +310,10 @@ def set_app_palette(app, theme_setting):
 
 
 def main():
+    os.makedirs(HOME_DIR, exist_ok=True)
+    os.makedirs(LOGS_DIR, exist_ok=True)
+    os.makedirs(PLUGINS_DIR, exist_ok=True)
+
     hide_home_folder()
     init_logging()
     set_desktop_icon()
@@ -371,8 +374,10 @@ def main():
             AUTHOR,
             WEBSITE,
             CURRENT_DIR,
-            HOME_DIR,
             DATA_DIR,
+            HOME_DIR,
+            LOGS_DIR,
+            PLUGINS_DIR,
         ],
     )
     app.aboutToQuit.connect(window.app_quit)
