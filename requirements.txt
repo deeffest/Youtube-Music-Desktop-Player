@@ -8,5 +8,5 @@ pyqtwebengine==5.15.7
 comtypes==1.4.16; sys_platform=="win32"
 python-xlib==0.33; sys_platform=="linux"
 pyaudiowpatch==0.2.12.8; sys_platform=="win32"
-git+https://github.com/deeffest/PyQt-Frameless-Window.git@cb78a40
-git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@0d8a126
+git+https://github.com/deeffest/PyQt-Frameless-Window.git@e088c5f
+git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@c64150c
