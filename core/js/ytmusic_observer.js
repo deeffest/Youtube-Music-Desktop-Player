@@ -5,7 +5,6 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
         const backend = channel.objects.backend;
         let lastSongState = "",
             lastSongInfo = {},
-            lastSongProgress = {},
             lastLikeStatus = "";
         let debounceTimer = null,
             DEBOUNCE_DELAY = 500;
@@ -15,13 +14,19 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                 ".ad-showing, .ad-interrupting, .ytp-ad-text",
             );
 
-        const getArtwork = () => {
-            const src = document.querySelector(
-                ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
-            )?.src;
-            return /w\d+-h\d+/.test(src)
-                ? src.replace(/w\d+-h\d+/, "w544-h544")
-                : src;
+        const getTitle = (title) => {
+            const bar =
+                document
+                    .querySelector(".title.style-scope.ytmusic-player-bar")
+                    ?.textContent.trim() || "";
+            const idx = bar.lastIndexOf(title);
+            if (idx === -1) return title;
+            return (
+                bar
+                    .slice(0, idx)
+                    .replace(/\s*-\s*$/, "")
+                    .trim() || title
+            );
         };
 
         const getArtist = (runs) => {
@@ -33,6 +38,15 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                       .filter((_, i) => i % 2 === 0)
                       .map((r) => r.text.trim())
                       .filter(Boolean);
+        };
+
+        const getArtwork = () => {
+            const src = document.querySelector(
+                ".thumbnail-image-wrapper .image.style-scope.ytmusic-player-bar",
+            )?.src;
+            return /w\d+-h\d+/.test(src)
+                ? src.replace(/w\d+-h\d+/, "w544-h544")
+                : src;
         };
 
         const updateSongInfo = () => {
@@ -53,10 +67,7 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     return;
                 }
 
-                const title =
-                    document
-                        .querySelector(".ytp-title-link")
-                        ?.textContent.trim() || "";
+                const title = getTitle(link.textContent.trim());
                 const artist = getArtist(
                     document.querySelector("ytmusic-player-bar")?.inst?.__data
                         ?.displayedMetadata?.bylineText?.[0]?.runs ?? [],
@@ -76,7 +87,6 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     artist !== lastSongInfo.artist ||
                     artwork !== lastSongInfo.artwork ||
                     videoId !== lastSongInfo.videoId;
-
                 if (!changed || isAdPlaying()) return;
 
                 backend.song_info_changed(
@@ -94,6 +104,7 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     videoId,
                     duration,
                 };
+                updateSongStatus();
             }, DEBOUNCE_DELAY);
         };
 

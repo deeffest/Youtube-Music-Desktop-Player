@@ -12,6 +12,8 @@ class HotkeyController(QThread):
     play_pause = Signal()
     previous = Signal()
     next = Signal()
+    volume_up = Signal()
+    volume_down = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -35,6 +37,10 @@ class HotkeyController(QThread):
                     self.previous.emit()
                 elif key == keyboard.Key.right:
                     self.next.emit()
+                elif key == keyboard.Key.up:
+                    self.volume_up.emit()
+                elif key == keyboard.Key.down:
+                    self.volume_down.emit()
         except AttributeError as e:
             logging.error(f"Failed to handle hotkey: {str(e)}")
 

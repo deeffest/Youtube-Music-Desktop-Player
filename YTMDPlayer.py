@@ -327,7 +327,7 @@ def main():
     if DEBUG:
         os.environ["QTWEBENGINE_REMOTE_DEBUGGING"] = str(find_free_port())
 
-    from core.main_window import MainWindow
+    from PySide6 import QtWebEngineWidgets  # noqa: F401
 
     app = SingletonApplication(sys.argv, UNIQUE_KEY)
     app.setApplicationName(SHORT_NAME)
@@ -343,6 +343,8 @@ def main():
     else:
         app.styleHints().setColorScheme(Qt.ColorScheme.Light)
     set_app_palette(app, light_theme_setting)
+
+    from core.main_window import MainWindow
 
     window = MainWindow(
         app_settings,

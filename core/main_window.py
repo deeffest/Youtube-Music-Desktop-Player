@@ -4,7 +4,7 @@ import json
 import base64
 import logging
 import platform
-from urllib.parse import urlparse, quote_plus
+from urllib.parse import urlparse, quote
 
 from PySide6.QtCore import (
     Qt,
@@ -74,15 +74,23 @@ from core.settings_dialog import SettingsDialog
 from core.comments_dialog import CommentsDialog
 from core.system_tray_icon import SystemTrayIcon
 from core.ui.ui_main_window import Ui_MainWindow
-from core.ytmusic_downloader import DownloadThread
 from core.hotkey_controller import HotkeyController
+from core.ytmusic_downloader import YTMusicDownloader
 from core.text_view_msg_box import TextViewMessageBox
 from core.web_channel_backend import WebChannelBackend
 from core.music_recognizer import MusicRecognizerThread
+from core.trackers_list_updater import TrackersListUpdater
 from core.web_engine_url_request_interceptor import WebEngineUrlRequestInterceptor
 
 if platform.system() == "Windows":
-    from core.taskbar_api import TaskbarAPI, THBF_ENABLED, THBF_DISABLED  # type: ignore
+    from core.taskbar_api import (
+        TaskbarAPI,
+        THBF_ENABLED,
+        THBF_DISABLED,
+        TBPF_NORMAL,
+        TBPF_PAUSED,
+        TBPF_NOPROGRESS,
+    )
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -110,40 +118,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.title = ""
         self.artist = ""
         self.artwork = ""
-        self.video_id = ""
         self.duration = 0
-        self.current_time = "0"
-        self.song_state = "NoSong"
-        self.song_status = "Indifferent"
-        self.icon_folder = f"{self.current_dir}/resources/icons"
+        self.video_id = ""
+        self.taskbar = None
+        self.current_url = None
         self.force_exit = False
+        self.current_time = "0"
+        self.discord_rpc = None
+        self.lyrics_dialog = None
+        self.comments_dialogs = {}
+        self.song_state = "NoSong"
         self.is_restarting = False
         self.is_downloading = False
-        self.current_url = None
-        self.download_thread = None
+        self.settings_dialog = None
+        self.system_tray_icon = None
+        self.song_status = "Indifferent"
         self.update_checker_thread = None
-        self.hotkey_controller_thread = None
         self.music_recognizer_thread = None
+        self.hotkey_controller_thread = None
+        self.taskbar_buttons_created = False
+        self.ytmusic_downloader_thread = None
         self.downloading_state_tool_tip = None
         self.recognizing_state_tool_tip = None
-        self.discord_rpc = None
-        self.default_geometry = QRect(get_geometry(1000, 799))
+        self.trackers_list_updater_thread = None
         self.default_home_url = "https://music.youtube.com/"
-        self.system_tray_icon = None
-        self.comments_dialogs = {}
-        self.lyrics_dialog = None
-        self.settings_dialog = None
-        self.taskbar = None
-
-        self.load_settings()
-        self.configure_window()
-        self.connect_signals()
-        self.connect_shortcuts()
-        self.create_actions()
-        self.create_submenus()
-        self.create_context_menus()
-        self.setup_web_engine()
-        self.show_splash_screen()
+        self.default_geometry = QRect(get_geometry(1000, 799))
+        self.icon_folder = f"{self.current_dir}/resources/icons"
 
         if platform.system() == "Windows":
             self.ffmpeg_url = (
@@ -180,6 +180,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         os.makedirs(self.cache_dir, exist_ok=True)
         self.cookies_txt = os.path.join(self.cache_dir, "cookies.txt")
 
+        self.load_settings()
+        self.configure_window()
+        self.connect_signals()
+        self.connect_shortcuts()
+        self.create_actions()
+        self.create_submenus()
+        self.create_context_menus()
+        self.setup_web_engine()
+        self.show_splash_screen()
         self.configure_ui_elements()
         self.activate_plugins()
         self.activate_custom_plugins()
@@ -272,6 +281,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings_.setValue("check_for_updates_at_startup", 1)
         if self.settings_.value("disable_navigation_restrictions") is None:
             self.settings_.setValue("disable_navigation_restrictions", 0)
+        if self.settings_.value("block_google_trackers") is None:
+            self.settings_.setValue("block_google_trackers", 1)
+        if self.settings_.value("shazam_recording_lenght") is None:
+            self.settings_.setValue("shazam_recording_lenght", 5)
 
         self.ad_blocker_setting = int(self.settings_.value("ad_blocker"))
         self.save_last_win_geometry_setting = int(
@@ -356,6 +369,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.disable_navigation_restrictions_setting = int(
             self.settings_.value("disable_navigation_restrictions")
         )
+        self.block_google_trackers_setting = int(
+            self.settings_.value("block_google_trackers")
+        )
+        self.shazam_recording_lenght_setting = int(
+            self.settings_.value("shazam_recording_lenght")
+        )
 
     def configure_window(self):
         setTheme(Theme.DARK) if self.light_theme_setting == 0 else setTheme(Theme.LIGHT)
@@ -399,20 +418,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.go_to_youtube_shortcut.setEnabled(False)
         self.go_to_youtube_shortcut.activated.connect(self.go_to_youtube)
 
-        self.musicbrainz_shortcut = QShortcut(QKeySequence("Ctrl+B"), self)
-        self.musicbrainz_shortcut.setEnabled(False)
-        self.musicbrainz_shortcut.activated.connect(
-            lambda: self.search_on("MusicBrainz")
-        )
-
-        self.spotify_shortcut = QShortcut(QKeySequence("Ctrl+O"), self)
-        self.spotify_shortcut.setEnabled(False)
-        self.spotify_shortcut.activated.connect(lambda: self.search_on("Spotify"))
-
-        self.genius_shortcut = QShortcut(QKeySequence("Ctrl+G"), self)
-        self.genius_shortcut.setEnabled(False)
-        self.genius_shortcut.activated.connect(lambda: self.search_on("Genius"))
-
         self.download_song_shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
         self.download_song_shortcut.setEnabled(False)
         self.download_song_shortcut.activated.connect(self.download_song)
@@ -431,6 +436,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.audd_shortcut = QShortcut(QKeySequence("Ctrl+U"), self)
         self.audd_shortcut.activated.connect(lambda: self.recognize_music("AudD"))
+
+        self.shazam_shortcut = QShortcut(QKeySequence("Ctrl+H"), self)
+        self.shazam_shortcut.activated.connect(lambda: self.recognize_music("Shazam"))
 
         self.settings_shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
         self.settings_shortcut.activated.connect(self.settings)
@@ -464,8 +472,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             self.webprofile.setCachePath(f"{self.data_dir}/cache/QtWebEngine/Default")
 
-        self.webinterceptor = WebEngineUrlRequestInterceptor()
+        self.webinterceptor = WebEngineUrlRequestInterceptor(self)
         self.webprofile.setUrlRequestInterceptor(self.webinterceptor)
+
+        if self.block_google_trackers_setting == 1:
+            self.update_trackers_list()
 
         webchannel_backend = WebChannelBackend(self)
         self.webchannel = QWebChannel()
@@ -534,7 +545,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.spotify_action = MultiAction()
 
-        self.genius_action = MultiAction()
+        self.apple_music_action = MultiAction()
+
+        self.tidal_action = MultiAction()
+
+        self.amazon_music_action = MultiAction()
+
+        self.deezer_action = MultiAction()
 
         self.download_song_action = Action("Song", shortcut="Ctrl+D")
         self.download_song_action.setIcon(
@@ -565,6 +582,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.comments_action.triggered.connect(self.comments)
 
         self.audd_action = MultiAction()
+
+        self.shazam_action = MultiAction()
 
         self.restart_app_action = Action("Restart app", shortcut="Ctrl+Shift+R")
         self.restart_app_action.setIcon(
@@ -876,7 +895,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             self.comments_dialog.show()
 
-    def on_comments_destroyed(self, video_id: str):
+    def on_comments_destroyed(self, video_id):
         self.comments_dialogs.pop(video_id, None)
         if not self.comments_dialogs:
             self.toggle_script("comments_dialog.js", False)
@@ -946,7 +965,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_enter_url_dialog(self):
         dialog = InputMessageBox("Enter URL", parent=self)
-        dialog.line_edit.setPlaceholderText("Only music.youtube.com URLs are supported")
+        dialog.line_edit.setPlaceholderText(
+            "Enter the URL for a song, album, podcast, etc."
+        )
         dialog.yesButton.setText("Go")
         if dialog.exec():
             url = dialog.line_edit.text().strip()
@@ -963,28 +984,55 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         action.triggered.connect(self.hide_toolbar)
         return action
 
+    def create_shazam_action(self):
+        action = Action("Shazam API", shortcut="Ctrl+H")
+        action.setIcon(QIcon(f"{self.icon_folder}/shazam.png"))
+        action.triggered.connect(lambda: self.recognize_music("Shazam"))
+        return action
+
     def create_audd_action(self):
         action = Action("AudD API", shortcut="Ctrl+U")
         action.setIcon(QIcon(f"{self.icon_folder}/audd.png"))
         action.triggered.connect(lambda: self.recognize_music("AudD"))
         return action
 
-    def create_genius_action(self):
-        action = Action("Genius", shortcut="Ctrl+G")
-        action.setIcon(QIcon(f"{self.icon_folder}/genius.png"))
+    def create_deezer_action(self):
+        action = Action("Deezer")
+        action.setIcon(QIcon(f"{self.icon_folder}/deezer.png"))
         action.setEnabled(False)
-        action.triggered.connect(lambda: self.search_on("Genius"))
+        action.triggered.connect(lambda: self.search_on("Deezer"))
+        return action
+
+    def create_amazon_music_action(self):
+        action = Action("Amazon Music")
+        action.setIcon(QIcon(f"{self.icon_folder}/amazon_music.png"))
+        action.setEnabled(False)
+        action.triggered.connect(lambda: self.search_on("Amazon Music"))
+        return action
+
+    def create_tidal_action(self):
+        action = Action("Tidal")
+        action.setIcon(QIcon(f"{self.icon_folder}/tidal.png"))
+        action.setEnabled(False)
+        action.triggered.connect(lambda: self.search_on("Tidal"))
+        return action
+
+    def create_apple_music_action(self):
+        action = Action("Apple Music US")
+        action.setIcon(QIcon(f"{self.icon_folder}/apple_music.png"))
+        action.setEnabled(False)
+        action.triggered.connect(lambda: self.search_on("Apple Music US"))
         return action
 
     def create_spotify_action(self):
-        action = Action("Spotify", shortcut="Ctrl+O")
+        action = Action("Spotify")
         action.setIcon(QIcon(f"{self.icon_folder}/spotify.png"))
         action.setEnabled(False)
         action.triggered.connect(lambda: self.search_on("Spotify"))
         return action
 
     def create_musicbrainz_action(self):
-        action = Action("MusicBrainz", shortcut="Ctrl+B")
+        action = Action("MusicBrainz")
         action.setIcon(QIcon(f"{self.icon_folder}/musicbrainz.png"))
         action.setEnabled(False)
         action.triggered.connect(lambda: self.search_on("MusicBrainz"))
@@ -1007,7 +1055,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.musicbrainz_action.add(menu, self.create_musicbrainz_action())
         self.spotify_action.add(menu, self.create_spotify_action())
-        self.genius_action.add(menu, self.create_genius_action())
+        self.apple_music_action.add(menu, self.create_apple_music_action())
+        self.tidal_action.add(menu, self.create_tidal_action())
+        self.amazon_music_action.add(menu, self.create_amazon_music_action())
+        self.deezer_action.add(menu, self.create_deezer_action())
         return menu
 
     def create_recognize_music_menu(self):
@@ -1018,6 +1069,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
         )
         self.audd_action.add(menu, self.create_audd_action())
+        self.shazam_action.add(menu, self.create_shazam_action())
         return menu
 
     def create_about_menu(self):
@@ -1044,8 +1096,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def recognize_music(self, service):
         self.audd_action.setEnabled(False)
         self.audd_shortcut.setEnabled(False)
+        self.shazam_action.setEnabled(False)
+        self.shazam_action.setEnabled(False)
 
-        self.music_recognizer_thread = MusicRecognizerThread(service, self)
+        if service == "AudD":
+            duration = self.audd_recording_lenght_setting
+        elif service == "Shazam":
+            duration = self.shazam_recording_lenght_setting
+
+        self.music_recognizer_thread = MusicRecognizerThread(service, duration, self)
         self.music_recognizer_thread.recording_audio_from_pc.connect(
             self.on_recording_audio_from_pc
         )
@@ -1060,6 +1119,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
         self.music_recognizer_thread.recognizing_via_audd_api_success.connect(
             self.on_recognizing_via_audd_api_success
+        )
+        self.music_recognizer_thread.recognizing_via_shazam_api.connect(
+            self.on_recognizing_via_shazam_api
+        )
+        self.music_recognizer_thread.recognizing_via_shazam_api_error.connect(
+            self.on_recognizing_via_shazam_api_error
+        )
+        self.music_recognizer_thread.recognizing_via_shazam_api_success.connect(
+            self.on_recognizing_via_shazam_api_success
         )
         self.music_recognizer_thread.finished.connect(self.on_recognizing_finish)
         self.music_recognizer_thread.start()
@@ -1112,7 +1180,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "Recognizing via AudD API", "Please wait..."
         )
 
-    def on_recognizing_via_audd_api_error(self, code, msg):
+    def on_recognizing_via_shazam_api(self):
+        self.show_recognizing_state_tooltip(
+            "Recognizing via Shazam API", "Please wait..."
+        )
+
+    def on_recognizing_via_audd_api_error(self, code, msg, service):
         self.hide_recognizing_state_tooltip()
 
         info_bar = InfoBar.error(
@@ -1130,7 +1203,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "Show error",
             self,
         )
-        button.clicked.connect(lambda: self.show_recognize_error(msg, info_bar))
+        button.clicked.connect(
+            lambda: self.show_recognize_error(msg, service, info_bar)
+        )
+        info_bar.addWidget(button)
+
+    def on_recognizing_via_shazam_api_error(self, code, msg, service):
+        self.hide_recognizing_state_tooltip()
+
+        info_bar = InfoBar.error(
+            title=f"Error code: {code}",
+            content="Recognize music failed!",
+            orient=Qt.Orientation.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self,
+        )
+
+        button = PushButton(
+            recolor_icon(f"{self.icon_folder}/show.png", self.light_theme_setting),
+            "Show error",
+            self,
+        )
+        button.clicked.connect(
+            lambda: self.show_recognize_error(msg, service, info_bar)
+        )
         info_bar.addWidget(button)
 
     def on_recognizing_via_audd_api_success(self, author, title):
@@ -1154,10 +1252,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         button.clicked.connect(lambda: self.search_song(f"{author} {title}", info_bar))
         info_bar.addWidget(button)
 
-    def show_recognize_error(self, msg, info_bar):
+    def on_recognizing_via_shazam_api_success(self, author, title):
+        self.hide_downloading_state_tooltip()
+
+        info_bar = InfoBar.success(
+            title=f"{author} - {title}",
+            content="Recognize music successfully!",
+            orient=Qt.Orientation.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.BOTTOM,
+            duration=-1,
+            parent=self,
+        )
+
+        button = PushButton(
+            recolor_icon(f"{self.icon_folder}/search.png", self.light_theme_setting),
+            "Search song",
+            self,
+        )
+        button.clicked.connect(lambda: self.search_song(f"{author} {title}", info_bar))
+        info_bar.addWidget(button)
+
+    def show_recognize_error(self, msg, service, info_bar):
         info_bar.close()
 
-        QTimer.singleShot(0, lambda: self.show_error_message(msg, "AudD API error"))
+        QTimer.singleShot(
+            0, lambda: self.show_error_message(msg, f"{service} API error")
+        )
 
     def search_song(self, query, info_bar):
         info_bar.close()
@@ -1186,6 +1307,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.audd_action.setEnabled(True)
         self.audd_shortcut.setEnabled(True)
+        self.shazam_action.setEnabled(True)
+        self.shazam_shortcut.setEnabled(True)
 
     def toggle_script(self, filenames, enabled, source=None, run_at=0, config=None):
         def inject_script(name, source, script_run_at):
@@ -1301,6 +1424,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def create_win_thumbnail_buttons(self):
         if platform.system() == "Windows" and self.win_thumbnail_buttons_setting == 1:
             self.taskbar = TaskbarAPI()
+
+    def update_trackers_list(self):
+        self.trackers_list_updater_thread = TrackersListUpdater(self)
+        self.trackers_list_updater_thread.trackers_list_updated.connect(
+            self.on_trackers_list_updated
+        )
+        self.trackers_list_updater_thread.start()
+
+    def on_trackers_list_updated(self, domains):
+        self.trackers_list_updater_thread = None
+        self.webinterceptor.blocked_domains = set(domains)
 
     def on_load_progress(self, progress):
         if progress > 70:
@@ -1460,22 +1594,74 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.taskbar is not None:
             if self.song_state == "Playing":
                 self.taskbar.update_button(1, flags=THBF_ENABLED)
+                self.taskbar.update_button(2, flags=THBF_ENABLED)
                 self.taskbar.update_button(
-                    2, icon=f"{self.icon_folder}/pause-taskbar.png", flags=THBF_ENABLED
+                    3,
+                    icon=f"{self.icon_folder}/pause-taskbar.png",
+                    tooltip="Pause",
+                    flags=THBF_ENABLED,
                 )
-                self.taskbar.update_button(3, flags=THBF_ENABLED)
+                self.taskbar.update_button(4, flags=THBF_ENABLED)
+                self.taskbar.update_button(5, flags=THBF_ENABLED)
+                self.taskbar.set_progress_state(TBPF_NORMAL)
             elif self.song_state == "Paused":
                 self.taskbar.update_button(1, flags=THBF_ENABLED)
+                self.taskbar.update_button(2, flags=THBF_ENABLED)
                 self.taskbar.update_button(
-                    2, icon=f"{self.icon_folder}/play-taskbar.png", flags=THBF_ENABLED
+                    3,
+                    icon=f"{self.icon_folder}/play-taskbar.png",
+                    tooltip="Play",
+                    flags=THBF_ENABLED,
                 )
-                self.taskbar.update_button(3, flags=THBF_ENABLED)
+                self.taskbar.update_button(4, flags=THBF_ENABLED)
+                self.taskbar.update_button(5, flags=THBF_ENABLED)
+                self.taskbar.set_progress_state(TBPF_PAUSED)
             else:
                 self.taskbar.update_button(1, flags=THBF_DISABLED)
+                self.taskbar.update_button(2, flags=THBF_DISABLED)
                 self.taskbar.update_button(
-                    2, icon=f"{self.icon_folder}/play-taskbar.png", flags=THBF_DISABLED
+                    3,
+                    icon=f"{self.icon_folder}/play-taskbar.png",
+                    tooltip="Play",
+                    flags=THBF_DISABLED,
                 )
-                self.taskbar.update_button(3, flags=THBF_DISABLED)
+                self.taskbar.update_button(4, flags=THBF_DISABLED)
+                self.taskbar.update_button(5, flags=THBF_DISABLED)
+                self.taskbar.set_progress_state(TBPF_NOPROGRESS)
+
+    def update_win_thumbnail_buttons_song_status(self):
+        if self.taskbar is not None:
+            if self.song_status == "Like":
+                self.taskbar.update_button(
+                    1, icon=f"{self.icon_folder}/like-taskbar-filled.png"
+                )
+                self.taskbar.update_button(
+                    5, icon=f"{self.icon_folder}/dislike-taskbar.png"
+                )
+            elif self.song_status == "Dislike":
+                self.taskbar.update_button(
+                    1, icon=f"{self.icon_folder}/like-taskbar.png"
+                )
+                self.taskbar.update_button(
+                    5,
+                    icon=f"{self.icon_folder}/dislike-taskbar-filled.png",
+                )
+            else:
+                self.taskbar.update_button(
+                    1, icon=f"{self.icon_folder}/like-taskbar.png"
+                )
+                self.taskbar.update_button(
+                    5, icon=f"{self.icon_folder}/dislike-taskbar.png"
+                )
+
+    def update_win_thumbnail_buttons_song_progress(self):
+        if self.taskbar is not None:
+            total_seconds = float(self.duration)
+            if total_seconds <= 0:
+                return
+            self.taskbar.set_progress_value(
+                int(float(self.current_time)), int(total_seconds)
+            )
 
     def show_system_tray_icon(self):
         if self.tray_icon_setting == 1:
@@ -1500,6 +1686,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         ),
                     )
                 )
+                self.system_tray_icon.play_pause_action.setText("Pause")
                 self.system_tray_icon.play_pause_action.setEnabled(True)
                 self.system_tray_icon.like_action.setEnabled(True)
                 self.system_tray_icon.previous_action.setEnabled(True)
@@ -1520,6 +1707,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         ),
                     )
                 )
+                self.system_tray_icon.play_pause_action.setText("Play")
                 self.system_tray_icon.play_pause_action.setEnabled(True)
                 self.system_tray_icon.like_action.setEnabled(True)
                 self.system_tray_icon.previous_action.setEnabled(True)
@@ -1540,6 +1728,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         ),
                     )
                 )
+                self.system_tray_icon.play_pause_action.setText("Play")
                 self.system_tray_icon.play_pause_action.setEnabled(False)
                 self.system_tray_icon.like_action.setEnabled(False)
                 self.system_tray_icon.previous_action.setEnabled(False)
@@ -1706,29 +1895,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.hotkey_controller_thread.play_pause.connect(self.play_pause)
             self.hotkey_controller_thread.previous.connect(self.previous)
             self.hotkey_controller_thread.next.connect(self.next)
+            self.hotkey_controller_thread.volume_up.connect(self.volume_up)
+            self.hotkey_controller_thread.volume_down.connect(self.volume_down)
             self.hotkey_controller_thread.start()
 
-    def dislike(self):
+    def play_pause(self):
         js = """
-        document
-            .querySelector(
-                "ytmusic-player-bar ytmusic-like-button-renderer " +
-                "yt-button-shape.dislike button"
-            )
-            ?.click();
+        var v = document.querySelector("video");
+        v && (v.paused ? v.play() : v.pause());
         """
         self.webpage.runJavaScript(js)
 
     def previous(self):
         js = """
         document.querySelector(".previous-button")?.click();
-        """
-        self.webpage.runJavaScript(js)
-
-    def play_pause(self):
-        js = """
-        var v = document.querySelector("video");
-        v && (v.paused ? v.play() : v.pause());
         """
         self.webpage.runJavaScript(js)
 
@@ -1749,6 +1929,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         self.webpage.runJavaScript(js)
 
+    def dislike(self):
+        js = """
+        document
+            .querySelector(
+                "ytmusic-player-bar ytmusic-like-button-renderer " +
+                "yt-button-shape.dislike button"
+            )
+            ?.click();
+        """
+        self.webpage.runJavaScript(js)
+
+    def volume_up(self):
+        js = """
+        var s = document.querySelector(".volume-slider");
+        s && (
+            s.value = Math.min(+s.value + 5, 100),
+            s.dispatchEvent(new Event("change"))
+        );
+        """
+        self.webpage.runJavaScript(js)
+
+    def volume_down(self):
+        js = """
+        var s = document.querySelector(".volume-slider");
+        s && (
+            s.value = Math.max(+s.value - 5, 0),
+            s.dispatchEvent(new Event("change"))
+        );
+        """
+        self.webpage.runJavaScript(js)
+
     def read_script(self, filename):
         with open(f"{self.current_dir}/core/js/{filename}", "r", encoding="utf-8") as f:
             return f.read()
@@ -1766,13 +1977,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webview.stop()
 
     def search_on(self, service):
-        query = quote_plus(f"{self.title} - {self.artist}")
+        query = quote(f"{self.artist} {self.title}")
         if service == "MusicBrainz":
-            open_url(f"https://musicbrainz.org/search?query={query}&type=recording")
+            artist = quote(self.artist)
+            track = quote(self.title)
+            duration_ms = round(self.duration * 1000)
+            open_url(
+                "https://musicbrainz.org/taglookup?"
+                f"artist={artist}&track={track}&duration={duration_ms}"
+            )
         elif service == "Spotify":
             open_url(f"https://open.spotify.com/search/{query}/tracks")
-        elif service == "Genius":
-            open_url(f"https://genius.com/search?q={query}")
+        elif service == "Apple Music US":
+            open_url(f"https://music.apple.com/us/search?term={query}")
+        elif service == "Tidal":
+            open_url(f"https://tidal.com/search/tracks?q={query}")
+        elif service == "Amazon Music":
+            open_url(f"https://music.amazon.de/search/{query}")
+        elif service == "Deezer":
+            open_url(f"https://www.deezer.com/search/{query}/track")
 
     def go_to_youtube(self):
         open_url(f"https://www.youtube.com/watch?v={self.video_id}")
@@ -1805,7 +2028,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.is_downloading = True
         self.update_download_buttons_state()
 
-        self.download_thread = DownloadThread(
+        self.ytmusic_downloader_thread = YTMusicDownloader(
             download_url,
             download_folder,
             use_cookies=self.use_cookies_setting,
@@ -1814,31 +2037,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ytdlp_format=self.ytdlp_format_setting,
             parent=self,
         )
-        self.download_thread.downloading_ffmpeg.connect(self.on_downloading_ffmpeg)
-        self.download_thread.downloading_ffmpeg_success.connect(
+        self.ytmusic_downloader_thread.downloading_ffmpeg.connect(
+            self.on_downloading_ffmpeg
+        )
+        self.ytmusic_downloader_thread.downloading_ffmpeg_success.connect(
             self.on_downloading_ffmpeg_success
         )
 
-        self.download_thread.downloading_deno.connect(self.on_downloading_deno)
-        self.download_thread.downloading_deno_success.connect(
+        self.ytmusic_downloader_thread.downloading_deno.connect(
+            self.on_downloading_deno
+        )
+        self.ytmusic_downloader_thread.downloading_deno_success.connect(
             self.on_downloading_deno_success
         )
 
-        self.download_thread.downloading_ytdlp.connect(self.on_downloading_ytdlp)
-        self.download_thread.downloading_ytdlp_success.connect(
+        self.ytmusic_downloader_thread.downloading_ytdlp.connect(
+            self.on_downloading_ytdlp
+        )
+        self.ytmusic_downloader_thread.downloading_ytdlp_success.connect(
             self.on_downloading_ytdlp_success
         )
 
-        self.download_thread.downloading_audio.connect(self.on_downloading_audio)
-        self.download_thread.downloading_audio_error.connect(
+        self.ytmusic_downloader_thread.downloading_audio.connect(
+            self.on_downloading_audio
+        )
+        self.ytmusic_downloader_thread.downloading_audio_error.connect(
             self.on_downloading_audio_error
         )
-        self.download_thread.downloading_audio_success.connect(
+        self.ytmusic_downloader_thread.downloading_audio_success.connect(
             self.on_downloading_audio_success
         )
 
-        self.download_thread.finished.connect(self.on_download_finished)
-        self.download_thread.start()
+        self.ytmusic_downloader_thread.finished.connect(self.on_download_finished)
+        self.ytmusic_downloader_thread.start()
 
     def show_downloading_state_tooltip(self, title, content):
         def calculate_tooltip_pos(
@@ -1952,7 +2183,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         open_url(folder)
 
     def on_download_finished(self):
-        self.download_thread = None
+        self.ytmusic_downloader_thread = None
         self.hide_downloading_state_tooltip()
 
         self.is_downloading = False
@@ -2069,8 +2300,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ):
             self.hotkey_controller_thread.stop()
 
-        if self.download_thread is not None and self.download_thread.isRunning():
-            self.download_thread.stop()
+        if (
+            self.ytmusic_downloader_thread is not None
+            and self.ytmusic_downloader_thread.isRunning()
+        ):
+            self.ytmusic_downloader_thread.stop()
 
         if (
             self.update_checker_thread is not None
@@ -2083,6 +2317,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             and self.music_recognizer_thread.isRunning()
         ):
             self.music_recognizer_thread.stop()
+
+        if (
+            self.trackers_list_updater_thread is not None
+            and self.trackers_list_updater_thread.isRunning()
+        ):
+            self.trackers_list_updater_thread.stop()
 
     def app_quit(self):
         self.save_settings()
@@ -2100,35 +2340,53 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             event = self.taskbar.handle_message(int(message))
             if event:
                 if event["type"] == "created":
-                    self.taskbar.register(int(self.winId()))
-                    self.taskbar.add_buttons(
-                        [
-                            {
-                                "id": 1,
-                                "icon": f"{self.icon_folder}/previous-taskbar.png",
-                                "tooltip": "Previous",
-                                "flags": THBF_DISABLED,
-                            },
-                            {
-                                "id": 2,
-                                "icon": f"{self.icon_folder}/play-taskbar.png",
-                                "tooltip": "Play/Pause",
-                                "flags": THBF_DISABLED,
-                            },
-                            {
-                                "id": 3,
-                                "icon": f"{self.icon_folder}/next-taskbar.png",
-                                "tooltip": "Next",
-                                "flags": THBF_DISABLED,
-                            },
-                        ]
-                    )
+                    if not self.taskbar_buttons_created:
+                        self.taskbar.register(int(self.winId()))
+                        self.taskbar.add_buttons(
+                            [
+                                {
+                                    "id": 1,
+                                    "icon": f"{self.icon_folder}/like-taskbar.png",
+                                    "tooltip": "Like",
+                                    "flags": THBF_DISABLED,
+                                },
+                                {
+                                    "id": 2,
+                                    "icon": f"{self.icon_folder}/previous-taskbar.png",
+                                    "tooltip": "Previous",
+                                    "flags": THBF_DISABLED,
+                                },
+                                {
+                                    "id": 3,
+                                    "icon": f"{self.icon_folder}/play-taskbar.png",
+                                    "tooltip": "Play",
+                                    "flags": THBF_DISABLED,
+                                },
+                                {
+                                    "id": 4,
+                                    "icon": f"{self.icon_folder}/next-taskbar.png",
+                                    "tooltip": "Next",
+                                    "flags": THBF_DISABLED,
+                                },
+                                {
+                                    "id": 5,
+                                    "icon": f"{self.icon_folder}/dislike-taskbar.png",
+                                    "tooltip": "Dislike",
+                                    "flags": THBF_DISABLED,
+                                },
+                            ]
+                        )
+                        self.taskbar_buttons_created = True
                 elif event["type"] == "click" and event["id"] == 1:
-                    self.previous()
+                    self.like()
                 elif event["type"] == "click" and event["id"] == 2:
-                    self.play_pause()
+                    self.previous()
                 elif event["type"] == "click" and event["id"] == 3:
+                    self.play_pause()
+                elif event["type"] == "click" and event["id"] == 4:
                     self.next()
+                elif event["type"] == "click" and event["id"] == 5:
+                    self.dislike()
             return False, 0
 
     def eventFilter(self, obj, event):

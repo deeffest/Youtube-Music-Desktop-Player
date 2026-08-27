@@ -13,7 +13,7 @@ Turns the [YouTube Music](https://music.youtube.com) site into a cross-platform 
 - Synchronized lyrics
 - View/add comments
 - Music recognition
-- Windows thumbnail buttons
+- Windows taskbar integration
 - System tray icon
 - Discord Rich Presence
 - Global playback hotkeys
