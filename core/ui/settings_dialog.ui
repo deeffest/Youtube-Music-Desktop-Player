@@ -123,7 +123,7 @@
                   <enum>Qt::NoFocus</enum>
                  </property>
                  <property name="text">
-                  <string>Icon color</string>
+                  <string>Tray icons color</string>
                  </property>
                 </widget>
                </item>
@@ -137,9 +137,6 @@
                  </property>
                  <property name="focusPolicy">
                   <enum>Qt::NoFocus</enum>
-                 </property>
-                 <property name="toolTip">
-                  <string>This setting applies only to the icons in the system tray!</string>
                  </property>
                  <item>
                   <property name="text">
@@ -175,7 +172,7 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="text">
-                <string>Windows thumbnail buttons</string>
+                <string>Windows taskbar integration</string>
                </property>
               </widget>
              </item>
@@ -205,11 +202,7 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>It may not work on Wayland.
-
-• Ctrl + Shift + Space: Play/Pause.
-• Ctrl + Shift + Left: Previous.
-• Ctrl + Shift + Right: Next.</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;• Ctrl + Shift + Space: Play/Pause.&lt;br/&gt;• Ctrl + Shift + Left: Previous.&lt;br/&gt;• Ctrl + Shift + Right: Next.&lt;br/&gt;• Ctrl + Shift + Up: Volume up.&lt;br/&gt;• Ctrl + Shift + Down: Volume down.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;It may not work on Wayland.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Global playback hotkeys</string>
@@ -298,12 +291,7 @@
                   <enum>Qt::NoFocus</enum>
                  </property>
                  <property name="toolTip">
-                  <string>ANGLE is recommended for Windows systems with graphics acceleration.
-
-• Auto: Automatic selection based on system.
-• Desktop: Native OpenGL implementation.
-• ANGLE: OpenGL over Direct3D.
-• Software: Software-based rendering.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;• Auto: Automatic selection based on system.&lt;br/&gt;• Desktop: Native OpenGL implementation.&lt;br/&gt;• ANGLE: OpenGL over Direct3D.&lt;br/&gt;• Software: Software-based rendering.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;ANGLE is recommended for Windows systems with graphics acceleration.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <item>
                   <property name="text">
@@ -512,7 +500,7 @@ Make sure that the version of yt-dlp installed is 2025.11.12 or later.</string>
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>This will not remove the system version of yt-dlp - only the built-in version!</string>
+                <string>This will not remove the system version of yt-dlp - only the built-in version.</string>
                </property>
                <property name="text">
                 <string>Remove from device</string>
@@ -560,7 +548,7 @@ If you encounter errors, make sure that yt-dlp is compatible with your version o
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>This will not remove the system version of FFmpeg - only the built-in version!</string>
+                <string>This will not remove the system version of FFmpeg - only the built-in version.</string>
                </property>
                <property name="text">
                 <string>Remove from device</string>
@@ -602,7 +590,7 @@ If you encounter errors, make sure that yt-dlp is compatible with your version o
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>This will not remove the system version of Deno - only the built-in version!</string>
+                <string>This will not remove the system version of Deno - only the built-in version.</string>
                </property>
                <property name="text">
                 <string>Remove from device</string>
@@ -738,6 +726,64 @@ Alternatively, please wait; recognitions should be restored shortly.</string>
            </widget>
           </item>
           <item>
+           <widget class="QGroupBox" name="groupBox_11">
+            <property name="title">
+             <string>Shazam API</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_16">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>Recording lenght</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSlider" name="horizontalSlider_2">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
+                 <property name="minimum">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <number>12</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>1</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="invertedAppearance">
+                  <bool>false</bool>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::TicksBelow</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>1s</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer_5">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -790,6 +836,16 @@ Alternatively, please wait; recognitions should be restored shortly.</string>
               </widget>
              </item>
              <item>
+              <widget class="QCheckBox" name="checkBox_20">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Try turning it off if something seems broken.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Uses the Disconnect tracker list (disconnect.me).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Block Google trackers</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <layout class="QHBoxLayout" name="horizontalLayout_7">
                <item>
                 <widget class="QPushButton" name="pushButton_5">
@@ -800,7 +856,7 @@ Alternatively, please wait; recognitions should be restored shortly.</string>
                   <string>We recommend attaching the `app.log` file from this folder to your bug report on GitHub.</string>
                  </property>
                  <property name="text">
-                  <string>Open logs folder</string>
+                  <string>Logs folder</string>
                  </property>
                 </widget>
                </item>
@@ -814,7 +870,7 @@ Alternatively, please wait; recognitions should be restored shortly.</string>
 You can write them yourself or get them from sites like Greasy Fork.</string>
                  </property>
                  <property name="text">
-                  <string>Open plugins folder</string>
+                  <string>Plugins folder</string>
                  </property>
                 </widget>
                </item>

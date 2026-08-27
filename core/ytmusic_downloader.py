@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from core.main_window import MainWindow
 
 
-class DownloadThread(QThread):
+class YTMusicDownloader(QThread):
     downloading_ffmpeg = pyqtSignal()
     downloading_ffmpeg_success = pyqtSignal()
 

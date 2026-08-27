@@ -49,6 +49,8 @@ class LyricsDialog(QDialog, Ui_LyricsDialog):
         if opacity < 100:
             self.setWindowOpacity(opacity / 100)
 
+        self.finished.connect(self.on_finished)
+
     def configure_ui_elements(self):
         self.verticalLayout_4.setAlignment(Qt.AlignmentFlag.AlignTop)
 
@@ -222,6 +224,12 @@ class LyricsDialog(QDialog, Ui_LyricsDialog):
             viewport_half = self.scrollArea.viewport().height() // 2
             self.scrollArea.verticalScrollBar().setValue(pos.y() - viewport_half)
 
+    def on_finished(self):
+        if self.load_lyrics_thread and self.load_lyrics_thread.isRunning():
+            self.load_lyrics_thread.stop()
+
+        self.window.lyrics_dialog = None
+
     def contextMenuEvent(self, event):
         self.main_menu.exec(event.globalPos())
 
@@ -243,11 +251,4 @@ class LyricsDialog(QDialog, Ui_LyricsDialog):
             self.window.settings_.setValue("lyrics_dialog_opacity", new_value)
             self.setWindowOpacity(new_value / 100)
 
-        event.accept()
-
-    def closeEvent(self, event):
-        if self.load_lyrics_thread and self.load_lyrics_thread.isRunning():
-            self.load_lyrics_thread.stop()
-
-        self.window.lyrics_dialog = None
         event.accept()

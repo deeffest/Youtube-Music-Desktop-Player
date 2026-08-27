@@ -18,6 +18,12 @@ THBF_NONINTERACTIVE = 0x0008
 WM_COMMAND = 0x0111
 THBN_CLICKED = 0x1800
 
+TBPF_NOPROGRESS = 0x0
+TBPF_INDETERMINATE = 0x1
+TBPF_NORMAL = 0x2
+TBPF_ERROR = 0x4
+TBPF_PAUSED = 0x8
+
 
 class THUMBBUTTON(ctypes.Structure):
     _fields_ = [
@@ -140,6 +146,8 @@ class TaskbarAPI:
         )
         self._buttons = {}
         self._button_defs = []
+        self._progress_state = TBPF_NOPROGRESS
+        self._progress_value = (0, 0)
 
     def __del__(self):
         _destroy_icons(self._buttons)
@@ -149,6 +157,18 @@ class TaskbarAPI:
         self._hwnd = hwnd
         self._taskbar.HrInit()
         self._taskbar.SetProgressState(hwnd, 0)
+
+    def set_progress_state(self, flags):
+        if not self._hwnd:
+            return
+        self._progress_state = flags
+        self._taskbar.SetProgressState(self._hwnd, flags)
+
+    def set_progress_value(self, completed, total):
+        if not self._hwnd:
+            return
+        self._progress_value = (completed, total)
+        self._taskbar.SetProgressValue(self._hwnd, completed, total)
 
     def add_buttons(self, buttons):
         if not self._hwnd:
@@ -224,7 +244,9 @@ class TaskbarAPI:
         msg = wintypes.MSG.from_address(msg_ptr)
         if msg.message == self._msg_created:
             self._taskbar.HrInit()
-            self._taskbar.SetProgressState(self._hwnd, 0)
+            self._taskbar.SetProgressState(self._hwnd, self._progress_state)
+            if self._progress_state != TBPF_NOPROGRESS:
+                self._taskbar.SetProgressValue(self._hwnd, *self._progress_value)
             _destroy_icons(self._buttons)
             self._buttons.clear()
             if self._button_defs:

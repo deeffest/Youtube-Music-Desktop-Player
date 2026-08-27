@@ -327,7 +327,7 @@ def main():
     if DEBUG:
         os.environ["QTWEBENGINE_REMOTE_DEBUGGING"] = str(find_free_port())
 
-    from core.main_window import MainWindow
+    from PyQt5 import QtWebEngineWidgets  # noqa: F401
 
     app = SingletonApplication(
         sys.argv
@@ -361,6 +361,8 @@ def main():
         shutil.rmtree(sw_dir)
     except Exception as e:
         logging.error(f"Failed to remove Service Worker: {str(e)}")
+
+    from core.main_window import MainWindow
 
     window = MainWindow(
         app_settings,

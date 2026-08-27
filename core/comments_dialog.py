@@ -67,6 +67,8 @@ class CommentsDialog(QDialog, Ui_CommentsDialog):
         if opacity < 100:
             self.setWindowOpacity(opacity / 100)
 
+        self.finished.connect(self.on_finished)
+
     def setup_web_engine(self):
         self.webpage = WebEnginePage(self.window.webprofile, self)
 
@@ -92,6 +94,9 @@ class CommentsDialog(QDialog, Ui_CommentsDialog):
         self.splash_screen.deleteLater()
         self.splash_screen = None
 
+    def on_finished(self):
+        self.webpage.deleteLater()
+
     def keyPressEvent(self, event):
         key = event.key()
         if key in (Qt.Key.Key_Plus, Qt.Key.Key_Equal):
@@ -110,8 +115,4 @@ class CommentsDialog(QDialog, Ui_CommentsDialog):
             self.window.settings_.setValue("comments_dialog_opacity", new_value)
             self.setWindowOpacity(new_value / 100)
 
-        event.accept()
-
-    def closeEvent(self, event):
-        self.webpage.deleteLater()
         event.accept()

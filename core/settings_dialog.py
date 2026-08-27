@@ -25,6 +25,8 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.setWindowIcon(QIcon(f"{self.window.icon_folder}/settings-colored.png"))
         self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, False)
 
+        self.finished.connect(self.on_finished)
+
     def configure_ui_elements(self):
         def remove_deno_from_device():
             self.window.remove_tool_from_device("Deno")
@@ -168,8 +170,31 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.checkBox_16.setChecked(self.window.prefer_system_ytdlp_setting)
         self.checkBox_12.setChecked(self.window.check_for_updates_at_startup_setting)
         self.checkBox_19.setChecked(self.window.disable_navigation_restrictions_setting)
+        self.checkBox_20.setChecked(self.window.block_google_trackers_setting)
         self.pushButton_5.clicked.connect(lambda: open_url(self.window.logs_dir))
         self.pushButton_6.clicked.connect(lambda: open_url(self.window.plugins_dir))
+        self.pushButton_5.setIcon(
+            recolor_icon(
+                f"{self.window.icon_folder}/logs_folder.png",
+                self.window.light_theme_setting,
+            )
+        )
+        self.pushButton_6.setIcon(
+            recolor_icon(
+                f"{self.window.icon_folder}/plugins_folder.png",
+                self.window.light_theme_setting,
+            )
+        )
+        self.label_8.setText(f"{self.window.shazam_recording_lenght_setting}s")
+        self.label_8.setFixedWidth(
+            self.label_8.fontMetrics().horizontalAdvance(
+                str(self.horizontalSlider_2.maximum()) + "s"
+            )
+        )
+        self.horizontalSlider_2.setValue(self.window.shazam_recording_lenght_setting)
+        self.horizontalSlider_2.valueChanged.connect(
+            lambda value: self.label_8.setText(f"{value}s")
+        )
 
     def save_settings(self):
         self.window.save_last_win_geometry_setting = int(self.checkBox.isChecked())
@@ -277,6 +302,17 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             "disable_navigation_restrictions",
             self.window.disable_navigation_restrictions_setting,
         )
+        self.window.block_google_trackers_setting = int(self.checkBox_20.isChecked())
+        self.window.settings_.setValue(
+            "block_google_trackers",
+            self.window.block_google_trackers_setting,
+        )
+        self.window.shazam_recording_lenght_setting = int(
+            self.horizontalSlider_2.value()
+        )
+        self.window.settings_.setValue(
+            "shazam_recording_lenght", self.window.shazam_recording_lenght_setting
+        )
 
         self.close()
 
@@ -284,6 +320,9 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         hint = self.minimumSizeHint()
         if self.width() < hint.width() or self.height() < hint.height():
             self.resize(hint)
+
+    def on_finished(self):
+        self.window.settings_dialog = None
 
     def focusNextPrevChild(self, next):
         return False
@@ -299,7 +338,3 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
     def resizeEvent(self, event):
         self.fix_size()
         super().resizeEvent(event)
-
-    def closeEvent(self, event):
-        self.window.settings_dialog = None
-        event.accept()
