@@ -1,11 +1,12 @@
 pynput==1.8.2
 pyside6==6.8.3
-packaging==26.2
+packaging==26.3
 requests==2.34.2
 discord-rpc==6.0
 pyinstaller==6.19.0
+shazamio_core==1.1.2
 comtypes==1.4.16; sys_platform=="win32"
 python-xlib==0.33; sys_platform=="linux"
 pyaudiowpatch==0.2.12.8; sys_platform=="win32"
-git+https://github.com/deeffest/PyQt-Frameless-Window.git@7c8d5b4
-git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@045ae7c
+git+https://github.com/deeffest/PyQt-Frameless-Window.git@4b21690
+git+https://github.com/deeffest/PyQt-Fluent-Widgets.git@7353ac2

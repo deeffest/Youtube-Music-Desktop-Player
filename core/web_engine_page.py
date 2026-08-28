@@ -17,6 +17,9 @@ class WebEnginePage(QWebEnginePage):
         self.window: "MainWindow" = parent
 
     def acceptNavigationRequest(self, url, type, isMainFrame):
+        if self.window.disable_navigation_restrictions_setting == 1:
+            return True
+
         url_str = url.toString()
 
         patterns = [

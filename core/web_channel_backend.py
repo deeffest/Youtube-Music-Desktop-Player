@@ -33,11 +33,11 @@ class WebChannelBackend(QObject):
             self.window.go_to_youtube_action.setEnabled(False)
             self.window.go_to_youtube_shortcut.setEnabled(False)
             self.window.musicbrainz_action.setEnabled(False)
-            self.window.musicbrainz_shortcut.setEnabled(False)
             self.window.spotify_action.setEnabled(False)
-            self.window.spotify_shortcut.setEnabled(False)
-            self.window.genius_action.setEnabled(False)
-            self.window.genius_shortcut.setEnabled(False)
+            self.window.apple_music_action.setEnabled(False)
+            self.window.tidal_action.setEnabled(False)
+            self.window.amazon_music_action.setEnabled(False)
+            self.window.deezer_action.setEnabled(False)
             self.window.lyrics_action.setEnabled(False)
             self.window.lyrics_tbutton.setEnabled(False)
             self.window.lyrics_shortcut.setEnabled(False)
@@ -50,11 +50,11 @@ class WebChannelBackend(QObject):
             self.window.go_to_youtube_action.setEnabled(True)
             self.window.go_to_youtube_shortcut.setEnabled(True)
             self.window.musicbrainz_action.setEnabled(True)
-            self.window.musicbrainz_shortcut.setEnabled(True)
             self.window.spotify_action.setEnabled(True)
-            self.window.spotify_shortcut.setEnabled(True)
-            self.window.genius_action.setEnabled(True)
-            self.window.genius_shortcut.setEnabled(True)
+            self.window.apple_music_action.setEnabled(True)
+            self.window.tidal_action.setEnabled(True)
+            self.window.amazon_music_action.setEnabled(True)
+            self.window.deezer_action.setEnabled(True)
             self.window.lyrics_action.setEnabled(True)
             self.window.lyrics_tbutton.setEnabled(True)
             self.window.lyrics_shortcut.setEnabled(True)
@@ -80,6 +80,7 @@ class WebChannelBackend(QObject):
     def song_progress_changed(self, current_time):
         self.window.current_time = current_time
 
+        self.window.update_win_thumbnail_buttons_song_progress()
         if self.window.lyrics_dialog is not None:
             self.window.lyrics_dialog.sync_lyrics_to_time(current_time)
 
@@ -89,4 +90,6 @@ class WebChannelBackend(QObject):
             self.window.song_status = status
         else:
             self.window.song_status = "Indifferent"
+
+        self.window.update_win_thumbnail_buttons_song_status()
         self.window.update_system_tray_icon_song_status()

@@ -126,7 +126,7 @@
                   <enum>Qt::FocusPolicy::NoFocus</enum>
                  </property>
                  <property name="text">
-                  <string>Icon color</string>
+                  <string>Tray icons color</string>
                  </property>
                 </widget>
                </item>
@@ -140,9 +140,6 @@
                  </property>
                  <property name="focusPolicy">
                   <enum>Qt::FocusPolicy::NoFocus</enum>
-                 </property>
-                 <property name="toolTip">
-                  <string>This setting applies only to the icons in the system tray!</string>
                  </property>
                  <item>
                   <property name="text">
@@ -178,7 +175,7 @@
                 <enum>Qt::FocusPolicy::NoFocus</enum>
                </property>
                <property name="text">
-                <string>Windows thumbnail buttons</string>
+                <string>Windows taskbar integration</string>
                </property>
               </widget>
              </item>
@@ -208,11 +205,7 @@
                 <enum>Qt::FocusPolicy::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>It may not work on Wayland.
-
-• Ctrl + Shift + Space: Play/Pause.
-• Ctrl + Shift + Left: Previous.
-• Ctrl + Shift + Right: Next.</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;• Ctrl + Shift + Space: Play/Pause.&lt;br/&gt;• Ctrl + Shift + Left: Previous.&lt;br/&gt;• Ctrl + Shift + Right: Next.&lt;br/&gt;• Ctrl + Shift + Up: Volume up.&lt;br/&gt;• Ctrl + Shift + Down: Volume down.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;It may not work on Wayland.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Global playback hotkeys</string>
@@ -268,29 +261,6 @@
                </property>
                <property name="text">
                 <string>Animated scrolling support</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="groupBox_4">
-            <property name="title">
-             <string>Rendering</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
-             <item>
-              <widget class="QCheckBox" name="checkBox_12">
-               <property name="focusPolicy">
-                <enum>Qt::FocusPolicy::NoFocus</enum>
-               </property>
-               <property name="toolTip">
-                <string>This setting removes the 60 FPS limit, but it can place a heavy and unnecessary load on the CPU.
-It is recommended to leave it disabled.</string>
-               </property>
-               <property name="text">
-                <string>Disable frame rate limit</string>
                </property>
               </widget>
              </item>
@@ -461,7 +431,7 @@ Make sure that the version of yt-dlp installed is 2025.11.12 or later.</string>
                 <enum>Qt::FocusPolicy::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>This will not remove the system version of yt-dlp - only the built-in version!</string>
+                <string>This will not remove the system version of yt-dlp - only the built-in version.</string>
                </property>
                <property name="text">
                 <string>Remove from device</string>
@@ -509,7 +479,7 @@ If you encounter errors, make sure that yt-dlp is compatible with your version o
                 <enum>Qt::FocusPolicy::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>This will not remove the system version of FFmpeg - only the built-in version!</string>
+                <string>This will not remove the system version of FFmpeg - only the built-in version.</string>
                </property>
                <property name="text">
                 <string>Remove from device</string>
@@ -551,7 +521,7 @@ If you encounter errors, make sure that yt-dlp is compatible with your version o
                 <enum>Qt::FocusPolicy::NoFocus</enum>
                </property>
                <property name="toolTip">
-                <string>This will not remove the system version of Deno - only the built-in version!</string>
+                <string>This will not remove the system version of Deno - only the built-in version.</string>
                </property>
                <property name="text">
                 <string>Remove from device</string>
@@ -671,6 +641,64 @@ Alternatively, please wait; recognitions should be restored shortly.</string>
            </widget>
           </item>
           <item>
+           <widget class="QGroupBox" name="groupBox_4">
+            <property name="title">
+             <string>Shazam API</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="focusPolicy">
+                  <enum>Qt::FocusPolicy::NoFocus</enum>
+                 </property>
+                 <property name="text">
+                  <string>Recording lenght</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSlider" name="horizontalSlider_2">
+                 <property name="focusPolicy">
+                  <enum>Qt::FocusPolicy::NoFocus</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="minimum">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <number>12</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>1</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::TickPosition::TicksBelow</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>1s</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer_5">
             <property name="orientation">
              <enum>Qt::Orientation::Vertical</enum>
@@ -682,6 +710,102 @@ Alternatively, please wait; recognitions should be restored shortly.</string>
              <size>
               <width>20</width>
               <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_5">
+         <attribute name="title">
+          <string>Advanced</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_13">
+          <item>
+           <widget class="QGroupBox" name="groupBox_9">
+            <property name="title">
+             <string>Misc</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_15">
+             <item>
+              <widget class="QCheckBox" name="checkBox_19">
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::NoFocus</enum>
+               </property>
+               <property name="text">
+                <string>Check for updates at startup</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_20">
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::NoFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>Allows navigation to or entry of any URL (not recommended).</string>
+               </property>
+               <property name="text">
+                <string>Disable navigation restrictions</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_12">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Try turning it off if something seems broken.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Uses the Disconnect tracker list (disconnect.me).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Block Google trackers</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QPushButton" name="pushButton_5">
+                 <property name="focusPolicy">
+                  <enum>Qt::FocusPolicy::NoFocus</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>We recommend attaching the `app.log` file from this folder to your bug report on GitHub.</string>
+                 </property>
+                 <property name="text">
+                  <string>Logs folder</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pushButton_6">
+                 <property name="focusPolicy">
+                  <enum>Qt::FocusPolicy::NoFocus</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>Drag and drop the `.js` files (scripts) that should run on YT Music and/or other pages into this folder.
+You can write them yourself or get them from sites like Greasy Fork.</string>
+                 </property>
+                 <property name="text">
+                  <string>Plugins folder</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Policy::MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>307</height>
              </size>
             </property>
            </spacer>

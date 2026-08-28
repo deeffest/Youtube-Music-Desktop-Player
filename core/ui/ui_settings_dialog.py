@@ -171,19 +171,6 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout_4.addWidget(self.groupBox_2)
 
-        self.groupBox_4 = QGroupBox(self.tab_2)
-        self.groupBox_4.setObjectName(u"groupBox_4")
-        self.verticalLayout_6 = QVBoxLayout(self.groupBox_4)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.checkBox_12 = QCheckBox(self.groupBox_4)
-        self.checkBox_12.setObjectName(u"checkBox_12")
-        self.checkBox_12.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.verticalLayout_6.addWidget(self.checkBox_12)
-
-
-        self.verticalLayout_4.addWidget(self.groupBox_4)
-
         self.groupBox_5 = QGroupBox(self.tab_2)
         self.groupBox_5.setObjectName(u"groupBox_5")
         self.verticalLayout_7 = QVBoxLayout(self.groupBox_5)
@@ -379,11 +366,96 @@ class Ui_SettingsDialog(object):
 
         self.verticalLayout_18.addWidget(self.groupBox_12)
 
+        self.groupBox_4 = QGroupBox(self.tab_4)
+        self.groupBox_4.setObjectName(u"groupBox_4")
+        self.verticalLayout_6 = QVBoxLayout(self.groupBox_4)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.horizontalLayout_7 = QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.label_8 = QLabel(self.groupBox_4)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.horizontalLayout_7.addWidget(self.label_8)
+
+        self.horizontalSlider_2 = QSlider(self.groupBox_4)
+        self.horizontalSlider_2.setObjectName(u"horizontalSlider_2")
+        self.horizontalSlider_2.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.horizontalSlider_2.setMinimum(3)
+        self.horizontalSlider_2.setMaximum(12)
+        self.horizontalSlider_2.setPageStep(1)
+        self.horizontalSlider_2.setOrientation(Qt.Orientation.Horizontal)
+        self.horizontalSlider_2.setTickPosition(QSlider.TickPosition.TicksBelow)
+
+        self.horizontalLayout_7.addWidget(self.horizontalSlider_2)
+
+        self.label_7 = QLabel(self.groupBox_4)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+
+        self.horizontalLayout_7.addWidget(self.label_7)
+
+
+        self.verticalLayout_6.addLayout(self.horizontalLayout_7)
+
+
+        self.verticalLayout_18.addWidget(self.groupBox_4)
+
         self.verticalSpacer_5 = QSpacerItem(20, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
         self.verticalLayout_18.addItem(self.verticalSpacer_5)
 
         self.tabWidget.addTab(self.tab_4, "")
+        self.tab_5 = QWidget()
+        self.tab_5.setObjectName(u"tab_5")
+        self.verticalLayout_13 = QVBoxLayout(self.tab_5)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.groupBox_9 = QGroupBox(self.tab_5)
+        self.groupBox_9.setObjectName(u"groupBox_9")
+        self.verticalLayout_15 = QVBoxLayout(self.groupBox_9)
+        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
+        self.checkBox_19 = QCheckBox(self.groupBox_9)
+        self.checkBox_19.setObjectName(u"checkBox_19")
+        self.checkBox_19.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.verticalLayout_15.addWidget(self.checkBox_19)
+
+        self.checkBox_20 = QCheckBox(self.groupBox_9)
+        self.checkBox_20.setObjectName(u"checkBox_20")
+        self.checkBox_20.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.verticalLayout_15.addWidget(self.checkBox_20)
+
+        self.checkBox_12 = QCheckBox(self.groupBox_9)
+        self.checkBox_12.setObjectName(u"checkBox_12")
+
+        self.verticalLayout_15.addWidget(self.checkBox_12)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.pushButton_5 = QPushButton(self.groupBox_9)
+        self.pushButton_5.setObjectName(u"pushButton_5")
+        self.pushButton_5.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.horizontalLayout.addWidget(self.pushButton_5)
+
+        self.pushButton_6 = QPushButton(self.groupBox_9)
+        self.pushButton_6.setObjectName(u"pushButton_6")
+        self.pushButton_6.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.horizontalLayout.addWidget(self.pushButton_6)
+
+
+        self.verticalLayout_15.addLayout(self.horizontalLayout)
+
+
+        self.verticalLayout_13.addWidget(self.groupBox_9)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 307, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+
+        self.verticalLayout_13.addItem(self.verticalSpacer_3)
+
+        self.tabWidget.addTab(self.tab_5, "")
 
         self.verticalLayout.addWidget(self.tabWidget)
 
@@ -413,36 +485,23 @@ class Ui_SettingsDialog(object):
         self.checkBox_3.setText(QCoreApplication.translate("SettingsDialog", u"Restore zoom factor", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("SettingsDialog", u"Appearance", None))
         self.checkBox_7.setText(QCoreApplication.translate("SettingsDialog", u"Light theme", None))
-        self.label.setText(QCoreApplication.translate("SettingsDialog", u"Icon color", None))
+        self.label.setText(QCoreApplication.translate("SettingsDialog", u"Tray icons color", None))
         self.comboBox_2.setItemText(0, QCoreApplication.translate("SettingsDialog", u"Auto", None))
         self.comboBox_2.setItemText(1, QCoreApplication.translate("SettingsDialog", u"Dark", None))
         self.comboBox_2.setItemText(2, QCoreApplication.translate("SettingsDialog", u"Light", None))
 
-#if QT_CONFIG(tooltip)
-        self.comboBox_2.setToolTip(QCoreApplication.translate("SettingsDialog", u"This setting applies only to the icons in the system tray!", None))
-#endif // QT_CONFIG(tooltip)
         self.groupBox_10.setTitle(QCoreApplication.translate("SettingsDialog", u"Features", None))
-        self.checkBox_14.setText(QCoreApplication.translate("SettingsDialog", u"Windows thumbnail buttons", None))
+        self.checkBox_14.setText(QCoreApplication.translate("SettingsDialog", u"Windows taskbar integration", None))
         self.checkBox_10.setText(QCoreApplication.translate("SettingsDialog", u"System tray icon", None))
         self.checkBox_11.setText(QCoreApplication.translate("SettingsDialog", u"Discord Rich Presence", None))
 #if QT_CONFIG(tooltip)
-        self.checkBox_13.setToolTip(QCoreApplication.translate("SettingsDialog", u"It may not work on Wayland.\n"
-"\n"
-"\u2022 Ctrl + Shift + Space: Play/Pause.\n"
-"\u2022 Ctrl + Shift + Left: Previous.\n"
-"\u2022 Ctrl + Shift + Right: Next.", None))
+        self.checkBox_13.setToolTip(QCoreApplication.translate("SettingsDialog", u"<html><head/><body><p>\u2022 Ctrl + Shift + Space: Play/Pause.<br/>\u2022 Ctrl + Shift + Left: Previous.<br/>\u2022 Ctrl + Shift + Right: Next.<br/>\u2022 Ctrl + Shift + Up: Volume up.<br/>\u2022 Ctrl + Shift + Down: Volume down.</p><p><span style=\" font-style:italic;\">It may not work on Wayland.</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.checkBox_13.setText(QCoreApplication.translate("SettingsDialog", u"Global playback hotkeys", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("SettingsDialog", u"General", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("SettingsDialog", u"Features", None))
         self.checkBox_8.setText(QCoreApplication.translate("SettingsDialog", u"Full-screen mode support", None))
         self.checkBox_9.setText(QCoreApplication.translate("SettingsDialog", u"Animated scrolling support", None))
-        self.groupBox_4.setTitle(QCoreApplication.translate("SettingsDialog", u"Rendering", None))
-#if QT_CONFIG(tooltip)
-        self.checkBox_12.setToolTip(QCoreApplication.translate("SettingsDialog", u"This setting removes the 60 FPS limit, but it can place a heavy and unnecessary load on the CPU.\n"
-"It is recommended to leave it disabled.", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_12.setText(QCoreApplication.translate("SettingsDialog", u"Disable frame rate limit", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("SettingsDialog", u"Cookies", None))
         self.checkBox_15.setText(QCoreApplication.translate("SettingsDialog", u"Do not save cookies to disk", None))
         self.pushButton_4.setText(QCoreApplication.translate("SettingsDialog", u"Delete all saved cookies", None))
@@ -466,7 +525,7 @@ class Ui_SettingsDialog(object):
 #endif // QT_CONFIG(tooltip)
         self.checkBox_16.setText(QCoreApplication.translate("SettingsDialog", u"Prefer system yt-dlp", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton.setToolTip(QCoreApplication.translate("SettingsDialog", u"This will not remove the system version of yt-dlp - only the built-in version!", None))
+        self.pushButton.setToolTip(QCoreApplication.translate("SettingsDialog", u"This will not remove the system version of yt-dlp - only the built-in version.", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton.setText(QCoreApplication.translate("SettingsDialog", u"Remove from device", None))
         self.groupBox_6.setTitle(QCoreApplication.translate("SettingsDialog", u"FFmpeg", None))
@@ -476,7 +535,7 @@ class Ui_SettingsDialog(object):
 #endif // QT_CONFIG(tooltip)
         self.checkBox_5.setText(QCoreApplication.translate("SettingsDialog", u"Prefer system FFmpeg", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_2.setToolTip(QCoreApplication.translate("SettingsDialog", u"This will not remove the system version of FFmpeg - only the built-in version!", None))
+        self.pushButton_2.setToolTip(QCoreApplication.translate("SettingsDialog", u"This will not remove the system version of FFmpeg - only the built-in version.", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_2.setText(QCoreApplication.translate("SettingsDialog", u"Remove from device", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("SettingsDialog", u"Deno", None))
@@ -486,7 +545,7 @@ class Ui_SettingsDialog(object):
 #endif // QT_CONFIG(tooltip)
         self.checkBox_18.setText(QCoreApplication.translate("SettingsDialog", u"Prefer system Deno", None))
 #if QT_CONFIG(tooltip)
-        self.pushButton_3.setToolTip(QCoreApplication.translate("SettingsDialog", u"This will not remove the system version of Deno - only the built-in version!", None))
+        self.pushButton_3.setToolTip(QCoreApplication.translate("SettingsDialog", u"This will not remove the system version of Deno - only the built-in version.", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_3.setText(QCoreApplication.translate("SettingsDialog", u"Remove from device", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QCoreApplication.translate("SettingsDialog", u"Tools", None))
@@ -502,6 +561,32 @@ class Ui_SettingsDialog(object):
         self.horizontalSlider.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.label_6.setText(QCoreApplication.translate("SettingsDialog", u"1s", None))
+        self.groupBox_4.setTitle(QCoreApplication.translate("SettingsDialog", u"Shazam API", None))
+        self.label_8.setText(QCoreApplication.translate("SettingsDialog", u"Recording lenght", None))
+#if QT_CONFIG(tooltip)
+        self.horizontalSlider_2.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.label_7.setText(QCoreApplication.translate("SettingsDialog", u"1s", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QCoreApplication.translate("SettingsDialog", u"Music recognition", None))
+        self.groupBox_9.setTitle(QCoreApplication.translate("SettingsDialog", u"Misc", None))
+        self.checkBox_19.setText(QCoreApplication.translate("SettingsDialog", u"Check for updates at startup", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_20.setToolTip(QCoreApplication.translate("SettingsDialog", u"Allows navigation to or entry of any URL (not recommended).", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_20.setText(QCoreApplication.translate("SettingsDialog", u"Disable navigation restrictions", None))
+#if QT_CONFIG(tooltip)
+        self.checkBox_12.setToolTip(QCoreApplication.translate("SettingsDialog", u"<html><head/><body><p>Try turning it off if something seems broken.</p><p><span style=\" font-style:italic;\">Uses the Disconnect tracker list (disconnect.me).</span></p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.checkBox_12.setText(QCoreApplication.translate("SettingsDialog", u"Block Google trackers", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_5.setToolTip(QCoreApplication.translate("SettingsDialog", u"We recommend attaching the `app.log` file from this folder to your bug report on GitHub.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_5.setText(QCoreApplication.translate("SettingsDialog", u"Logs folder", None))
+#if QT_CONFIG(tooltip)
+        self.pushButton_6.setToolTip(QCoreApplication.translate("SettingsDialog", u"Drag and drop the `.js` files (scripts) that should run on YT Music and/or other pages into this folder.\n"
+"You can write them yourself or get them from sites like Greasy Fork.", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButton_6.setText(QCoreApplication.translate("SettingsDialog", u"Plugins folder", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), QCoreApplication.translate("SettingsDialog", u"Advanced", None))
     # retranslateUi
 
