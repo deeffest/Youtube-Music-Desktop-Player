@@ -1285,15 +1285,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def search_song(self, query, info_bar):
         info_bar.close()
 
-        js = f"""
-        (function() {{
-            const input = document.querySelector('ytmusic-search-box input#input');
-            if (!input) return;
-            input.focus();
-            document.execCommand('selectAll');
-            document.execCommand('insertText', false, {json.dumps(query)});
-        }})();
-        """
+        js = f"({self.read_script('search.js')})({json.dumps(query)})"
 
         def after_insert(_):
             QTest.keyClick(self.webview.focusProxy(), Qt.Key.Key_Return)
@@ -1301,7 +1293,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if is_valid_ytmusic_url(self.current_url):
             self.webpage.runJavaScript(js, after_insert)
         else:
-            self.webview.setUrl(QUrl(f"https://music.youtube.com/search?q={query}"))
+            self.webview.setUrl(
+                QUrl(f"https://music.youtube.com/search?q={quote(query, safe='')}")
+            )
 
     def on_recognizing_finish(self):
         self.music_recognizer_thread = None
@@ -1904,65 +1898,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.hotkey_controller_thread.start()
 
     def play_pause(self):
-        js = """
-        var v = document.querySelector("video");
-        v && (v.paused ? v.play() : v.pause());
-        """
-        self.webpage.runJavaScript(js)
+        self.webpage.runJavaScript(self.read_script("play_pause.js"))
 
     def previous(self):
-        js = """
-        document.querySelector(".previous-button")?.click();
-        """
-        self.webpage.runJavaScript(js)
+        self.webpage.runJavaScript(self.read_script("previous.js"))
 
     def next(self):
-        js = """
-        document.querySelector(".next-button")?.click();
-        """
-        self.webpage.runJavaScript(js)
+        self.webpage.runJavaScript(self.read_script("next.js"))
 
     def like(self):
-        js = """
-        document
-            .querySelector(
-                "ytmusic-player-bar ytmusic-like-button-renderer " +
-                "yt-button-shape.like button"
-            )
-            ?.click();
-        """
-        self.webpage.runJavaScript(js)
+        self.webpage.runJavaScript(self.read_script("like.js"))
 
     def dislike(self):
-        js = """
-        document
-            .querySelector(
-                "ytmusic-player-bar ytmusic-like-button-renderer " +
-                "yt-button-shape.dislike button"
-            )
-            ?.click();
-        """
-        self.webpage.runJavaScript(js)
+        self.webpage.runJavaScript(self.read_script("dislike.js"))
 
     def volume_up(self):
-        js = """
-        var s = document.querySelector(".volume-slider");
-        s && (
-            s.value = Math.min(+s.value + 5, 100),
-            s.dispatchEvent(new Event("change"))
-        );
-        """
-        self.webpage.runJavaScript(js)
+        self.webpage.runJavaScript(self.read_script("volume_up.js"))
 
     def volume_down(self):
-        js = """
-        var s = document.querySelector(".volume-slider");
-        s && (
-            s.value = Math.max(+s.value - 5, 0),
-            s.dispatchEvent(new Event("change"))
-        );
-        """
-        self.webpage.runJavaScript(js)
+        self.webpage.runJavaScript(self.read_script("volume_down.js"))
 
     def read_script(self, filename):
         with open(f"{self.current_dir}/core/js/{filename}", "r", encoding="utf-8") as f:
@@ -1981,10 +1935,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.webview.stop()
 
     def search_on(self, service):
-        query = quote(f"{self.artist} {self.title}")
+        query = quote(f"{self.artist} {self.title}", safe="")
         if service == "MusicBrainz":
-            artist = quote(self.artist)
-            track = quote(self.title)
+            artist = quote(self.artist, safe="")
+            track = quote(self.title, safe="")
             duration_ms = round(self.duration * 1000)
             open_url(
                 "https://musicbrainz.org/taglookup?"
