@@ -31,13 +31,11 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
 
         const getArtist = (runs) => {
             const boundary = runs.findIndex((r) => r.text.trim() === "•");
-            return boundary === -1
-                ? runs
-                : runs
-                      .slice(0, boundary)
-                      .filter((_, i) => i % 2 === 0)
-                      .map((r) => r.text.trim())
-                      .filter(Boolean);
+            return runs
+                .slice(0, boundary === -1 ? runs.length : boundary)
+                .filter((_, i) => i % 2 === 0)
+                .map((r) => r.text.trim())
+                .filter(Boolean);
         };
 
         const getArtwork = () => {

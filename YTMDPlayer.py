@@ -12,7 +12,7 @@ from core.application import SingletonApplication
 NAME = "Youtube-Music-Desktop-Player"
 DISPLAY_NAME = "YouTube Music Desktop Player"
 SHORT_NAME = "YTMDPlayer"
-VERSION = "1.30.0"
+VERSION = "1.30.1"
 AUTHOR = "deeffest"
 WEBSITE = "deeffest.pythonanywhere.com"
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -45,8 +45,6 @@ def init_app_settings():
     app_settings = QSettings(AUTHOR, NAME)
     if app_settings.value("light_theme") is None:
         app_settings.setValue("light_theme", 0)
-    if app_settings.value("disable_frame_rate_limit") is None:
-        app_settings.setValue("disable_frame_rate_limit", 0)
     return app_settings
 
 
