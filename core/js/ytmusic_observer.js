@@ -51,7 +51,7 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 const link = document.querySelector(".ytp-title-link");
-                if (!link?.textContent.trim() || "") {
+                if (!link?.textContent.trim()) {
                     if (lastSongInfo.videoId !== "") {
                         backend.song_info_changed("", "", "", "", 0);
                         lastSongInfo = {
@@ -65,12 +65,22 @@ if (typeof qt !== "undefined" && qt.webChannelTransport) {
                     return;
                 }
 
-                const title = getTitle(link.textContent.trim());
-                const artist = getArtist(
+                let title = getTitle(link.textContent.trim());
+                let artist = getArtist(
                     document.querySelector("ytmusic-player-bar")?.inst?.__data
                         ?.displayedMetadata?.bylineText?.[0]?.runs ?? [],
                 ).join(", ");
-                const artwork = getArtwork();
+                let artwork = getArtwork();                
+                
+                if (!title || !artist || !artwork) {
+                    const m = navigator.mediaSession?.metadata;
+                    if (m) {
+                        title = m.title;
+                        artist = m.artist;
+                        artwork = m.artwork.at(-1)?.src ?? "";
+                    }
+                }
+
                 const videoId = link?.href
                     ? new URL(link.href).searchParams.get("v") || ""
                     : "";
