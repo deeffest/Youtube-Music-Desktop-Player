@@ -9,6 +9,7 @@
         "ytm-slim-video-action-bar-renderer",
         "ytm-item-section-renderer[section-identifier='related-items']",
         "ad-slot-renderer",
+        "ytm-slim-video-metadata-section-renderer",
     ];
 
     const setTheme = () => {
